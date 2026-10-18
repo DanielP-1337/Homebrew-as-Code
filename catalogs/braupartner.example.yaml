@@ -1,0 +1,36 @@
+# Copy this file into .local/, verify pack sizes/SKUs against the merchant,
+# then set verified: true only for confirmed product/pack combinations.
+# No IDs, availability or pricing claims are made by this template.
+schema_version: 1
+supplier: braupartner.de
+products:
+  Pale Ale Malt:
+    packs: []
+  Munich Malt Type II:
+    packs: []
+  CaraMunich II:
+    packs: []
+  Melanoidin Malt:
+    packs: []
+  Chocolate Malt:
+    packs: []
+  Goldings pellets:
+    packs: []
+  Mild honey:
+    packs: []
+  Ceylon cinnamon sticks:
+    packs: []
+  Fresh ginger:
+    packs: []
+  Whole cloves:
+    packs: []
+  Nutmeg:
+    packs: []
+  Orange zest:
+    packs: []
+  Fermentis SafAle S-04:
+    packs: []
+  calcium_chloride_dihydrate:
+    packs: []
+  calcium_sulfate_dihydrate:
+    packs: []
