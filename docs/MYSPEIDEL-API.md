@@ -1,5 +1,7 @@
 # MySpeidel API v1.0 — read-only discovery
 
+For interactive username/password login see [MySpeidel Login](MYSPEIDEL-LOGIN.md).
+
 Official OpenAPI v1.0: https://api.cloud.myspeidel.com/v1.0/api-spec/json
 
 Implemented documented GET endpoints:

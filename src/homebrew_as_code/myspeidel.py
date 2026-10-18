@@ -11,7 +11,7 @@ import urllib.request
 from typing import Any, Callable
 
 BASE_URL = "https://api.cloud.myspeidel.com"
-UUID_PATTERN = re.compile(r"^[0-9]+$")
+UUID_PATTERN = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
 
 
 class MySpeidelError(RuntimeError):
@@ -36,11 +36,11 @@ class MySpeidelClient:
 
     def _get(self, path: str, params: dict[str, str] | None = None) -> Any:
         # Only fixed allowlisted endpoints. No arbitrary URL or path supplied by caller.
-        if path != "/v1.0/propfind/recipe" and not re.fullmatch(r"/v1\.0/recipe/[0-9]+", path):
+        if path != "/v1.0/propfind/recipe" and not re.fullmatch(r"/v1\.0/recipe/" + UUID_PATTERN.pattern[1:-1], path):
             raise MySpeidelError("Disallowed read endpoint")
         url = BASE_URL + path
         if params:
-            if path != "/v1.0/propfind/recipe" or set(params) - {"machineSize", "includePublic", "recipeType"}:
+            if path != "/v1.0/propfind/recipe" or set(params) - {"size", "includePublic", "recipeType"}:
                 raise MySpeidelError("Disallowed query parameter")
             url += "?" + urllib.parse.urlencode(params)
         request = urllib.request.Request(url, headers={
@@ -63,16 +63,16 @@ class MySpeidelClient:
 
     def list_recipes(self, *, machine_size: int | None = None,
                      include_public: bool = False) -> Any:
-        params = {"includePublic": "true" if include_public else "false"}
+        params = {"includePublic": "1" if include_public else "0"}
         if machine_size is not None:
             if isinstance(machine_size, bool) or machine_size <= 0:
                 raise MySpeidelError("Invalid machine size")
-            params["machineSize"] = str(machine_size)
+            params["size"] = str(machine_size)
         return self._get("/v1.0/propfind/recipe", params)
 
     def get_recipe(self, uuid: str) -> Any:
         if not UUID_PATTERN.fullmatch(uuid):
-            raise MySpeidelError("Recipe UUID must be numeric")
+            raise MySpeidelError("Recipe UUID must be a 36-character UUID")
         return self._get(f"/v1.0/recipe/{uuid}")
 
 

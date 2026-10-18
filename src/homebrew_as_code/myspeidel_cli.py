@@ -13,7 +13,7 @@ def main(argv: list[str] | None = None) -> int:
     recipes = sub.add_parser("list", help="Read recipe metadata (prints schema only by default)")
     recipes.add_argument("--machine-size", type=int, default=20)
     recipes.add_argument("--include-public", action="store_true")
-    recipe = sub.add_parser("get", help="Read an individual recipe by numeric ID")
+    recipe = sub.add_parser("get", help="Read an individual recipe by UUID")
     recipe.add_argument("uuid")
     args = parser.parse_args(argv)
     try:

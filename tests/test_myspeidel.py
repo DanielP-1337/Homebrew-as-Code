@@ -36,14 +36,14 @@ def test_list_only_get_and_bearer():
     assert client.list_recipes(machine_size=20)["collection"][0]["uuid"] == 123
     assert captured[0].get_method() == "GET"
     assert captured[0].get_header("Authorization") == "Bearer fake-secret"
-    assert "machineSize=20" in captured[0].full_url
+    assert "size=20" in captured[0].full_url
     assert captured[0].full_url.startswith("https://api.cloud.myspeidel.com/v1.0/propfind/recipe?")
 
 
 def test_get_numeric_uuid_only():
     client = MySpeidelClient(token="x", opener=lambda req, timeout: FakeResponse({"rest": {"steps": []}}))
-    assert client.get_recipe("123")["rest"]["steps"] == []
-    for invalid in ("../auth", "abc", "123?x=1", "", "1/2"):
+    assert client.get_recipe("123e4567-e89b-12d3-a456-426614174000")["rest"]["steps"] == []
+    for invalid in ("../auth", "abc", "123?x=1", "", "1/2", "123"):
         with pytest.raises(MySpeidelError):
             client.get_recipe(invalid)
 
