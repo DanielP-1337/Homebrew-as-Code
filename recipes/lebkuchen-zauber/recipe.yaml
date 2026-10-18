@@ -1,0 +1,60 @@
+# Recipe specification, not a MySpeidel API payload.
+# Quantities and water profile are provisional until measured brew-house efficiency
+# and RO-water residual mineral content have been confirmed.
+schema_version: 1
+recipe:
+  id: lebkuchen-zauber
+  version: "1.3.0"
+  name: "Lebkuchen-Zauber 2026"
+  style: "Christmas Brown Ale"
+equipment:
+  model: "Speidel Braumeister 20 L"
+  controller: "MySpeidel Wi-Fi touchscreen"
+targets:
+  packaged_volume_l: 20.0
+  original_gravity_plato: 14.0
+  alcohol_abv_percent: 5.7
+  bitterness_ibu: 21.0
+  mash_ph_room_temperature: 5.40
+  carbonation_volumes: 2.2
+fermentables:
+  - {name: "Pale Ale Malt", amount_g: 2800, purchase_form: whole}
+  - {name: "Munich Malt Type II", amount_g: 1500, purchase_form: whole}
+  - {name: "CaraMunich II", amount_g: 450, purchase_form: whole}
+  - {name: "Melanoidin Malt", amount_g: 250, purchase_form: whole}
+  - {name: "Chocolate Malt", amount_g: 100, purchase_form: whole}
+mash:
+  mash_in_temperature_c: 60
+  steps:
+    - {temperature_c: 63, duration_min: 20}
+    - {temperature_c: 72, duration_min: 45}
+    - {temperature_c: 78, duration_min: 10}
+boil:
+  temperature_c: 100
+  duration_min: 60
+  additions:
+    - {remaining_min: 60, ingredient: "Goldings pellets", amount_g: 60, alpha_acid_percent: 2.9}
+    - {remaining_min: 10, ingredient: "Mild honey", amount_g: 250}
+    - {remaining_min: 5, ingredient: "Ceylon cinnamon sticks", amount_g: 5}
+    - {remaining_min: 5, ingredient: "Fresh ginger", amount_g: 12}
+    - {remaining_min: 5, ingredient: "Whole cloves", amount_g: 0.2}
+    - {remaining_min: 5, ingredient: "Nutmeg", amount_g: 0.3}
+    - {remaining_min: 5, ingredient: "Orange zest", amount_g: 8}
+  spice_contact_after_flameout_min: 5
+yeast:
+  name: "Fermentis SafAle S-04"
+  amount_g: 11.5
+  fermentation_temperature_c: [18, 20]
+water:
+  source: "RO water; measured residual ions to be added later"
+  total_l: 28.0
+  mash_l: 23.0
+  sparge_l: 5.0
+  salts_g:
+    calcium_chloride_dihydrate: 5.0
+    calcium_sulfate_dihydrate: 3.0
+  target_mash_ph_at_20c: [5.35, 5.45]
+packaging:
+  type: keg
+  carbonation: forced
+  carbonation_volumes: 2.2
