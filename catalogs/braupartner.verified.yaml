@@ -1,0 +1,36 @@
+# Shop evidence reviewed 2026-10-18. Not a live inventory or price feed.
+# Variable-weight products are NOT represented as fixed packs in patch 0012.
+# 'offer' is audit-only metadata consumed by supplier_evidence_cli (0013).
+schema_version: 1
+supplier: braupartner.de
+reviewed_on: '2026-10-18'
+products:
+  Pale Ale Malt:
+    packs: []
+    offer: {kind: variable_weight, sku: 10-303A-UGS, min_g: 1000, increment_g: 500, whole_grain: true, source_url: 'https://www.braupartner.de/pale-ale-malz-ungeschrotet'}
+  Munich Malt Type II:
+    packs: []
+    offer: {kind: variable_weight, sku: 10-302A-UGS, min_g: 1000, increment_g: 500, whole_grain: true, source_url: 'https://www.braupartner.de/muenchner-malz-typ-ii-ungeschrotet'}
+  CaraMunich II:
+    packs: []
+    offer: {kind: variable_weight, sku: 10-210A-UGS, min_g: 1000, increment_g: 500, whole_grain: true, source_url: 'https://www.braupartner.de/caramuench-r-ii-malz-ungeschrotet'}
+  Melanoidin Malt:
+    packs: []
+    offer: {kind: variable_weight, sku: 10-308A-UGS, min_g: 1000, increment_g: 500, whole_grain: true, source_url: 'https://www.braupartner.de/melanoidin-malz-ungeschrotet'}
+  Chocolate Malt:
+    packs:
+      - {sku: 10-009A-KLU, pack_g: 100, whole_grain: true, verified: true, availability: unknown, source_url: 'https://www.braupartner.de/malz'}
+  Goldings pellets:
+    packs:
+      - {sku: 30-509A, pack_g: 100, verified: true, availability: unknown, source_url: 'https://www.braupartner.de/goldings-hopfenpellets'}
+  Mild honey: {packs: []}
+  Ceylon cinnamon sticks: {packs: []}
+  Fresh ginger: {packs: []}
+  Whole cloves: {packs: []}
+  Nutmeg: {packs: []}
+  Orange zest: {packs: []}
+  Fermentis SafAle S-04:
+    packs:
+      - {sku: 237-S-04-115, pack_g: 11.5, verified: true, availability: unknown, source_url: 'https://www.braupartner.de/hefe'}
+  calcium_chloride_dihydrate: {packs: []}
+  calcium_sulfate_dihydrate: {packs: []}
