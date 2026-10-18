@@ -36,8 +36,13 @@ def test_comparison_private_and_blocked():
     assert result["candidate_matches"]["api_values_equal_web_remaining_times"] is False
     assert result["candidate_matches"]["api_spans_end_at_web_hop_events"] is False
     serial = json.dumps(result)
-    for secret in ("PRIVATE", UUID, "hop_uuid", "name"):
+    # Reference field *labels* are diagnostic schema metadata, not secret values.
+    # Never include identifier values or private recipe/ingredient names.
+    for secret in ("PRIVATE", UUID, "PRIVATE SECRET"):
         assert secret not in serial
+    references = result["boil_addition_diagnostics"]["steps"][0]["hops"]["entries"][0]["reference_fields_present"]
+    assert references == {"uuid": False, "hop_uuid": True, "ingredient_uuid": False}
+    assert all(isinstance(value, bool) for value in references.values())
 
 
 def test_unverified_empty_steps():

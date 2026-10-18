@@ -42,3 +42,16 @@ account metadata in this public Git repository. All comparison results keep
 Unverified: whether `boil.steps[].duration` means step spans, remaining time,
 elapsed time, or something else. Validation against multiple controlled web
 recipes and catalog UUID lookup remain future work.
+
+## Mixed-ingredient GET diagnostics (0008b)
+
+The consented roundtrip report includes `boil_addition_diagnostics`: each step
+reports counts, raw numeric amounts and acid values under `adds.hops` and
+`adds.ingredients`, as well as boolean presence of UUID reference fields.
+No names, UUID values, tokens or API response objects are output. Numeric
+quantities are still private and require explicit confirmation before GET.
+
+The API collection name does not prove an ingredient's botanical classification.
+The reference presence flags do not establish catalog validity.
+The command remains GET-only and produces `upload_ready: false` and
+`api_payload: null`.

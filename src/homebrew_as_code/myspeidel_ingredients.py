@@ -1,7 +1,8 @@
 """Offline ingredient plan; deliberately NOT a MySpeidel upload payload.
 
 No ingredient catalog identifiers are guessed. Hop times remain in the
-web-form convention (minutes before end), not API boil.step durations.
+web-form convention (minutes before end). Controlled GET comparison confirms
+this numeric convention for the three observed test steps; API writes remain blocked.
 """
 from __future__ import annotations
 
@@ -61,6 +62,33 @@ def build_ingredient_plan(recipe: dict[str, Any]) -> dict[str, Any]:
             })
     additions = [{'minutes_before_end': minutes, **schedule[minutes]}
                  for minutes in sorted(schedule, reverse=True)]
+    # Deliberately an OFFLINE, incomplete shape: one observed cinnamon entry
+    # appeared under adds.hops with amount=5, acid=0 and hop_uuid present.
+    # Other ingredient types and catalog references have not been verified.
+    boil_steps_draft = []
+    for slot in additions:
+        entries = []
+        for hop in slot['hops']:
+            entries.append({
+                'source_category': 'hop', 'name': hop['name'],
+                'amount': hop['amount_g'], 'acid': hop['alpha_acid_percent'],
+                'hop_uuid': None, 'resolution': 'REQUIRED',
+                'api_container': 'adds.hops',
+                'evidence': 'observed_for_hops',
+            })
+        for ingredient in slot['other_ingredients']:
+            entries.append({
+                'source_category': 'other_ingredient', 'name': ingredient['name'],
+                'amount': ingredient['amount_g'], 'acid': 0,
+                'hop_uuid': None, 'resolution': 'REQUIRED',
+                'api_container': 'adds.hops',
+                'evidence': 'observed_for_ceylon_cinnamon_only',
+            })
+        boil_steps_draft.append({
+            'duration': slot['minutes_before_end'],
+            'duration_meaning': 'minutes_before_end',
+            'adds': {'hops': entries},
+        })
     return {
         'format': 'homebrew-as-code/myspeidel-ingredient-plan-v1',
         'upload_ready': False,
@@ -69,9 +97,19 @@ def build_ingredient_plan(recipe: dict[str, Any]) -> dict[str, Any]:
         'mapped_program': base['mapped'],
         'malts': malts,
         'boil_additions_web_form_timeline': additions,
+        'boil_steps_offline_draft': boil_steps_draft,
+        'boil_timing_evidence': {
+            'status': 'MATCHED_SINGLE_PRIVATE_WEB_TO_GET_TEST',
+            'observed_web_remaining_min': [60, 20, 5],
+            'observed_api_duration_raw': [60, 20, 5],
+            'observed_web_total_min': 60,
+            'observed_api_total_min': 60,
+            'scope': 'three steps in one manually created test recipe',
+        },
         'blocked_by': [
             'Resolve every ingredient catalog UUID from authoritative MySpeidel catalog data',
-            'Verify conversion from web-form minutes-before-end to API boil.steps durations',
+            'Timing matched in one controlled web-to-GET recipe; confirm across more recipes before writer',
+            'Only Ceylon cinnamon has been observed as a non-hop under adds.hops; verify all other ingredient kinds',
             'Verify full recipe_v5 envelope, water UUID, fermentation/maturation and required fields',
             'No API writer exists; generated manifest must never be POSTed',
         ],
