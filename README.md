@@ -3,6 +3,16 @@
 Version-controlled homebrewing recipes, water chemistry,
 batch tracking, and MySpeidel Cloud synchronization.
 
+## Architecture
+
+**One recipe. Multiple integrations. No vendor lock-in.**
+
+The canonical YAML recipe defines what to brew, not how a particular machine
+controls heaters, pumps or valves. MySpeidel, BeerXML / BeerJSON and supplier
+integrations are independent adapters; actual batch records are kept separate.
+See [ADR-0001](docs/adr/0001-one-recipe-multiple-integrations.md) for the
+accepted decision, dependency rules and integration boundaries.
+
 ## Equipment
 
 - Speidel Braumeister 20 L
