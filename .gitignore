@@ -1,0 +1,21 @@
+# Local configuration and secrets
+.local/
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.egg-info/
+dist/
+build/
+
+# Editors
+.vscode/*.local.json
+
+# Operating system
+Thumbs.db
+.DS_Store
