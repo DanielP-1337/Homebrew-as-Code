@@ -37,3 +37,11 @@ Early development.
 - MySpeidel Cloud API integration
 - BeerXML import/export
 - Automated recipe validation
+
+## Legal and tax compliance
+
+Brewing and distributing beer may be subject to taxes, reporting obligations,
+and other regulations. For Germany, see [Brewing law and beer tax](docs/LEGAL-DE.md)
+(§ 41 BierStV: 500 L per calendar year for qualifying private homebrewing;
+no advance notice for that exemption since 2025-01-01). Other jurisdictions
+have different rules. The software does not provide tax or legal clearance.
