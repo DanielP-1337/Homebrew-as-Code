@@ -1,4 +1,4 @@
-# MySpeidel BeerXML Golden Roundtrip (0020d)
+# MySpeidel BeerXML Golden Export (0020d–0020d2)
 
 **Experimental, offline, partial export. No HTTP; no private data in Git.**
 
@@ -10,23 +10,40 @@ Output: a new BeerXML `.xml` file and local JSON report. No overwrites.
 ```powershell
 .\.venv\Scripts\python.exe -m homebrew_as_code.myspeidel_beerxml_roundtrip export `
   --backup .local/weizen38-duplicate-backup.json `
-  --xml .local/weizen38-roundtrip.xml `
-  --report .local/weizen38-beerxml-export-report.json `
+  --xml .local/weizen38-roundtrip-v2.xml `
+  --report .local/weizen38-beerxml-export-v2-report.json `
   --name 'HBAC BeerXML Roundtrip - Weizen 38' `
   --batch-size-liters 20 `
   --boil-size-liters 23 `
-  --assumed-malt-yield-percent 75
+  --assumed-malt-yield-percent 75 `
+  --malt-color-override 3=24 `
+  --mash-in-temp 38 `
+  --mash-step 62:30 `
+  --mash-step 72:40 `
+  --mash-step 78:10
 ```
 
-**The three values at the end are explicit experimental inputs, NOT verified vendor values.** Verify batch size, pre-boil volume, malt yield and color units manually against the MySpeidel editor before import. This exporter interprets malt quantities as kg and hop quantities as grams using the previously observed web/cloud examples. Hop step timing is used only if explicitly present as `duration` or `hopping_duration`; otherwise the export FAILS rather than assigning a guessed schedule. BeerXML hop amount is kilograms.
+**Batch size, boil size, and malt yield are explicit experimental assumptions, NOT verified vendor values.** Verify batch size, pre-boil volume, malt yield and color units manually against the MySpeidel editor before import. This exporter interprets malt quantities as kg and hop quantities as grams using the previously observed web/cloud examples. Hop step timing is used only if explicitly present as `duration` or `hopping_duration`; otherwise the export FAILS rather than assigning a guessed schedule. BeerXML hop amount is kilograms.
 
-The export deliberately labels itself `PARTIAL_EXPORT`: mash rests, water, yeast, fermentation, maturation, equipment and proprietary settings are **not** preserved. Review the XML and the JSON report; do **not** brew from the exported recipe without checking these fields. Source and XML hashes are recorded in the report.
+The export deliberately labels itself `PARTIAL_EXPORT`: the three specified temperature rests are exported from manual web-form observations, but water, unconfirmed yeast properties, fermentation, maturation, equipment and proprietary settings are **not** preserved. The separate `--mash-in-temp 38` parameter must not be mistaken for a verified reconstruction of the device's mash-in control sequence. Review the XML and the JSON report; do **not** brew from the exported recipe without checking these fields. Source and XML hashes are recorded in the report.
 
-## Manual MySpeidel validation
+## Observed compatibility as of 2026-10-24
+
+- Local tests passed (256 reported after 0020d2); the Weizenbier 38° XML
+  contained four malts, three hops and three manually recorded temperature rests.
+- Web upload of both the generated BeerXML and a minimal BeerXML returned
+  **HTTP 500** at `/recipes/upload_recipe_post`; the root cause is unknown.
+- A genuine MySpeidel `.recipe` file uploaded successfully and reached the
+  similar-ingredient matching screen. This does not validate BeerXML import.
+- **Do not claim a successful MySpeidel BeerXML golden roundtrip.** Do not
+  proceed to a real import or brew from this partial export without independent
+  compatibility evidence and complete manual review.
+
+## Conditional manual validation (only after compatibility is demonstrated)
 
 1. Keep the original private recipe intact.
 2. Review the generated XML locally. If export refuses due to unknown hop timing or missing names, inspect the backup schema and extend the mapping with tests; do not invent values.
-3. Navigate to MySpeidel's **Rezept hochladen**, upload the new `.xml`, inspect the preview/merge workflow and only confirm creation of a clearly named disposable private test recipe.
+3. Only if an independent reference BeerXML imports successfully, test the new `.xml` using MySpeidel's **Rezept hochladen**, inspect the preview/merge workflow and confirm only a disposable private recipe after manual review.
 4. Fetch that *new* private recipe using the existing read-only backup CLI, to `.local/weizen38-reimported-backup.json`. It must have a **different** recipe UUID.
 5. Compare the two backups:
 

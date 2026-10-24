@@ -1,7 +1,7 @@
 # Homebrew-as-Code
 
 Version-controlled homebrewing recipes, water chemistry,
-batch tracking, and MySpeidel Cloud synchronization.
+batch tracking, and experimental MySpeidel Cloud integrations.
 
 ## Architecture
 
@@ -27,16 +27,39 @@ Lebkuchen-Zauber 2026 - Christmas Gingerbread Ale
 
 ## Project status
 
-Early development.
+Early development. The following components are implemented, but not all
+integrations are production-ready.
 
-## Planned features
+## Implemented capabilities
 
-- Version-controlled YAML brewing recipes
-- Water chemistry calculations
-- Batch and ingredient tracking
-- MySpeidel Cloud API integration
-- BeerXML import/export
-- Automated recipe validation
+- Canonical YAML recipes and automated recipe validation (including CI tests).
+- Water chemistry calculations and independent supplier/catalog workflows.
+- MySpeidel Cloud read-only inspection, private recipe backups, and reference diagnostics.
+- BeerXML and BeerJSON export tooling; MySpeidel BeerXML golden export remains
+  **experimental and partial** (water, yeast, fermentation, and device settings
+  may be unrepresented).
+- Experimental, explicitly opted-in MySpeidel POST/PUT diagnostics; there is
+  **no supported cloud recipe create/update workflow**.
+
+## Current interoperability status
+
+- Read-only MySpeidel GET and local recipe export work for tested private recipes.
+- MySpeidel web import of generated BeerXML and minimal BeerXML returned HTTP 500;
+  successful MySpeidel BeerXML import has **not** been demonstrated.
+- Import of one genuine MySpeidel `.recipe` file reached ingredient matching;
+  this does not establish a native `.recipe` exporter.
+- The experimental Cloud POST `dryRun=1` candidate returned HTTP 400; live POST
+  remains disabled pending a verified vendor contract.
+
+See [MySpeidel write status](docs/MYSPEIDEL-WRITE-INTEGRATION-STATUS.md),
+[BeerXML golden export](docs/MYSPEIDEL-BEERXML-GOLDEN-ROUNDTRIP.md), and
+[OpenAPI reference inventory](docs/MYSPEIDEL-OPENAPI-REFERENCE.md).
+
+## Planned work
+
+- Verify an end-to-end MySpeidel recipe creation contract before enabling writes.
+- Improve loss-aware BeerXML interoperability and ingredient identity handling.
+- Extend batch and ingredient tracking without coupling canonical recipes to vendors.
 
 ## Legal and tax compliance
 

@@ -47,15 +47,32 @@ the Python inspection tool itself does not use the network.
 required sub-objects or serialization. Some source fields can be candidates,
 but none are automatically accepted as ready for upload.
 
-### Gate before any POST dry run
+## Relationship to experimental POST dry run (0020e)
+
+This `0019a` tool is **strictly offline** and does not validate a complete
+`recipe_v5` upload payload. A separate experimental command was subsequently
+added in [0020e](0020e-MYSPEIDEL-POST-DRY-RUN.md): it clones a digest-checked
+private 20 L backup, assigns a fresh recipe UUID/name, and can send **only**
+`POST /v1.0/recipe?dryRun=1` after explicit SHA-256 confirmation.
+
+The clone retains ingredient references and ownership metadata for diagnosis;
+these have **not** been proven transferable or safe. The observed 0020e POST
+returned **HTTP 400** (`UNVERIFIED_RESPONSE` / `unclassified`), not an
+acknowledged successful dry run. No live-create capability is implemented.
+See [write integration status](MYSPEIDEL-WRITE-INTEGRATION-STATUS.md).
+
+### Requirements before resuming POST experiments or implementing live writes
 
 1. Record/specify exact required types, nested fields and unit semantics.
 2. Confirm ingredient identifiers and reference handling from official examples
    and controlled read-only GET observations; do not invent UUIDs.
 3. Implement real payload validation against the applicable `recipe_v5` schema.
 4. Review request semantics, especially the documented `dryRun` parameter.
-5. Only then implement a separate explicitly opt-in network write test.
+5. Use the existing 0020e opt-in diagnostic only after reviewing its limitations;
+   a live-create implementation additionally requires vendor-confirmed semantics,
+   independent tests, and separate explicit approval.
 
 Do not confuse a MySpeidel dry run with a verified no-side-effect guarantee;
-confirm behavior before sending private recipes. No recipe POST/PUT is
-performed by this patch. No direct machine control is ever in scope.
+confirm behavior before sending private recipes. The **0019a inspector itself** performs no recipe POST/PUT; the separate
+0020e diagnostic can perform an opt-in dry-run POST. No direct machine
+control is in scope.

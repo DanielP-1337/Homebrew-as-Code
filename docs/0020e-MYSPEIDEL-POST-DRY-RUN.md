@@ -43,6 +43,19 @@ HTTP 400 / validation errors are expected while learning the documented create
 contract. The request never attempts to create a real recipe. An HTTP 200 without
 the explicit `DRY RUN SUCCEEDED` acknowledgement is reported as unverified.
 
+## Observed result and project decision
+
+For the tested cloned private 20 L recipe candidate, the server returned
+**HTTP 400**. The sanitized diagnostic categorized the result as
+`UNVERIFIED_RESPONSE` / `unclassified`; this neither verifies the create
+schema nor proves a general API outage. The documented endpoint and the
+existence of `dryRun` do **not** establish safe transferable ingredient
+references or owner semantics. Live create/update remains blocked pending
+vendor clarification: [write integration status](MYSPEIDEL-WRITE-INTEGRATION-STATUS.md).
+
+The [OpenAPI inventory](MYSPEIDEL-OPENAPI-REFERENCE.md) is a separate offline
+schema exploration tool, not a schema validator or authorization to write.
+
 ## Interpretation
 
 The output is only an experimental schema/authorization diagnostic. Do not treat
