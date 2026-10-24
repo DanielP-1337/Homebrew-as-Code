@@ -226,6 +226,20 @@ def put_recipe(token: str, uuid: str, recipe: dict[str, Any], *, dry_run: bool,
         if exc.code == 400:
             from .myspeidel_server_validation import summarize_server_validation
             diagnostic.validation_details = summarize_server_validation(response)
+        # Developer opt-in: keep raw HTTP error strictly outside publishable receipts.
+        import os
+        if os.environ.get('HBAC_MYSPEIDEL_LOCAL_HTTP_ERROR') == '1':
+            content_type = exc.headers.get('Content-Type', '') if exc.headers else ''
+            # Do not copy arbitrary response headers; content-type is allowlisted.
+            if not isinstance(content_type, str) or len(content_type) > 160:
+                content_type = 'unavailable'
+            diagnostic.local_http_error = {
+                'http_status': exc.code,
+                'content_type': content_type,
+                'body_text': response[:MAX_RESPONSE_BYTES].decode('utf-8', errors='replace'),
+                'body_truncated': len(response) > MAX_RESPONSE_BYTES,
+                'body_bytes_captured': min(len(response), MAX_RESPONSE_BYTES),
+            }
         raise diagnostic from None
     except (urllib.error.URLError, TimeoutError, OSError):
         raise PutDiagnosticError(None, 'transport_uncertain') from None

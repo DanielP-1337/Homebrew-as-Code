@@ -17,7 +17,9 @@ from .myspeidel_put_roundtrip import (
 )
 
 FORMAT = 'homebrew-as-code/myspeidel-put-experiment-v1'
-VARIANTS = ('original', 'omit-null-names', 'empty-string-names')
+VARIANTS = ('original', 'omit-null-names', 'empty-string-names', 'nonempty-reference-names',
+            'omit-references', 'empty-references', 'empty-reference-categories')
+REFERENCE_TEST_NAMES = {'water_types': 'Test Water Reference', 'hops': 'Test Hop Reference'}
 CATEGORIES = ('water_types', 'hops')
 
 
@@ -28,6 +30,26 @@ def make_variant(recipe: dict[str, Any], variant: str) -> tuple[dict[str, Any], 
     candidate = copy.deepcopy(recipe)
     counts = {category: 0 for category in CATEGORIES}
     if variant == 'original':
+        return candidate, counts
+    if variant in ('omit-references', 'empty-references', 'empty-reference-categories'):
+        # Never change source recipe, ingredient UUIDs used by brewing steps,
+        # or any catalog/reference entry fields in place.
+        references = candidate.get('references')
+        if not isinstance(references, dict):
+            raise ValueError('Missing references object')
+        if variant == 'omit-references':
+            del candidate['references']
+        elif variant == 'empty-references':
+            candidate['references'] = {}
+        else:
+            # Preserve category names but remove all embedded catalog records.
+            # Referenced UUIDs remain only where recipe steps refer to them.
+            candidate['references'] = {key: {} if isinstance(value, dict) else value
+                                       for key, value in references.items()}
+            if not any(isinstance(value, dict) and value for value in references.values()):
+                raise ValueError('No reference entries to strip; refusing a no-op experiment')
+        if candidate == recipe:
+            raise ValueError('No reference change; refusing a no-op experiment')
         return candidate, counts
     references = candidate.get('references')
     if not isinstance(references, dict):
@@ -43,8 +65,12 @@ def make_variant(recipe: dict[str, Any], variant: str) -> tuple[dict[str, Any], 
                 counts[category] += 1
                 if variant == 'omit-null-names':
                     del entry['name']
-                else:
+                elif variant == 'empty-string-names':
                     entry['name'] = ''
+                else:
+                    entry['name'] = REFERENCE_TEST_NAMES[category]
+    if variant == 'nonempty-reference-names' and any(counts[k] != 1 for k in CATEGORIES):
+        raise ValueError('Expected exactly one null name in each reference category')
     if not any(counts.values()):
         raise ValueError('No matching null names; refusing a no-op experiment')
     return candidate, counts
@@ -86,6 +112,31 @@ def _write_receipt(marker_path: Path, receipt: dict[str, Any]) -> None:
     finally:
         if receipt_path.exists():
             temp_path.unlink(missing_ok=True)
+
+
+def _write_local_full_errors(marker_path: Path, errors: list[dict[str, Any]]) -> None:
+    """Write opted-in diagnostic details to a separate exclusive .local sidecar."""
+    path = marker_path.with_name(marker_path.name + '.local-errors.json')
+    # The caller has already validated the marker path with private_file().
+    write_new(path, {
+        'format': 'homebrew-as-code/myspeidel-local-validation-errors-v1',
+        'warning': 'PRIVATE DEVELOPMENT OUTPUT - DO NOT COMMIT',
+        'errors': errors,
+    })
+
+
+def _write_local_http_error(marker_path: Path, envelope: dict[str, Any]) -> None:
+    """Persist an opted-in bounded HTTP error response outside the safe receipt.
+
+    Never store request headers or the authentication token. The sidecar is
+    private development material and must not be committed.
+    """
+    path = marker_path.with_name(marker_path.name + '.http-error.json')
+    write_new(path, {
+        'format': 'homebrew-as-code/myspeidel-local-http-error-v1',
+        'warning': 'PRIVATE DEVELOPMENT OUTPUT - DO NOT COMMIT',
+        'response': envelope,
+    })
 
 
 def _run_online(args: Any, uuid: str, baseline: dict[str, Any], baseline_sha: str,
@@ -130,6 +181,16 @@ def _run_online(args: Any, uuid: str, baseline: dict[str, Any], baseline_sha: st
                          'fermentation', 'maturation', 'references'}
             if isinstance(getattr(exc, 'validation_details', None), dict):
                 receipt['validation_details'] = exc.validation_details
+            # Separate private developer diagnostics from the normal receipt.
+            details = getattr(exc, 'validation_details', None)
+            if isinstance(details, dict) and 'local_full_errors' in details:
+                private_details = details.pop('local_full_errors')
+                if isinstance(private_details, list):
+                    _write_local_full_errors(marker_path, private_details)
+            # The raw response is never added to the normal receipt.
+            envelope = getattr(exc, 'local_http_error', None)
+            if isinstance(envelope, dict):
+                _write_local_http_error(marker_path, envelope)
             receipt.update(phase='put_rejected', put_outcome='rejected',
                            http_status=exc.status if type(exc.status) is int else None,
                            error_type=exc.category if exc.category in categories else 'unclassified',
@@ -176,6 +237,9 @@ def main(argv: list[str] | None = None) -> int:
         candidate, counts = make_variant(baseline, args.variant)
         check_private(candidate, uuid)
         candidate_sha = digest(candidate)
+        # This is an experiment, not a complete PUT schema validation. Missing
+        # references may be treated as destructive by the server; never assume
+        # these variants preserve remote catalog data on an actual write.
         if digest(baseline) != baseline_sha:
             raise ValueError('Backup changed during preparation')
         if args.mode == 'prepare':
@@ -191,6 +255,8 @@ def main(argv: list[str] | None = None) -> int:
         else:
             if args.spec:
                 raise ValueError('--spec is valid only for prepare')
+            if args.mode == 'apply' and args.variant in ('omit-references', 'empty-references', 'empty-reference-categories'):
+                raise ValueError('Real PUT disabled for reference-stripping experiment variants')
             if args.mode == 'apply' and not args.allow_live_write:
                 raise ValueError('Real PUT requires --allow-live-write')
             _run_online(args, uuid, baseline, baseline_sha, candidate, candidate_sha)
@@ -204,6 +270,9 @@ def main(argv: list[str] | None = None) -> int:
                   'Real PUT requires --allow-live-write',
                   'No matching null names; refusing a no-op experiment',
                   'Backup changed during preparation',
+                  'No reference entries to strip; refusing a no-op experiment',
+                  'No reference change; refusing a no-op experiment',
+                  'Real PUT disabled for reference-stripping experiment variants',
               } else type(exc).__name__), file=sys.stderr)
         return 1
 

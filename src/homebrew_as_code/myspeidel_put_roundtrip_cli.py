@@ -66,9 +66,11 @@ def main(argv=None):
             phase = 'login'
             _, client = _login()
             recipes = private_recipes(client, machine_size=20)
-            print(f'Found {len(recipes)} private 20 L recipes (names hidden).')
-            for idx in range(len(recipes)):
-                print(f'  {idx + 1} (name hidden)')
+            print(f'Found {len(recipes)} private 20 L recipes:')
+            for idx, entry in enumerate(recipes, start=1):
+                # Names are displayed locally only, never included in diagnostics.
+                display_name = ' '.join(str(entry.get('name') or '(name unavailable)').split())[:120]
+                print(f'  {idx}  {display_name}')
             choice = input('Select recipe number (Enter cancels): ').strip()
             if not choice:
                 return 0
@@ -79,6 +81,10 @@ def main(argv=None):
             uuid = recipes[int(choice)-1]['uuid']
             phase = 'backup_get'
             recipe = check_private(client.get_recipe(uuid), uuid)
+            selected_name = ' '.join(str(recipe.get('name') or '(name unavailable)').split())[:120]
+            print(f'Selected recipe from GET: {selected_name}')
+            if input('Confirm this recipe and save backup? [yes/NO]: ').strip() != 'yes':
+                return 0
             write_new(output, {'format': 'homebrew-as-code/myspeidel-put-backup-v1',
                                'uuid': uuid, 'recipe': recipe, 'sha256': digest(recipe)})
             print('Private backup saved; NO API writes.')

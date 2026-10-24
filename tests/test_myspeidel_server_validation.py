@@ -100,3 +100,104 @@ def test_error_shape_inspector_is_bounded_and_safe_with_unusual_values():
         'location': 'object', 'message': 'null',
     }
     assert 'SECRET' not in json.dumps(report)
+
+
+def test_path_formats_and_masking_without_plaintext(monkeypatch):
+    monkeypatch.delenv('HBAC_MYSPEIDEL_LOCAL_PLAINTEXT_PATHS', raising=False)
+    response = {'errors': [
+        {'path': '/references/hops/SECRET_KEY/name'},
+        {'path': 'references.water_types.SECRET_ID.name'},
+        {'path': '$.references.hops.SECRET_ID.name'},
+        {'path': 'mashing.steps[0].temperature'},
+        {'path': ''},
+    ]}
+    report = summarize_server_validation(json.dumps(response).encode())
+    assert report['path_formats'] == {'dot': 1, 'empty': 1, 'json_pointer': 1, 'jsonpath': 1, 'bracket': 1}
+    assert '$.references.hops.<redacted>.name' in report['masked_path_patterns']
+    assert 'local_plaintext_paths' not in report
+    assert 'SECRET' not in json.dumps(report)
+
+
+def test_plaintext_paths_require_explicit_opt_in(monkeypatch):
+    monkeypatch.setenv('HBAC_MYSPEIDEL_LOCAL_PLAINTEXT_PATHS', '1')
+    body = {'errors': [{'path': '/references/hops/SECRET_KEY/name',
+                        'message': 'SECRET_MESSAGE', 'errorCode': 'SECRET_CODE'}]}
+    report = summarize_server_validation(json.dumps(body).encode())
+    assert report['local_plaintext_paths'] == ['/references/hops/SECRET_KEY/name']
+    assert 'SECRET_MESSAGE' not in json.dumps(report)
+    assert 'SECRET_CODE' not in json.dumps(report)
+    monkeypatch.setenv('HBAC_MYSPEIDEL_LOCAL_PLAINTEXT_PATHS', 'true')
+    assert 'local_plaintext_paths' not in summarize_server_validation(json.dumps(body).encode())
+
+
+def test_non_string_and_long_paths_are_not_copied_even_if_enabled(monkeypatch):
+    monkeypatch.setenv('HBAC_MYSPEIDEL_LOCAL_PLAINTEXT_PATHS', '1')
+    report = summarize_server_validation(json.dumps({'errors': [
+        {'path': {'secret': 'VALUE'}}, {'path': 'S' * 513}, {'path': None}
+    ]}).encode())
+    assert report['local_plaintext_paths'] == []
+    assert 'VALUE' not in json.dumps(report)
+    assert 'SSSSSS' not in json.dumps(report)
+
+
+def test_local_full_errors_preserve_order_and_duplicate_paths(monkeypatch):
+    monkeypatch.setenv('HBAC_MYSPEIDEL_LOCAL_FULL_ERRORS', '1')
+    body = {'message': 'TOP_LEVEL_SECRET', 'errors': [
+        {'path': '/body/name', 'errorCode': 'abc', 'message': 'First', 'token': 'DO_NOT_COPY'},
+        {'path': '/body/name', 'errorCode': 'xyz', 'message': 'Second'},
+    ]}
+    result = summarize_server_validation(json.dumps(body).encode())
+    assert result['local_full_errors'] == [
+        {'path': '/body/name', 'errorCode': 'abc', 'message': 'First'},
+        {'path': '/body/name', 'errorCode': 'xyz', 'message': 'Second'},
+    ]
+    assert 'TOP_LEVEL_SECRET' not in json.dumps(result)
+    assert 'DO_NOT_COPY' not in json.dumps(result)
+
+
+def test_local_full_errors_disabled_and_bounded(monkeypatch):
+    monkeypatch.delenv('HBAC_MYSPEIDEL_LOCAL_FULL_ERRORS', raising=False)
+    response = json.dumps({'errors': [{'message': 'SECRET'}]}).encode()
+    assert 'local_full_errors' not in summarize_server_validation(response)
+    monkeypatch.setenv('HBAC_MYSPEIDEL_LOCAL_FULL_ERRORS', '1')
+    report = summarize_server_validation(json.dumps({'errors': [
+        {'path': '/body', 'message': 'X' * 2049, 'errorCode': 42}
+    ]}).encode())
+    assert report['local_full_errors'] == [
+        {'path': '/body', 'message': None, 'errorCode': None}
+    ]
+
+
+def test_local_full_errors_sidecar_separate_from_receipt(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    import pytest
+    from homebrew_as_code import myspeidel_put_experiments as exp
+    from homebrew_as_code.myspeidel_put_roundtrip import PutDiagnosticError
+    from homebrew_as_code import myspeidel_put_roundtrip_cli as cli
+
+    monkeypatch.setenv('HBAC_MYSPEIDEL_LOCAL_FULL_ERRORS', '1')
+    monkeypatch.delenv('HBAC_MYSPEIDEL_LOCAL_PLAINTEXT_PATHS', raising=False)
+    baseline = {'public': 0, 'name': 'test'}
+    sha = exp.digest(baseline)
+    marker = tmp_path / 'attempt.json'
+    monkeypatch.setattr(exp, 'private_file', lambda value: marker)
+    monkeypatch.setattr(exp, '_current', lambda client, uuid: baseline)
+    monkeypatch.setattr(cli, '_login', lambda: ('fake', object()))
+    monkeypatch.setattr('builtins.input', lambda prompt: 'DRY RUN EXPERIMENT')
+
+    def reject(*args, **kwargs):
+        exc = PutDiagnosticError(400, 'schema_validation', 'unknown')
+        exc.validation_details = summarize_server_validation(json.dumps({
+            'errors': [{'path': '/body', 'errorCode': 'TYPE', 'message': 'PRIVATE_MESSAGE'}]
+        }).encode())
+        raise exc
+
+    monkeypatch.setattr(exp, 'put_recipe', reject)
+    args = SimpleNamespace(result=str(marker), variant='original', mode='dry-run')
+    with pytest.raises(PutDiagnosticError):
+        exp._run_online(args, 'uuid', baseline, sha, baseline, 'candidate-sha')
+    receipt = (tmp_path / 'attempt.json.receipt.json').read_text()
+    local = json.loads((tmp_path / 'attempt.json.local-errors.json').read_text())
+    assert 'PRIVATE_MESSAGE' not in receipt
+    assert local['errors'] == [{'path': '/body', 'errorCode': 'TYPE', 'message': 'PRIVATE_MESSAGE'}]
+    assert 'local_full_errors' not in receipt
