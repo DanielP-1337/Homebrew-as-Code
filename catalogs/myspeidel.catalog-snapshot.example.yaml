@@ -1,0 +1,12 @@
+# Copy to .local/myspeidel.catalog-snapshot.yaml and populate ONLY from an
+# authorized, manually checked MySpeidel catalog GET response.
+# An item in a private recipe GET is NOT necessarily a catalog lookup result.
+# Do not commit real account data or catalog UUIDs without permission.
+schema_version: 1
+entries: []
+# Example shape (placeholder ONLY; DO NOT uncomment without real evidence):
+#  - kind: malt
+#    name: "Pale Ale Malt"
+#    uuid: "replace-with-actual-uuid"
+#    source_get_path: "/v1.0/<documented-catalog-endpoint>"
+#    confirmed: false
