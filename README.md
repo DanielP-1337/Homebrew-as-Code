@@ -21,9 +21,22 @@ accepted decision, dependency rules and integration boundaries.
 - KEG packaging
 - Cast-iron malt mill
 
-## Initial recipe
+## Featured recipe — Lebkuchen-Zauber 2026
 
-Lebkuchen-Zauber 2026 - Christmas Gingerbread Ale
+[![Lebkuchen-Zauber 2026 — Christmas Brown Ale](recipes/lebkuchen-zauber/assets/lebkuchen-zauber.png)](recipes/lebkuchen-zauber/README.md)
+
+**Lebkuchen-Zauber 2026** is our first signature homebrew recipe: a festive
+Christmas Brown Ale featuring honey, cinnamon, ginger, cloves, nutmeg, and
+orange zest.
+
+**20 L · 14 °P · 5.7% ABV (target) · 21 IBU**
+
+Designed for the Speidel Braumeister 20 L.
+
+[Explore the recipe](recipes/lebkuchen-zauber/README.md) ·
+[View canonical YAML](recipes/lebkuchen-zauber/recipe.yaml)
+
+*AI-generated concept image. The first batch has not yet been brewed.*
 
 ## Project status
 
