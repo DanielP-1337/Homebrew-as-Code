@@ -106,3 +106,8 @@ and other regulations. For Germany, see [Brewing law and beer tax](docs/LEGAL-DE
 (§ 41 BierStV: 500 L per calendar year for qualifying private homebrewing;
 no advance notice for that exemption since 2025-01-01). Other jurisdictions
 have different rules. The software does not provide tax or legal clearance.
+
+## BeerJSON schema conformance (0020o)
+
+See [offline schema validation and multi-format inspection](docs/0020o-BEERJSON-CONFORMANCE.md)
+for pinned schemas, version-policy separation and private Brewfather fixture checks.

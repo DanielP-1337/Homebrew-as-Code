@@ -6,3 +6,6 @@
 *.md   text eol=lf
 *.sh   text eol=lf
 *.ps1  text eol=crlf
+
+# Pinned upstream schema bundle, including extensionless LICENSE.
+src/homebrew_as_code/schemas/beerjson_v1/* text eol=lf

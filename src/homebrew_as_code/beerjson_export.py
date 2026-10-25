@@ -1,6 +1,6 @@
 """Offline, deliberately incomplete BeerJSON schema-3 recipe export.
 
-The current upstream schema requires measured values absent from recipe.yaml.
+The legacy draft lacks mandatory exchange data; it has no pinned schema contract.
 Do NOT call this file schema-valid or import-ready before filling these gaps.
 """
 from __future__ import annotations
@@ -67,7 +67,7 @@ def build_beerjson_draft(recipe: dict[str, Any]) -> tuple[dict[str, Any], dict[s
     ]
     report = {
         "format": "homebrew-as-code/beerjson-export-report-v1",
-        "schema_target": "beerjson/beerjson main (schema version 3)",
+        "schema_target": "legacy unvalidated draft (declared version 3; no pinned schema)",
         "schema_valid": False,
         "import_ready": False,
         "myspeidel_import_ready": False,

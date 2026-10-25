@@ -1,0 +1,29 @@
+{
+  "repository": "https://github.com/beerjson/beerjson",
+  "ref": "v.1.0",
+  "ref_kind": "branch",
+  "commit": "a3c0c0cce5d44ee162b5939e04d0c9fc2eccf128",
+  "root": "beer.json",
+  "files": {
+    "LICENSE": "1b04bdc8748cdb77c6fe15e6255650461a28bc821e25077d59e14b1dc8fd611a",
+    "beer.json": "81b7778cc6d3f158d40fc27ca80da914c5259a33aa1ccfe855cf4292b5c96b64",
+    "boil.json": "268a137a2815ea9e1ea37227d34437ace4e7b271590eb7848d97691906c003c3",
+    "boil_step.json": "78b987458058e5a395cc5dc64b7cac2ea67f584e71158928eb90d7975017bde4",
+    "culture.json": "8a33775e387d0432582e904826d4b02a12394c55e65f67b06231c607e5ab9957",
+    "equipment.json": "70ef72b2683a16ae9a3db7911a4781f7a07a52bdfc048da002f89e413d88c665",
+    "fermentable.json": "1f7c4691517f82807308593da433c0344f088292b788228e04c42ee90c55dd58",
+    "fermentation.json": "7b0d463ea3c8f2f2bcea54cb8d0c929341bec2fd9cb20d3ff0a091feeb07fd95",
+    "fermentation_step.json": "5ac62882e9b3202453117641e307e200f97af1ba6c3859302d4ce4b8fd5a4e8a",
+    "hop.json": "17239dca34bbdd54aec07af7d54eec545c3ae13e6bdbbeadb5a60231ab8b8ff1",
+    "mash.json": "dcb9fac31a79b466ab70e8db6d09fa2828c10d494c88e8b5fc873ef5952a2850",
+    "mash_step.json": "c389904c6e85f0a0531cdf464f733593d07eda3148e711d0cf31724611029e98",
+    "measureable_units.json": "6f76d0aa12a2efba9d68979785e8ce2a70ae2e0ddd7c96b6dba599d00b3a088c",
+    "misc.json": "c93c707c10c78908d3c1fff0cf12176a3f02f565da2afb19f209280e93004071",
+    "packaging.json": "319a2209ec4fc1b9bd07280be2cc222cfa0b7f60736d7f9849a3521dac3af514",
+    "packaging_vessel.json": "266732a4df7b74ad2a8f70d88e1981340164f5f2110ae19f0cf3d74b2a18f839",
+    "recipe.json": "46143f80c0caed6a0241d2db9e2a54f8e6ac0157376b8828a9244b3d7cf65c9f",
+    "style.json": "437c5ed54b1e19b62fb6b2a5c780e91b39b0ec7da9f86d8bc7442d6519491806",
+    "timing.json": "444d937eb21ee0d77353149f5fa49b0c9f7aea15ebb47cdcbc58d2e3039898e0",
+    "water.json": "4125531a1a9fa9acbba6ccf03e28fece08f1299150e163193df4ac3233959f57"
+  }
+}

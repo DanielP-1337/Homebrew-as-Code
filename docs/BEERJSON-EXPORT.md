@@ -3,12 +3,13 @@
 The MySpeidel web screenshot advertises **BeerXML** (`.xml`) and proprietary
 `.recipe` imports, **not BeerJSON**. These formats are not interchangeable.
 
-This patch targets the *current* `beerjson/beerjson` schema, whose internal
-`beerjson.version` is **3**, despite the project being described as BeerJSON 1.0.
-Do not change `3` to `1` to label it "BeerJSON 1.0": the current schema does
-not accept that value. Review/pin the official schema before implementing
-validation. The exporter deliberately produces an **incomplete draft**, **not**
-a schema-valid or upload-ready file.
+The legacy exporter emits a document declaring version **3** and deliberately
+produces an **incomplete draft**, not a schema-valid or upload-ready file.
+The earlier moving-`main` schema statement is not an immutable conformance
+contract. [0020o](0020o-BEERJSON-CONFORMANCE.md) now provides an explicitly pinned
+`v.1.0` schema validator with a separate version policy. That snapshot's
+`VersionType` accepts any number; schema validity alone does not establish
+version support. The draft is not automatically relabeled or promoted by 0020o.
 
 ```powershell
 .\.venv\Scripts\python.exe -m homebrew_as_code.beerjson_cli `
