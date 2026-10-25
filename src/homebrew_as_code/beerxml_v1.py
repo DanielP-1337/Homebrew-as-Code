@@ -90,7 +90,8 @@ def validate_xml(xml_bytes):
 
 
 def export(data, *, boil_size_l, efficiency_percent, malt_specs, honey_yield_percent,
-           honey_color_lovibond, grain_temp_c=None, title=None):
+           honey_color_lovibond, grain_temp_c=None, title=None,
+           emit_target_og=False, fermentation_days=None, fermentation_temp_c=None):
     """Build standards-oriented XML with explicitly provided missing brew-house values.
 
     malt_specs is an index-keyed mapping with yield_percent and color_lovibond.
@@ -118,6 +119,23 @@ def export(data, *, boil_size_l, efficiency_percent, malt_specs, honey_yield_per
     elem(r, 'BOIL_TIME',fmt(dec(boil['duration_min'],'boil.duration_min')))
     elem(r, 'EFFICIENCY',fmt(eff))
     elem(r, 'CARBONATION',fmt(dec(targets['carbonation_volumes'],'targets.carbonation_volumes')))
+    # Optional source-labelled target value for the MySpeidel editor. Do not
+    # infer an actual measured OG, FG, fermentation time or hop utilisation.
+    if emit_target_og:
+        plato = dec(targets['original_gravity_plato'], 'targets.original_gravity_plato')
+        sg = Decimal('1') + plato / (Decimal('258.6') - (plato / Decimal('258.2')) * Decimal('227.1'))
+        elem(r, 'OG', fmt(sg.quantize(Decimal('0.00001'))))
+    if fermentation_days is not None or fermentation_temp_c is not None:
+        if fermentation_days is None or fermentation_temp_c is None:
+            raise BeerXmlError('Fermentation profile requires both explicit days and temperature')
+        days = dec(fermentation_days, 'fermentation_days')
+        temp = dec(fermentation_temp_c, 'fermentation_temp_c', zero=True)
+        low, high = [dec(v, 'fermentation range', zero=True) for v in data['yeast']['fermentation_temperature_c']]
+        if not low <= temp <= high:
+            raise BeerXmlError('Explicit fermentation temperature outside YAML range')
+        elem(r, 'FERMENTATION_STAGES', '1')
+        elem(r, 'PRIMARY_AGE', fmt(days))
+        elem(r, 'PRIMARY_TEMP', fmt(temp))
     # Numeric original gravity target is not asserted as a measured OG.
     notes = [
         'Canonical Homebrew-as-Code YAML; target original gravity '
@@ -131,6 +149,7 @@ def export(data, *, boil_size_l, efficiency_percent, malt_specs, honey_yield_per
         f"Spice contact after flameout: {boil.get('spice_contact_after_flameout_min', 0)} min.",
         f"Target fermentation temperature: {data['yeast']['fermentation_temperature_c']} C.",
         'All ingredients and targets require review in MySpeidel before saving.',
+        'OG, if present, is a CALCULATED TARGET from YAML degrees Plato, NOT a measured gravity.',
     ]
     elem(r, 'NOTES',' '.join(notes))
     hops = ET.SubElement(r,'HOPS'); ferm = ET.SubElement(r,'FERMENTABLES')
@@ -190,8 +209,17 @@ def export(data, *, boil_size_l, efficiency_percent, malt_specs, honey_yield_per
     ET.indent(root, space='  ')
     xml = ET.tostring(root, encoding='utf-8', xml_declaration=True)
     validate_xml(xml)
+    if emit_target_og:
+        warnings.append('OG field is a calculated YAML target used for MySpeidel interoperability, NOT a measured OG.')
+    if fermentation_days is None:
+        warnings.append('No fermentation age emitted; the YAML only supplies a temperature range.')
+    else:
+        warnings.append('Fermentation days/temperature are explicit trial assumptions, not sourced from canonical YAML.')
+    warnings.append('MySpeidel may independently recalculate IBU based on its own algorithm; no proprietary model is assumed.')
     return xml, {'format':'homebrew-as-code/beerxml-v1-export', 'status':'STRUCTURALLY_VALIDATED_NOT_IMPORT_VERIFIED',
                  'recipe':recipe['name'],'sha256':hashlib.sha256(xml).hexdigest(),
+                 'target_og_exported':bool(emit_target_og),
+                 'fermentation_profile_exported':fermentation_days is not None,
                  'malt_count':len(data['fermentables']),'hop_count':len(hops),'misc_count':len(misc),
                  'yeast_count':len(yeast),'mash_step_count':len(steps), 'warnings':warnings,
                  'unsupported_fields':['mash_in_water_temperature_as_structured_step','mash_and_sparge_water',
@@ -209,6 +237,9 @@ def main(argv=None):
     p.add_argument('--properties-json',required=True,help='Local JSON with malt_specs, honey_yield_percent, honey_color_lovibond')
     p.add_argument('--grain-temp-c')
     p.add_argument('--name')
+    p.add_argument('--emit-target-og',action='store_true',help='Export computed YAML target as OG; never a measurement')
+    p.add_argument('--fermentation-days',help='Explicit trial assumption only, not inferred from YAML')
+    p.add_argument('--fermentation-temp-c',help='Explicit trial temperature within YAML range')
     args = p.parse_args(argv)
     try:
         values = json.loads(Path(args.properties_json).read_text(encoding='utf-8'))
@@ -216,7 +247,9 @@ def main(argv=None):
             efficiency_percent=args.efficiency_percent,malt_specs=values['malt_specs'],
             honey_yield_percent=values['honey_yield_percent'],
             honey_color_lovibond=values['honey_color_lovibond'],
-            grain_temp_c=args.grain_temp_c,title=args.name)
+            grain_temp_c=args.grain_temp_c,title=args.name,
+            emit_target_og=args.emit_target_og,fermentation_days=args.fermentation_days,
+            fermentation_temp_c=args.fermentation_temp_c)
         out=Path(args.xml); rep=Path(args.report)
         if out.exists() or rep.exists():
             raise BeerXmlError('Output exists; refusing overwrite')

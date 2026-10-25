@@ -63,3 +63,33 @@ def test_unknown_ingredient_not_silently_misclassified():
   d['boil']['additions'].append({'remaining_min':5,'ingredient':'Extra Spice','amount_g':3})
   with pytest.raises(BeerXmlError, match='Unclassified boil addition'):
     export(d,boil_size_l=25,efficiency_percent=70,malt_specs=SPECS,honey_yield_percent=80,honey_color_lovibond=1)
+
+def test_target_og_is_opt_in_and_calculated_from_plato():
+  xml,report=run(emit_target_og=True)
+  r=ET.fromstring(xml).find('RECIPE')
+  assert abs(float(r.findtext('OG')) - 1.0569) < 0.001
+  assert r.find('FG') is None
+  assert report['target_og_exported'] is True
+  assert any('NOT a measured' in w for w in report['warnings'])
+
+def test_default_does_not_emit_og_or_assume_fermentation_days():
+  xml, report=run()
+  r=ET.fromstring(xml).find('RECIPE')
+  assert r.find('OG') is None
+  assert r.find('PRIMARY_AGE') is None
+  assert report['fermentation_profile_exported'] is False
+
+def test_explicit_fermentation_profile():
+  xml,report=run(fermentation_days=12,fermentation_temp_c=19)
+  r=ET.fromstring(xml).find('RECIPE')
+  assert r.findtext('PRIMARY_AGE')=='12'
+  assert r.findtext('PRIMARY_TEMP')=='19'
+  assert report['fermentation_profile_exported'] is True
+
+@pytest.mark.parametrize('kwargs', [
+ {'fermentation_days':14}, {'fermentation_temp_c':19},
+ {'fermentation_days':14,'fermentation_temp_c':25},
+ {'fermentation_days':0,'fermentation_temp_c':19},
+])
+def test_fermentation_fail_closed(kwargs):
+  with pytest.raises(BeerXmlError):run(**kwargs)
