@@ -1,0 +1,14 @@
+schema_version: 1
+brew_plan:
+  id: lebkuchen-zauber-brew-001
+  status: draft
+  recipe_path: recipes/lebkuchen-zauber/recipe.yaml
+  recipe_version: '1.3.0'
+  equipment_path: equipment/speidel-braumeister-20l.yaml
+  equipment_id: speidel-braumeister-20l
+  intended_packaged_volume_l: 20.0
+  notes:
+    - This plan only links domains; it does not change recipe quantities or start equipment.
+    - Recipe has provisional 23 L mash + 5 L sparge; profile pre-boil 25.42 L is not total water.
+    - Existing recipe equipment metadata is legacy contextual data pending versioned migration.
+    - Validate physical volumes, water chemistry and efficiency before first brew.

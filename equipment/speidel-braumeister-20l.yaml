@@ -1,0 +1,22 @@
+schema_version: 1
+equipment:
+  id: speidel-braumeister-20l
+  manufacturer: Speidel
+  model: Braumeister 20 L
+reference:
+  provider: Brewfather
+  profile_name: Speidel Braumeister 20L
+  evidence: User-observed Brewfather equipment profile and BeerXML re-export, 2026-10-25
+  verification: UNVERIFIED_EQUIPMENT_PRESET
+parameters:
+  batch_volume_l: 21.0
+  pre_boil_volume_l: 25.42
+  boil_duration_min: 60
+  brewhouse_efficiency_percent: 74.0
+  trub_chiller_loss_l: 1.0
+  lauter_deadspace_l: 3.5
+  hop_utilization_percent: 100.0
+notes:
+  - These are third-party preset/reference values, not measurements of this particular machine.
+  - Do not auto-scale recipe ingredients or overwrite canonical recipe targets.
+  - Water requirements cannot be inferred from pre-boil volume alone.
