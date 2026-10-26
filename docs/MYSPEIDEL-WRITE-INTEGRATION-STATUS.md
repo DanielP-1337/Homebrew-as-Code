@@ -1,60 +1,55 @@
-# MySpeidel Write Integration – Blocked by Vendor Contract
+# MySpeidel write integration — verified private recipe creation
 
-**Status:** BLOCKED / WRITE EXPERIMENTS PAUSED
+Status as of **October 26, 2026**, implementation through commit `33a10fd`.
 
-**Decision date:** 2026-10-24
-**Scope:** Homebrew-as-Code MySpeidel integration
+Private recipe creation is implemented and experimentally verified for two 20 L
+recipes in the tested account. Use the [guided API import workflow](0021-API-IMPORT-WORKFLOW.md).
+The repository remains the source of recipe intent; the adapter supplies explicit
+exchange decisions, account-specific references and creation metadata.
 
-## Decision
+## Evidence
 
-Homebrew-as-Code keeps vendor-neutral YAML recipes as the source of truth. MySpeidel Cloud API access is treated as **read-only for supported workflows** until a documented, verified create/update contract is available. Writing or merging MySpeidel catalog ingredients is not part of the supported integration.
+| Recipe | Dry-run | Live POST | Subsequent GET | Source |
+| --- | --- | --- | --- | --- |
+| Lebkuchen-Zauber 2026 | Verified, HTTP 200 | HTTP 201 | Zero content differences; 28 metadata differences | Unchanged |
+| Weizen Nikolaus - HBAC API | Verified, HTTP 200 | HTTP 201 | Zero content differences; 18 metadata differences | Unchanged |
 
-This is a **vendor-contract dependency**, not a claim that all MySpeidel write operations are broken. A request has already been sent to Speidel support/sales; a response is pending.
+The Lebkuchen metadata differences were inspected and were timestamp normalization.
+The Weizen report's 18 metadata differences have not been individually analyzed;
+do not describe them as confirmed timestamp-only changes. Content and metadata
+are separate comparison categories, not a claim of byte-identical responses.
 
-## Evidence from controlled experiments
+The Weizen web portal listing was also confirmed, showing 12 °P, 14.8 IBU and
+5 EBC. Its creation includes the reviewed fermentation and maturation settings.
+These are transferred recipe values, not independently measured beer properties.
+The Windows test suite passed **535 tests** at commit `33a10fd`.
 
-| Path | Observation | Conclusion |
-| --- | --- | --- |
-| Cloud GET and private-recipe backup | Successfully reads private recipes, references, and brew process data | Usable as read-only integration |
-| Cloud PUT with `dryRun=1` | HTTP 400, including validation/shared-ingredient-reference errors | No verified update contract |
-| Cloud POST `/v1.0/recipe?dryRun=1` | HTTP 400 for a cloned 20 L private recipe candidate with new recipe UUID; sanitized report `UNVERIFIED_RESPONSE` / `unclassified` | No validated create request; do not attempt live POST |
-| Web upload of Homebrew-as-Code BeerXML | HTTP 500 at `/recipes/upload_recipe_post` | Not demonstrated compatible with Speidel import |
-| Web upload of minimal BeerXML | Same HTTP 500 | Failure is not isolated to specific generated hop/malt fields |
-| Web upload of genuine `.recipe` | HTTP 200, proceeds to manual similar-ingredient matching screen | Native import path works for this tested file, not evidence we can generate native files |
+The evidence consists of local diagnostics, user-reported terminal results and a
+portal screenshot. Private raw files and account identifiers are not published
+here. The screenshot confirms listing, not brewing-device execution. The portal
+list appeared after a delay; its cause and general timing are unverified.
 
-The precise server-side cause of the BeerXML failures is unknown. HTTP status codes alone do not establish an implementation defect. File-format cryptography and internals of `.recipe` remain unverified.
+## Operational boundaries
 
-## BeerXML export: implemented, experimental
+- POST creates a new private recipe. It does not update the source recipe.
+- Dry-run success alone is not persistence; live HTTP 201 plus GET verification
+  established persistence for the tested candidates.
+- Existing catalog identities are resolved and reused. Matching names alone do
+  not justify merging catalog entries. No dedicated ingredient creation endpoint
+  was present in the inspected OpenAPI document.
+- Schema checks can report unverified constraints; passing them is not API acceptance.
+- PUT remains a separate experimental path, not validated by these POST results.
+- Device synchronization and execution remain outside this evidence.
+- Frozen inputs, dry-run evidence binding, explicit live confirmation, attempt
+  tracking and GET comparison are retained. There are no automatic POST retries.
 
-The offline `homebrew_as_code.myspeidel_beerxml_roundtrip export` command writes a BeerXML 1.0 file and a separate loss/assumption report from a private MySpeidel backup. **It performs no network operations** and does not modify the original backup.
+## Historical findings
 
-For the local *Weizenbier 38°* test case the user verified export of **4 malts**, **3 hop additions**, and **3 temperature mash rests**; the local test suite passed **256 tests** after patch 0020d2. Malt color uses EBC-to-SRM conversion, with a separately evidenced Carahell override and recorded provenance. Mash rests are manually transcribed from web-form evidence, not inferred Cloud semantics.
+The [October 24 blocked-state snapshot](MYSPEIDEL-WRITE-STATUS-20261024.md) preserves
+the earlier failed requests and conclusions as history. Later milestones include
+the [independent BeerXML web import](0020i-MYSPEIDEL-WEB-IMPORT-MILESTONE.md),
+[verified live create implementation](0020t-MYSPEIDEL-LIVE-CREATE.md), and
+[Weizen candidate completion](0020z-MYSPEIDEL-UPLOAD-COMPLETION.md).
 
-The export deliberately remains `PARTIAL_EXPORT`:
-
-- Yeast omitted without independently confirmed type, form, and amount (the observed run emitted zero yeast entries).
-- Separate mash and sparge water volumes are not losslessly represented by the current BeerXML 1.0 mapping.
-- Fermentation, maturation, and machine-specific controls are not fully represented.
-- Batch/boil volumes and malt yield can include explicit test assumptions; validate before practical use.
-- Generated BeerXML **has not been successfully imported into MySpeidel**. Do not advertise a verified roundtrip.
-
-See `docs/MYSPEIDEL-BEERXML-GOLDEN-ROUNDTRIP.md` for commands, safeguards, and field caveats.
-
-## Ingredient identity safety
-
-Ingredient labels, quantities, EBC color, and alpha-acid values do **not** establish shared identity. Distinct MySpeidel UUIDs remain distinct even with matching attributes. Candidate Web-ID-to-Cloud-UUID matches are not authoritative. Do not perform an automatic identity merge, rewrite shared catalog entities, or transfer ownership metadata on that basis.
-
-## Resume only when evidence changes
-
-1. Speidel supplies a supported end-to-end POST/PUT example, including create-schema version, valid references, ingredient ownership semantics, and precise dry-run behavior; **or** a verified supported create path is captured with appropriate permissions.
-2. An offline fixture test reproduces the vendor contract without private account data.
-3. Any real write is independently reviewed and explicitly opted into, with backup and post-write GET verification.
-4. Independently verify a third-party BeerXML reference import before changing the exporter to accommodate undocumented MySpeidel behavior.
-
-## Privacy and publishing
-
-Never commit `.local/`, Cloud backups, candidate recipes, API tokens, cookies, session headers, raw HTTP error bodies, or browser HAR files. Publish sanitized status, schema findings, and non-sensitive test results only.
-
-## Local repository handoff
-
-The user's working tree includes patches 0020b–0020e applied locally, including the BeerXML exporter. GitHub may lag this working tree until reviewed and pushed. Before committing, run the complete test suite and review `git diff --cached` and the staged path list; exclude `.local/` and other private files.
+Keep credentials, backups, candidate files and raw diagnostics under `.local/`.
+Publish only reviewed summaries and synthetic fixtures.
