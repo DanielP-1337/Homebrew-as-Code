@@ -192,12 +192,16 @@ def read_backup(path: Path) -> tuple[str, dict[str, Any], str]:
 
 
 def put_recipe(token: str, uuid: str, recipe: dict[str, Any], *, dry_run: bool,
-               opener: Callable[..., Any] | None = None) -> int:
+               opener: Callable[..., Any] | None = None,
+               diagnostic_events: list[dict] | None = None) -> int:
     check_private(recipe, uuid)
     if not isinstance(token, str) or not token or '\r' in token or '\n' in token:
         raise ValueError('Invalid token')
     if type(dry_run) is not bool:
         raise ValueError('dry_run must be bool')
+    if diagnostic_events is not None and not dry_run:
+        raise ValueError('Development diagnostics require dry_run=True')
+    from .myspeidel_dev_diagnostics import request_event, response_event
     url = BASE_URL + '/v1.0/recipe/' + uuid + ('?dryRun=1' if dry_run else '')
     payload = serialized(recipe)
     if len(payload) > MAX_BYTES:
@@ -205,10 +209,14 @@ def put_recipe(token: str, uuid: str, recipe: dict[str, Any], *, dry_run: bool,
     req = urllib.request.Request(url, data=payload, method='PUT', headers={
         'Authorization': 'Bearer ' + token, 'Accept': 'application/json',
         'Content-Type': 'application/json', 'User-Agent': 'Homebrew-as-Code/0.2.0'})
+    if diagnostic_events is not None:
+        diagnostic_events.append(request_event(req, token))
     try:
         with (opener or urllib.request.urlopen)(req, timeout=20) as res:
             status = res.status
             response = res.read(MAX_RESPONSE_BYTES + 1)
+            if diagnostic_events is not None:
+                diagnostic_events.append(response_event(status, getattr(res, "headers", None), response, token, MAX_RESPONSE_BYTES))
             if status != 200:
                 raise PutDiagnosticError(status)
             if dry_run and (len(response) > MAX_RESPONSE_BYTES or
@@ -220,6 +228,8 @@ def put_recipe(token: str, uuid: str, recipe: dict[str, Any], *, dry_run: bool,
             response = exc.read(MAX_RESPONSE_BYTES + 1)
         except (OSError, ValueError):
             response = b''
+        if diagnostic_events is not None:
+            diagnostic_events.append(response_event(exc.code, exc.headers, response, token, MAX_RESPONSE_BYTES))
         category, location = classify_put_error(response[:MAX_RESPONSE_BYTES])
         paths = safe_validation_paths(response[:MAX_RESPONSE_BYTES])
         diagnostic = PutDiagnosticError(exc.code, category, location, paths)

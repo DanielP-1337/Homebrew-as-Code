@@ -1,0 +1,19 @@
+{
+  "water_name": "Osmosewasser (RO)",
+  "wort_volume_l": 20,
+  "malt_colors_ebc": {
+    "Pale Ale Malt": 5.9,
+    "Munich Malt Type II": 17.7,
+    "CaraMunich II": 88.7,
+    "Melanoidin Malt": 49.3,
+    "Chocolate Malt": 689.5
+  },
+  "timing_by_ingredient": {
+    "Mild honey": 10,
+    "Ceylon cinnamon sticks": 0,
+    "Fresh ginger": 0,
+    "Whole cloves": 0,
+    "Nutmeg": 0,
+    "Orange zest": 0
+  }
+}

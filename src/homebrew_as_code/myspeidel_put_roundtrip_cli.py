@@ -36,6 +36,8 @@ def main(argv=None):
     dry = sub.add_parser('dry-run', help='PUT dryRun only, with GET verification')
     dry.add_argument('--backup', required=True)
     dry.add_argument('--receipt', required=True)
+    dry.add_argument('--diagnostics', help='Print verbose masked request/response and save a new .local JSON report')
+    dry.add_argument('--spec', help='Optional local OpenAPI JSON for offline contract comparison (requires --diagnostics)')
     apply = sub.add_parser('apply', help='REAL PUT; requires dry-run receipt and manual consent')
     apply.add_argument('--backup', required=True)
     apply.add_argument('--receipt', required=True)
@@ -93,6 +95,12 @@ def main(argv=None):
         phase = 'backup_validation'
         backup_path = private_file(args.backup, must_exist=True)
         uuid, recipe, sha = read_backup(backup_path)
+        offline_contract = None
+        if args.action == 'dry-run' and args.spec:
+            if not args.diagnostics:
+                raise ValueError('--spec requires --diagnostics')
+            from .myspeidel_put_offline_schema import compare_backup
+            offline_contract = compare_backup(args.spec, args.backup)
         phase = 'login'
         token, client = _login()
         phase = 'preflight_get'
@@ -102,12 +110,51 @@ def main(argv=None):
             return 0
         if args.action == 'dry-run':
             receipt_path = private_file(args.receipt)
+            diagnostic_path = private_file(args.diagnostics) if args.diagnostics else None
+            if diagnostic_path is not None and diagnostic_path == receipt_path:
+                raise ValueError('Diagnostics and receipt must use separate files')
             if input('Perform PUT dryRun=1 on this existing PRIVATE recipe? [yes/NO]: ').strip() != 'yes':
                 return 0
             phase = 'dry_run_put'
-            put_recipe(token, uuid, recipe, dry_run=True)
+            events = [] if diagnostic_path is not None else None
+            put_error = None
+            verification = {'status': 'not_attempted'}
+            try:
+                if events is None:
+                    put_recipe(token, uuid, recipe, dry_run=True)
+                else:
+                    put_recipe(token, uuid, recipe, dry_run=True, diagnostic_events=events)
+            except (MySpeidelError, ValueError, OSError, EOFError, KeyboardInterrupt) as exc:
+                put_error = exc
+            finally:
+                # A rejected or uncertain PUT still requires independent GET evidence.
+                try:
+                    current = check_private(client.get_recipe(uuid), uuid)
+                    after_sha = digest(current)
+                    verification = {'status': 'unchanged' if after_sha == sha else 'changed',
+                                    'baseline_sha256': sha, 'after_sha256': after_sha}
+                except (MySpeidelError, ValueError, KeyError, TypeError, OSError) as exc:
+                    verification = {'status': 'unverified', 'error_type': type(exc).__name__}
+                print('Post-dry-run GET: ' + verification['status'].upper())
+                if diagnostic_path is not None:
+                    from .myspeidel_dev_diagnostics import redact
+                    report = redact({
+                        'format': 'homebrew-as-code/myspeidel-dry-run-diagnostics-v1',
+                        'dry_run': True, 'events': events, 'verification': verification,
+                        'offline_contract': offline_contract,
+                        'put_result': 'failed' if put_error else 'acknowledged',
+                        'error_type': type(put_error).__name__ if put_error else None,
+                        'error_category': getattr(put_error, 'category', None),
+                        'server_validation': getattr(put_error, 'validation_details', None),
+                    }, token)
+                    # ensure_ascii escapes terminal control characters in server strings.
+                    print(json.dumps(report, indent=2, ensure_ascii=True, allow_nan=False))
+                    write_new(diagnostic_path, report)
+            if put_error is not None:
+                raise put_error
             phase = 'post_dry_run_get'
-            _same(client, uuid, sha)  # No observed side effect on GET data
+            if verification['status'] != 'unchanged':
+                raise ValueError('Post-dry-run GET did not prove unchanged recipe')
             phase = 'receipt_write'
             write_new(receipt_path, {'format': 'homebrew-as-code/myspeidel-put-dry-run-v1',
                                      'uuid': uuid, 'sha256': sha, 'http_status': 200,

@@ -111,3 +111,16 @@ have different rules. The software does not provide tax or legal clearance.
 
 See [offline schema validation and multi-format inspection](docs/0020o-BEERJSON-CONFORMANCE.md)
 for pinned schemas, version-policy separation and private Brewfather fixture checks.
+
+Offline MySpeidel template extraction and brew-plan import drafts are documented
+in [0020q - MySpeidel Import Builder](docs/0020q-MYSPEIDEL-IMPORT-BUILDER.md).
+Drafts include explicit mapping gaps and are not upload-ready.
+
+Offline POST candidate preparation and existing catalog identity reuse:
+[0020r — MySpeidel Create Candidate](docs/0020r-MYSPEIDEL-CREATE-CANDIDATE.md).
+
+Controlled POST dry-run with masked diagnostics and before/after GET checks:
+[0020s — POST Dry-Run & GET Verification](docs/0020s-MYSPEIDEL-POST-DRY-RUN.md).
+
+Explicit live creation with dry-run evidence binding and saved-recipe comparison:
+[0020t — Live Create & GET Comparison](docs/0020t-MYSPEIDEL-LIVE-CREATE.md).
