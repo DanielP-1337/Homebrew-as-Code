@@ -92,6 +92,8 @@ def build_import_draft(recipe, template, settings, *, spec=None):
             raise ValueError('MySpeidel draft mapping needs: ' + '; '.join(status['myspeidel_mapping_blockers']))
     else:
         validate_recipe(recipe)
+    from .myspeidel_export_profile import export_recipe
+    recipe, fermentation_steps, maturation_steps, export_profile = export_recipe(recipe, settings)
     if template.get('format') != TEMPLATE_FORMAT:
         raise ValueError('Unexpected template format')
     refs = {kind: {} for kind in KINDS}
@@ -143,7 +145,7 @@ def build_import_draft(recipe, template, settings, *, spec=None):
     if len(mash_steps) > 10:
         raise ValueError('MySpeidel supports at most 10 mash rests')
     draft = {
-        'name': recipe['recipe']['name'], 'style': recipe['recipe']['style'],
+        'name': _text(settings.get('export_name', recipe['recipe']['name'])), 'style': recipe['recipe']['style'],
         'public': 0, 'recipe_type': 0,
         'water_plato': _number(recipe['targets']['original_gravity_plato'], 'Plato'),
         'water_recast': _number(settings.get('wort_volume_l'), 'wort volume'),
@@ -151,14 +153,16 @@ def build_import_draft(recipe, template, settings, *, spec=None):
                     'adds': {'water': {'uuid': water_id, 'water_amount_start': _number(recipe['water']['mash_l'], 'mash water')}, 'malts': malts}},
         'rest': {'water_amount_addition': _number(recipe['water']['sparge_l'], 'sparge'), 'steps': mash_steps},
         'boil': {'boiling_duration': duration, 'boiling_temperature': _number(recipe['boil']['temperature_c'], 'boil temperature'), 'steps': steps},
-        'fermentation': {'steps': [], 'adds': {'yeasts': [{'yeast_uuid': resolve('yeasts', yeast['name']), 'amount': _number(yeast['amount_g'], 'yeast') }]}},
-        'maturation': {'steps': []}, 'references': refs,
+        'fermentation': {'steps': fermentation_steps, 'adds': {'yeasts': [{'yeast_uuid': resolve('yeasts', yeast['name']), 'amount': _number(yeast['amount_g'], 'yeast') }]}},
+        'maturation': {'steps': maturation_steps}, 'references': refs,
         'phases': {'1': 'mashing', '2': 'rest', '3': 'boil', '4': 'fermentation', '5': 'maturation'},
     }
     report = {
         'format': 'homebrew-as-code/myspeidel-import-report-v1', 'offline': True,
         'upload_ready': False, 'candidate_sha256': digest(draft),
         'timing_decisions': timing_decisions,
+        'export_profile': export_profile,
+        'process_units': {'fermentation_duration': 'hours', 'maturation_duration': 'days', 'maturation_pressure': 'bar'} if export_profile else None,
         'unmapped': {'target_bitterness_ibu': recipe['targets'].get('bitterness_ibu'),
                      'fermentation_temperature_c': deepcopy(yeast.get('fermentation_temperature_c')),
                      'fermentation_context': deepcopy(recipe.get('fermentation')),
@@ -169,7 +173,7 @@ def build_import_draft(recipe, template, settings, *, spec=None):
         'blockers': ['Creation identity and metadata policy is unverified: recipe/addition UUIDs, owner, brewer, dates and versions are intentionally absent.',
                      'Reference metadata is intentionally absent; confirm identities and complete the POST contract before sending.',
                      'Machine reference, color, specific gravity and other required POST fields need explicit mapping.',
-                     'Fermentation/maturation schedules, water chemistry and packaging are not mapped; review unmapped values.',
+                     'Review explicit process settings, unmapped water chemistry and packaging; no schedule is inferred from ambient temperature.',
                      'Target IBU is not a measured or vendor-calculated IBU. No automatic substitution.',
                      'This draft cannot be passed to the existing backup-based PUT/POST commands.'],
     }

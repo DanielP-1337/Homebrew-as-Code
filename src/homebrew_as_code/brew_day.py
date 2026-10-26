@@ -31,12 +31,13 @@ def calendar_date(value):
     return parsed
 
 
-def new_record(bundle, brew_date):
+def new_record(bundle, brew_date, *, record_kind="real"):
     calendar_date(brew_date)
     recipe = bundle['recipe']['recipe']
     return {
         'format': FORMAT, 'batch_id': str(uuid4()), 'brew_date': brew_date,
         'recipe_id': recipe['id'], 'recipe_version': recipe['version'],
+        'recipe_name': recipe.get('name', recipe['id']), 'record_kind': record_kind,
         'brew_plan_id': bundle['plan']['brew_plan']['id'],
         'source_sha256': digest(bundle), 'measurements': [],
         'actual_yield': {'production_date': None, 'produced_beer_l': None,
@@ -50,6 +51,8 @@ def validate(record):
         raise ValueError('Expected brew-day-v1 record')
     for field in ('batch_id', 'recipe_id', 'recipe_version', 'brew_plan_id', 'source_sha256'):
         text(record.get(field), field)
+    if record.get('record_kind') not in (None, 'real', 'test'):
+        raise ValueError('record_kind must be real or test')
     brew_date = calendar_date(record['brew_date'])
     rows = record['measurements']
     if not isinstance(rows, list):
@@ -109,6 +112,7 @@ def report(record):
     by_stage = {stage: [r for r in record['measurements'] if r['stage'] == stage] for stage in STAGES}
     return {
         'format': 'homebrew-as-code/brew-day-report-v1', 'batch_id': record['batch_id'],
+        'record_kind': record.get('record_kind') or 'unclassified',
         'measurements_by_stage': by_stage, 'actual_yield': record['actual_yield'],
         'missing_stages': [s for s, rows in by_stage.items() if not rows],
         'alcohol_abv_percent': None, 'efficiency_percent': None, 'upload_ready': False,
@@ -121,12 +125,19 @@ def year_summary(records, year):
     if type(year) is not int:
         raise ValueError('year must be an integer')
     seen, included, unresolved = set(), [], []
+    excluded_tests, unclassified = [], []
     for record in records:
         validate(record)
         batch_id = record['batch_id']
         if batch_id in seen:
             raise ValueError(f'Duplicate batch_id: {batch_id}')
         seen.add(batch_id)
+        if record.get('record_kind') == 'test':
+            excluded_tests.append(batch_id)
+            continue
+        if record.get('record_kind') != 'real':
+            unclassified.append(batch_id)
+            continue
         actual = record['actual_yield']
         when, volume = actual.get('production_date'), actual.get('produced_beer_l')
         if when is None:
@@ -139,6 +150,7 @@ def year_summary(records, year):
     return {'format': 'homebrew-as-code/actual-production-summary-v1', 'year': year,
             'included_batches': included, 'known_produced_beer_l': sum(r['produced_beer_l'] for r in included),
             'unresolved_batches': unresolved, 'input_records': len(records),
+            'excluded_test_batches': excluded_tests, 'unclassified_batches': unclassified,
             'scope': 'Supplied records only. Unknown dates remain unresolved; packaged and wort volumes are not added. No 12-Plato normalization, exemption determination or tax calculation.'}
 
 
@@ -148,6 +160,7 @@ def main(argv=None):
     init = sub.add_parser('init')
     init.add_argument('--plan', default='brew-plans/weizen-nikolaus-brew-001.yaml')
     init.add_argument('--date', required=True)
+    init.add_argument('--kind', choices=('test', 'real'), default='test')
     init.add_argument('--output', required=True)
     show = sub.add_parser('report')
     show.add_argument('--record', required=True)
@@ -158,9 +171,10 @@ def main(argv=None):
     try:
         if args.command == 'init':
             bundle = load_brew_plan(args.plan, repo_root=Path.cwd())
-            record = new_record(bundle, args.date)
+            record = new_record(bundle, args.date, record_kind=args.kind)
             validate(record)
             write_new(private_file(args.output), record)
+            print(f'Record kind: {record["record_kind"]}')
             print('Saved local batch record. Edit observations, then run report. No API requests.')
         elif args.command == 'report':
             record = json.loads(Path(args.record).read_text(encoding='utf-8-sig'))

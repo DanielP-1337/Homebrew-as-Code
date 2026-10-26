@@ -22,7 +22,7 @@ MAP_FORMAT = 'homebrew-as-code/myspeidel-ingredient-mapping-v1'
 
 
 def display(value):
-    return json.dumps(str(value), ensure_ascii=True)
+    return json.dumps(str(value), ensure_ascii=False)
 
 
 def choose(label, rows, input_fn=input, output_fn=print):

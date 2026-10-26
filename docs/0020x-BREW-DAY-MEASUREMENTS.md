@@ -14,7 +14,7 @@ production entry merely to try the workflow.
 $Batch = '.local/brew-days/weizen-2026-11-01.json'
 .\.venv\Scripts\python.exe -m homebrew_as_code.brew_day init `
     --plan brew-plans/weizen-nikolaus-brew-001.yaml `
-    --date 2026-11-01 --output $Batch
+    --date 2026-11-01 --kind real --output $Batch
 code $Batch
 ```
 
@@ -103,3 +103,11 @@ Tests cover separation of process stages, unknown values, finite numeric inputs,
 measurement temperatures, timezone-aware timestamps, duplicate observations and
 batch IDs, explicit year assignment, actual-versus-packaged quantities, and
 exclusive local record creation without changing the plan.
+
+## Guided recording and test batches
+
+[0020y — Guided Brew-Day Recording](0020y-GUIDED-BREW-DAY.md) adds interactive
+selection and entry. TEST records are excluded from production totals; legacy
+records without a classification are listed separately until explicitly classified.
+The low-level init command defaults to TEST; the real-batch example above uses
+`--kind real` explicitly.

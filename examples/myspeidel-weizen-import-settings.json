@@ -1,0 +1,30 @@
+{
+  "export_name": "Weizen Nikolaus - HBAC API",
+  "water_name": "Münchener Leitungswasser",
+  "wort_volume_l": 20,
+  "malt_colors_ebc": {
+    "Weizen": 4,
+    "Muenchner": 15,
+    "Pilsner": 2
+  },
+  "timing_by_ingredient": {},
+  "export_profile": {
+    "recipe_id": "weizen-nikolaus",
+    "recipe_version": "0.3.0",
+    "original_gravity_plato": 12,
+    "boil_controller_temperature_c": 101,
+    "fermentation_steps": [
+      {
+        "temperature_c": 22,
+        "duration_hours": 168
+      }
+    ],
+    "maturation_steps": [
+      {
+        "temperature_c": 7,
+        "duration_days": 21,
+        "pressure_bar": 1.6
+      }
+    ]
+  }
+}

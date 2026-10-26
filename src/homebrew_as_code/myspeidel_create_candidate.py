@@ -29,6 +29,9 @@ def additions(recipe):
         for kind in ('hops', 'ingredients'):
             yield from step['adds'].get(kind, [])
     yield from recipe['fermentation']['adds'].get('yeasts', [])
+    # Process steps also receive fresh identities and participate in dry-run collision checks.
+    yield from recipe.get('fermentation', {}).get('steps', [])
+    yield from recipe.get('maturation', {}).get('steps', [])
 
 
 def build_candidate(draft, source, policy, spec):

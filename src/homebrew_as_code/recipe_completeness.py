@@ -71,6 +71,8 @@ def load_draft(path):
 def assess(data, settings=None):
     validate_draft(data)
     settings=settings or {}
+    from .myspeidel_export_profile import export_recipe
+    data, _, _, _ = export_recipe(data, settings)
     blockers=[]
     if data['boil'].get('temperature_c') is None:blockers.append('boil.temperature_c: confirm export temperature; historical controller setpoint is separate')
     if data['targets'].get('original_gravity_plato') is None:blockers.append('targets.original_gravity_plato: confirm final OG separately from after-mash measurement')
