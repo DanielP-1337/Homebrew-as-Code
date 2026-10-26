@@ -121,6 +121,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ('candidate', 'backup', 'spec', 'diagnostics'):
         parser.add_argument('--' + name, required=True)
+    parser.add_argument('--verbose', action='store_true', help='Print full masked diagnostics')
     args = parser.parse_args(argv)
     try:
         destination = private_file(args.diagnostics)
@@ -146,8 +147,14 @@ def main(argv=None):
         result['offline_contract'] = contract
         result = redact(result, token)
         destination.write_text(json.dumps(result, indent=2, ensure_ascii=True, allow_nan=False) + '\n', encoding='utf-8')
-        print(json.dumps(result, indent=2, ensure_ascii=True, allow_nan=False))
         print('Result:', result['result'])
+        print('POST attempted:', result['post_attempted'], 'HTTP:', result.get('post_http_status', 'n/a'))
+        for key in ('before_source', 'before_candidate', 'after_source', 'after_candidate'):
+            if key in result:
+                print(key + ':', result[key]['status'])
+        print('Diagnostics:', destination)
+        if args.verbose:
+            print(json.dumps(result, indent=2, ensure_ascii=True, allow_nan=False))
         return 0 if result['passed'] else 2
     except (Exception, KeyboardInterrupt) as exc:
         # Authentication/network exceptions may embed credentials; print only type.

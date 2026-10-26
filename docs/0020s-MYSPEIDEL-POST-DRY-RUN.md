@@ -17,7 +17,7 @@ without rebuilding IDs. No live-create or PUT capability is added.
 7. In a finally block, independently GET both source and candidate UUIDs.
    This also runs after 400/500, unexpected acknowledgement, transport error
    and KeyboardInterrupt during POST. Failure of either GET does not skip the other.
-8. Save and print masked diagnostics. Exit 0 only when HTTP 200 explicitly
+8. Save masked diagnostics and print a compact summary (full output with `--verbose`). Exit 0 only when HTTP 200 explicitly
    acknowledges `DRY RUN SUCCEEDED`, source is unchanged and candidate returns 404.
 
 The supplied OpenAPI is checked again; an old report alone is not trusted.

@@ -124,3 +124,7 @@ Controlled POST dry-run with masked diagnostics and before/after GET checks:
 
 Explicit live creation with dry-run evidence binding and saved-recipe comparison:
 [0020t — Live Create & GET Comparison](docs/0020t-MYSPEIDEL-LIVE-CREATE.md).
+
+Guided recipe/plan selection, persistent account-scoped ingredient mappings and
+resumable import sessions:
+[0020u — Guided Import Workflow](docs/0020u-GUIDED-IMPORT-WORKFLOW.md).
