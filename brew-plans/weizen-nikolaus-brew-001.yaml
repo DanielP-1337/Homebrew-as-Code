@@ -1,0 +1,20 @@
+schema_version: 2
+brew_plan:
+  id: weizen-nikolaus-brew-001
+  status: draft
+  recipe_path: recipes/weizen-nikolaus/recipe.yaml
+  recipe_version: '0.3.0'
+  equipment_path: equipment/speidel-braumeister-20l.yaml
+  equipment_id: speidel-braumeister-20l
+  yield_mode: target_gravity_variable_yield
+  target_plato: 12
+  intended_packaged_volume_l: null
+  observations:
+    after_mash_plato: null
+    measured_wort_volume_l: null
+    final_original_gravity_plato: null
+    packaged_volume_l: null
+  notes:
+    - Measure after mashing and adjust to 12 Plato; yield may vary.
+    - Equipment capacity is not a batch yield promise.
+    - No dilution, boil-off, hop adjustment or volume scaling is performed automatically.

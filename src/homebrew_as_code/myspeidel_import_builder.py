@@ -85,7 +85,13 @@ def build_import_draft(recipe, template, settings, *, spec=None):
     timing_by_ingredient (explicit remaining minutes for every non-hop addition).
     No source recipe values or source addition identities are reused.
     """
-    validate_recipe(recipe)
+    if recipe.get('schema_version') == 2:
+        from .recipe_completeness import assess
+        status = assess(recipe, settings)
+        if status['myspeidel_mapping_blockers']:
+            raise ValueError('MySpeidel draft mapping needs: ' + '; '.join(status['myspeidel_mapping_blockers']))
+    else:
+        validate_recipe(recipe)
     if template.get('format') != TEMPLATE_FORMAT:
         raise ValueError('Unexpected template format')
     refs = {kind: {} for kind in KINDS}
@@ -153,11 +159,13 @@ def build_import_draft(recipe, template, settings, *, spec=None):
         'format': 'homebrew-as-code/myspeidel-import-report-v1', 'offline': True,
         'upload_ready': False, 'candidate_sha256': digest(draft),
         'timing_decisions': timing_decisions,
-        'unmapped': {'target_bitterness_ibu': recipe['targets']['bitterness_ibu'],
-                     'fermentation_temperature_c': deepcopy(yeast['fermentation_temperature_c']),
+        'unmapped': {'target_bitterness_ibu': recipe['targets'].get('bitterness_ibu'),
+                     'fermentation_temperature_c': deepcopy(yeast.get('fermentation_temperature_c')),
+                     'fermentation_context': deepcopy(recipe.get('fermentation')),
+                     'gravity_control': deepcopy(recipe.get('gravity_control')),
                      'spice_contact_after_flameout_min': recipe['boil'].get('spice_contact_after_flameout_min'),
                      'water_chemistry': deepcopy(recipe['water']), 'packaging': deepcopy(recipe['packaging']),
-                     'target_alcohol_abv_percent': recipe['targets']['alcohol_abv_percent']},
+                     'target_alcohol_abv_percent': recipe['targets'].get('alcohol_abv_percent')},
         'blockers': ['Creation identity and metadata policy is unverified: recipe/addition UUIDs, owner, brewer, dates and versions are intentionally absent.',
                      'Reference metadata is intentionally absent; confirm identities and complete the POST contract before sending.',
                      'Machine reference, color, specific gravity and other required POST fields need explicit mapping.',

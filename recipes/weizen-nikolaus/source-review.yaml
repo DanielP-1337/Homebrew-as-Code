@@ -1,0 +1,53 @@
+# Historical source evidence, NOT a validated canonical recipe or upload input.
+review_format: homebrew-as-code/recipe-source-review-v1
+status: needs_confirmation
+name: Weizen Nikolaus
+style: Weizen
+source: MySpeidel GET backup reviewed 2026-10-26
+observed:
+  wort_volume_l: 20
+  original_gravity_plato: 12
+  specific_gravity: 1.048
+  bitterness_ibu: 13.3
+  source_color_ebc: 0
+  malts:
+    - {name: Weizen, amount_kg: 3.5, source_color_ebc: 0}
+    - {name: Muenchner, amount_kg: 0.5, source_color_ebc: 0}
+    - {name: Pilsner, amount_kg: 0.5, source_color_ebc: 0}
+  mash_in_temperature_c: 45
+  mash_steps:
+    - {duration_min: 10, temperature_c: 55}
+    - {duration_min: 30, temperature_c: 62}
+    - {duration_min: 10, temperature_c: 65}
+    - {duration_min: 30, temperature_c: 72}
+    - {duration_min: 12, temperature_c: 78}
+  water: {name: null, mash_l: 20, sparge_l: 8}
+  boil_duration_min: 90
+  source_boil_temperature_c: 101
+  hops:
+    - name: Hallertauer Mittelfrüh
+      amount_g: 28
+      remaining_min: 70
+      addition_alpha_percent: 3.2
+      catalog_alpha_percent: 3.2
+    - name: null
+      amount_g: 13
+      remaining_min: 15
+      addition_alpha_percent: 3.2
+      catalog_alpha_percent: 9
+unresolved:
+  yeast_name: null
+  yeast_amount_g: null
+  fermentation_temperature_c: null
+  packaged_volume_l: null
+  packaging: null
+  water_profile: null
+  malt_product_colors: null
+  recipe_color: null
+  second_hop_identity_and_alpha: null
+notes:
+  - No account identifiers or credentials are included.
+  - Zero colors are retained source values, not confirmed colors.
+  - Muenchner is not automatically equated with Munich Malt Type II.
+  - Confirm whole/uncrushed malt product names when authoring the canonical recipe.
+  - No selectable brew plan is created until missing canonical inputs are resolved.

@@ -15,12 +15,12 @@ class BrewPlanError(ValueError):
     """Invalid equipment definition or brew-plan reference."""
 
 
-def _document(path: Path):
+def _document(path: Path, versions=(1,)):
     try:
         value = yaml.safe_load(path.read_text(encoding='utf-8'))
     except (OSError, yaml.YAMLError) as exc:
         raise BrewPlanError(f'Cannot load YAML: {path.name}') from exc
-    if not isinstance(value, dict) or value.get('schema_version') != 1:
+    if not isinstance(value, dict) or value.get('schema_version') not in versions:
         raise BrewPlanError('Expected YAML mapping with schema_version 1')
     return value
 
@@ -80,22 +80,35 @@ def _repo_path(root: Path, relative: str) -> Path:
 def load_brew_plan(path: str | Path, *, repo_root: str | Path):
     """Return plan, recipe and equipment without mutating either domain object."""
     root = Path(repo_root).resolve()
-    data = _document(Path(path))
+    data = _document(Path(path), versions=(1,2))
     plan = data.get('brew_plan')
     if not isinstance(plan, dict):
         raise BrewPlanError('Missing brew_plan')
     _required_text(plan, 'id')
     if plan.get('status') not in ('draft', 'ready', 'completed'):
         raise BrewPlanError('Invalid brew plan status')
-    recipe = load_recipe(_repo_path(root, _required_text(plan, 'recipe_path')))
+    recipe_path = _repo_path(root, _required_text(plan, 'recipe_path'))
+    if data['schema_version'] == 2:
+        from .recipe_completeness import load_draft
+        recipe = load_draft(recipe_path)
+        if plan.get('status') != 'draft':
+            raise BrewPlanError('Draft recipe requires draft brew plan')
+    else:
+        recipe = load_recipe(recipe_path)
     equipment = load_equipment(_repo_path(root, _required_text(plan, 'equipment_path')))
     if recipe['recipe']['version'] != _required_text(plan, 'recipe_version'):
         raise BrewPlanError('Recipe version mismatch')
     if equipment['equipment']['id'] != _required_text(plan, 'equipment_id'):
         raise BrewPlanError('Equipment ID mismatch')
-    volume = _number(plan.get('intended_packaged_volume_l'), 'intended_packaged_volume_l')
-    if volume != float(recipe['targets']['packaged_volume_l']):
-        raise BrewPlanError('Plan packaged volume differs from recipe target; explicit scaling not supported')
+    if data['schema_version'] == 2:
+        if plan.get('yield_mode') != 'target_gravity_variable_yield' or plan.get('intended_packaged_volume_l') is not None:
+            raise BrewPlanError('Variable-yield plan must not impose packaged volume')
+        if _number(plan.get('target_plato'), 'target_plato') != recipe['gravity_control']['target_plato']:
+            raise BrewPlanError('Gravity target mismatch')
+    else:
+        volume = _number(plan.get('intended_packaged_volume_l'), 'intended_packaged_volume_l')
+        if volume != float(recipe['targets']['packaged_volume_l']):
+            raise BrewPlanError('Plan packaged volume differs from recipe target; explicit scaling not supported')
     return {'plan': data, 'recipe': recipe, 'equipment': equipment,
             'warnings': [
                 'Equipment parameters are unverified third-party presets.',

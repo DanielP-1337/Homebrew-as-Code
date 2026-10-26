@@ -15,11 +15,23 @@ accepted decision, dependency rules and integration boundaries.
 
 ## Equipment
 
+I use the following equipment for my homebrewing:
+
 - Speidel Braumeister 20 L
 - MySpeidel WLAN / Touchscreen controller
 - Reverse osmosis water preparation
 - KEG packaging
 - Cast-iron malt mill
+- Counterflow wort cooler
+- [Barby + Kühner](https://barby-kuehner.de/) hydrometers from Untersiemau:
+  0–7 °P for monitoring fermentation, 7–14 °P as my main brewhouse hydrometer,
+  and 14–21 °P for stronger beers such as bock.
+
+I have used these three hydrometers for more than ten years. I use their
+thermometers and correction scales when measuring samples near the 20 °C
+reference temperature.
+
+Brewing course website: [Brauerei Starkmeth](https://www.bierbrauen-kurs.de/).
 
 ## Featured recipe — Lebkuchen-Zauber 2026
 
@@ -128,3 +140,12 @@ Explicit live creation with dry-run evidence binding and saved-recipe comparison
 Guided recipe/plan selection, persistent account-scoped ingredient mappings and
 resumable import sessions:
 [0020u — Guided Import Workflow](docs/0020u-GUIDED-IMPORT-WORKFLOW.md).
+
+Second-recipe source review and offline ingredient identity comparison:
+[0020v — Second Recipe Review](docs/0020v-SECOND-RECIPE-REVIEW.md).
+
+
+
+
+Variable-yield draft recipes, stage-specific completeness and plan linkage:
+[0020w — Draft Completeness & Brew-Plan Promotion](docs/0020w-DRAFT-COMPLETENESS.md).

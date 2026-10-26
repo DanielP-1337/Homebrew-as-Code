@@ -224,6 +224,11 @@ def prepare(folder, state):
     loaded=read_json(folder/'plan-snapshot.json');settings=read_json(folder/'settings.json')
     policy=read_json(folder/'policy.json');spec=read_json(folder/'spec.json')
     _,source,_=read_backup(folder/'backup.json')
+    if loaded['recipe'].get('schema_version') == 2:
+        from .recipe_completeness import assess
+        status = assess(loaded['recipe'], settings)
+        if status['myspeidel_mapping_blockers']:
+            raise ValueError('MySpeidel mapping needs: ' + '; '.join(status['myspeidel_mapping_blockers']))
     if policy.get('assumptions_accepted') is not True:
         raise ValueError('Review policy.json and set assumptions_accepted=true first')
     registry_path = local(REGISTRY)

@@ -1,0 +1,84 @@
+# Confirmed recipe intent, separate from the untouched historical source review.
+# Not yet compatible with canonical schema_version: 1 (see unresolved fields).
+format: homebrew-as-code/confirmed-recipe-draft-v1
+status: incomplete
+recipe:
+  id: weizen-nikolaus
+  name: Weizen Nikolaus
+  version: '0.2.0'
+  style: Weizen
+provenance:
+  historical_source: recipes/weizen-nikolaus/source-review.yaml
+  corrections: User-confirmed recipe intent in development conversation
+  original_reference: Nikolaus printed recipe; paper not inspected directly
+observed_targets:
+  wort_volume_l: 20
+  original_gravity_plato: 12
+  specific_gravity: 1.048
+  historical_bitterness_ibu: 13.3
+fermentables:
+  - {name: Weizen, amount_g: 3500, purchase_form: whole}
+  - {name: Muenchner, amount_g: 500, purchase_form: whole}
+  - {name: Pilsner, amount_g: 500, purchase_form: whole}
+mash:
+  mash_in_temperature_c: 45
+  steps:
+    - {temperature_c: 55, duration_min: 10}
+    - {temperature_c: 62, duration_min: 30}
+    - {temperature_c: 65, duration_min: 10}
+    - {temperature_c: 72, duration_min: 30}
+    - {temperature_c: 78, duration_min: 12}
+boil:
+  duration_min: 90
+  source_controller_setpoint_c: 101
+  additions:
+    - id: hallertauer-main
+      ingredient: Hallertauer Mittelfrüh
+      reference_amount_g: 28
+      reference_alpha_percent: 3.2
+      remaining_min: 70
+      provenance: historical_backup
+    - id: perle-late
+      ingredient: Perle
+      reference_amount_g: 13
+      reference_alpha_percent: 5.2
+      remaining_min: 15
+      provenance: user_confirmed_original_recipe_reference
+yeast:
+  name: Zymoferm GERMAN WHEAT
+  amount_g: 7
+  packs: 1
+  fermentation_type: top
+  manufacturer_information:
+    provenance: user_supplied_product_description
+    temperature_range_c: [18, 25]
+    attenuation_percent: [70, 76]
+    flocculation: low_to_medium
+    dosage_g: 7
+    dosage_volume_l: [20, 25]
+fermentation:
+  ambient_temperature_c: 21.5
+  temperature_control: ambient
+  measured_beer_temperature_c: null
+  duration_days: null
+water:
+  source: Münchener Leitungswasser
+  filtered: false
+  recipe_designed_for_this_source: true
+  total_l: 28
+  mash_l: 20
+  sparge_l: 8
+  mineral_analysis: null
+  salt_additions: null
+  notes: No RO profile or Lebkuchen salt additions inherited; additional treatment not specified.
+unresolved:
+  packaged_volume_l: null
+  alcohol_abv_target_percent: null
+  updated_bitterness_ibu: null
+  malt_product_colors_ebc: null
+  recipe_color_ebc: null
+  packaging: null
+  confirmed_boil_temperature_c: null
+  myspeidel_water_reference: null
+  myspeidel_perle_reference: null
+  myspeidel_yeast_reference: null
