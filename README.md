@@ -1,20 +1,28 @@
 # Homebrew-as-Code
 
-## HBAC 0.4.0-beta.1 – Home Assistant / HACS
+## HBAC 0.4.0-beta.2 – Home Assistant / Marketplace
+
+The interface and built-in guide now follow your HA language: English (en-US
+fallback), German, French, Spanish, Italian, Portuguese, Polish and Dutch.
+Add more languages with JSON files. [Translation guide](I18N.md) ·
+[Localized test dashboard](dashboard/hbac-test.yaml)
 
 Fetch Brewfather recipes or batch recipe snapshots, review the converted Braumeister
 program, arrange up to nine device slots, and upload through the PR #30 Bridge actions.
 
 **Test beta:** Add `https://github.com/DanielP-1337/Homebrew-as-Code` in HACS under
 **Custom repositories → Integration**, enable beta versions and download
-**v0.4.0-beta.1**. Restart Home Assistant and add the **HBAC** integration.
+**v0.4.0-beta.2**. After updating, restart Home Assistant. New installations with
+UI setup can load immediately in Marketplace on HA 2026.11 or later.
+Add the **HBAC** integration under Devices & services.
 
 [Installation and dashboard setup (Deutsch)](HBAC-HA.de.md) ·
 [Validation and limitations](VALIDATION-HA.md)
 
 The matching Speidel integration and Bridge with PR #30 actions are required.
-Every upload replaces all device recipes. This beta has automated tests but has
-not yet been accepted on a live Brewfather/HA/device installation.
+Every upload replaces all device recipes. A user-operated Beta 1 test successfully
+transferred two Brewfather recipes with matching content readback. The Beta 2
+localization changes have automated tests and await user acceptance in HA.
 
 
 Version-controlled homebrewing recipes, water chemistry,

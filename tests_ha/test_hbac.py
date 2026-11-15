@@ -310,3 +310,38 @@ async def test_cancelled_start_leaves_persistent_unknown(hass, manager):
         await manager.dispatch("upload", {"revision": manager.revision, "replace_all": True})
     assert manager.job["result"] == "outcome_unknown"
     assert manager.store.async_save.call_args.args[0]["job"]["result"] == "outcome_unknown"
+
+
+async def test_native_error_translation_keys():
+    from custom_components.hbac.i18n import service_error
+    error = service_error(HomeAssistantError("Der gekürzte Gerätename ist bereits in der Liste vorhanden."))
+    assert error.translation_domain == "hbac"
+    assert error.translation_key == "runtime_duplicate"
+    error = service_error(ValueError("Rast 2: ungültige Daten."))
+    assert error.translation_key == "runtime_bad_rest"
+    assert error.translation_placeholders == {"index": "2"}
+
+
+async def test_locale_files_served_by_ha(hass, hass_client):
+    from homeassistant.setup import async_setup_component
+    assert await async_setup_component(hass, "hbac", {})
+    client = await hass_client()
+    response = await client.get("/hbac/locales/nl.json")
+    assert response.status == 200
+    assert (await response.json())["ui.upload"] == "Alle apparaatplaatsen vervangen"
+    response = await client.get("/hbac/hbac-card.js")
+    assert response.status == 200
+    assert "hbac-help-card" in await response.text()
+
+
+async def test_eight_native_ha_translations():
+    import json
+    from pathlib import Path
+    root = Path(__file__).parents[1] / "custom_components/hbac"
+    for language in ("en", "de", "fr", "es", "it", "pt", "pl", "nl"):
+        data = json.loads((root / "translations" / f"{language}.json").read_text())
+        assert data["config"]["step"]["user"]["title"]
+        assert data["services"]["upload"]["name"]
+        assert "{index}" in data["exceptions"]["runtime_bad_rest"]["message"]
+    english = json.loads((root / "translations/en.json").read_text())
+    assert english == json.loads((root / "strings.json").read_text())

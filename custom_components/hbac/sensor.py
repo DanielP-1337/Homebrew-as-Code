@@ -1,5 +1,5 @@
 """Upload status for HA dashboards and automations."""
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 
 from .const import DOMAIN
@@ -13,9 +13,12 @@ class UploadSensor(SensorEntity):
     _attr_should_poll = False
     _attr_icon = "mdi:beer"
     _attr_has_entity_name = True
-    _attr_name = "Upload"
+    _attr_translation_key = "upload"
+    _attr_device_class = SensorDeviceClass.ENUM
 
     def __init__(self, manager):
+        self._attr_options = ["idle", "queued", "sending", "submitting", "confirmed", "state_changed",
+                              "unconfirmed", "outcome_unknown", "manually_released"]
         self.manager = manager
         self._attr_unique_id = manager.entry.entry_id + "_upload"
         self._attr_device_info = {"identifiers": {(DOMAIN, manager.entry.entry_id)},

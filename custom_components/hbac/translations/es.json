@@ -1,0 +1,396 @@
+{
+  "title": "HBAC – Brewfather to Braumeister",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Conectar Brewfather y Braumeister",
+        "description": "Usa una clave API Brewfather con recipes.read y batches.read. Las credenciales permanecen en Home Assistant.",
+        "data": {
+          "user_id": "ID de usuario Brewfather",
+          "api_key": "Clave API Brewfather",
+          "bridge_entry_id": "Braumeister"
+        }
+      },
+      "reconfigure": {
+        "title": "Actualizar credenciales Brewfather",
+        "data": {
+          "user_id": "ID de usuario Brewfather",
+          "api_key": "Clave API Brewfather"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Credenciales inválidas o faltan permisos de lectura.",
+      "cannot_connect": "Brewfather no disponible o límite de solicitudes alcanzado."
+    },
+    "abort": {
+      "no_bridge": "Configura primero la integración Speidel Braumeister.",
+      "already_configured": "HBAC ya está configurado para este Braumeister.",
+      "reconfigure_successful": "Credenciales actualizadas."
+    }
+  },
+  "services": {
+    "state": {
+      "name": "Leer lista y estado",
+      "description": "Leer lista y estado",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        }
+      }
+    },
+    "catalog": {
+      "name": "Cargar lista de Brewfather",
+      "description": "Cargar lista de Brewfather",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "kind": {
+          "name": "Origen"
+        },
+        "refresh": {
+          "name": "Actualizar caché"
+        }
+      }
+    },
+    "preview": {
+      "name": "Obtener y previsualizar",
+      "description": "Obtener y previsualizar",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "kind": {
+          "name": "Origen"
+        },
+        "source_id": {
+          "name": "ID de receta/lote (admite entrada directa)"
+        },
+        "mash_in": {
+          "name": "Temperatura de empaste °C – vacío: primer escalón"
+        },
+        "boil_temperature": {
+          "name": "Temperatura de hervor °C"
+        }
+      }
+    },
+    "add": {
+      "name": "Revisado · Añadir a la lista de envío",
+      "description": "Revisado · Añadir a la lista de envío",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "preview_id": {
+          "name": "ID de vista previa"
+        },
+        "revision": {
+          "name": "Revisión actual de la lista"
+        }
+      }
+    },
+    "remove": {
+      "name": "Quitar",
+      "description": "Quitar",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "index": {
+          "name": "Índice de lista (0–8)"
+        },
+        "revision": {
+          "name": "Revisión actual de la lista"
+        }
+      }
+    },
+    "move": {
+      "name": "Mover posición",
+      "description": "Mover posición",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "index": {
+          "name": "Índice de lista (0–8)"
+        },
+        "target": {
+          "name": "Índice de destino (0–8)"
+        },
+        "revision": {
+          "name": "Revisión actual de la lista"
+        }
+      }
+    },
+    "clear": {
+      "name": "Vaciar lista local",
+      "description": "Vaciar lista local",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "revision": {
+          "name": "Revisión actual de la lista"
+        }
+      }
+    },
+    "readiness": {
+      "name": "Comprobar disponibilidad del equipo",
+      "description": "Comprobar disponibilidad del equipo",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        }
+      }
+    },
+    "upload": {
+      "name": "Sustituir todos los espacios del equipo",
+      "description": "El envío sustituye TODAS las recetas del equipo por esta lista en el orden mostrado.",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "revision": {
+          "name": "Revisión actual de la lista"
+        },
+        "replace_all": {
+          "name": "He revisado la lista y quiero sustituir todos los espacios del equipo."
+        }
+      }
+    },
+    "status": {
+      "name": "Consultar de nuevo el estado",
+      "description": "Consultar de nuevo el estado",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        }
+      }
+    },
+    "acknowledge_unknown": {
+      "name": "Equipo comprobado, tarea finalizada · Desbloquear",
+      "description": "Úsalo solo tras comprobar el equipo y la Bridge y confirmar que no hay tareas en curso. Un envío interrumpido puede dejar una lista incompleta.",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "device_checked": {
+          "name": "¿No hay envíos en curso y has comprobado el equipo manualmente? Esto no envía recetas."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "runtime_integer": {
+      "message": "{field}: se requiere un entero entre {low} y {high}."
+    },
+    "runtime_bad_source": {
+      "message": "Registro de Brewfather inválido."
+    },
+    "runtime_no_batch_recipe": {
+      "message": "El lote no contiene una receta completa."
+    },
+    "runtime_no_name": {
+      "message": "Falta el nombre de la receta."
+    },
+    "runtime_bad_name": {
+      "message": "El nombre no contiene caracteres admitidos por el equipo."
+    },
+    "runtime_name_changed": {
+      "message": "Nombre en el equipo: {original} → {name}"
+    },
+    "runtime_rest_count": {
+      "message": "El equipo requiere de 1 a 5 escalones de maceración."
+    },
+    "runtime_bad_rest": {
+      "message": "Escalón {index}: datos inválidos."
+    },
+    "runtime_rest_type": {
+      "message": "Escalón {index}: tipo {type} no admitido."
+    },
+    "runtime_rest_temp": {
+      "message": "Escalón {index}, temperatura"
+    },
+    "runtime_rest_minutes": {
+      "message": "Escalón {index}, minutos"
+    },
+    "runtime_ramp": {
+      "message": "Escalón {index}: rampa no transferida; el equipo controla el calentamiento."
+    },
+    "runtime_end_temp": {
+      "message": "Escalón {index}: no se admite una temperatura final diferente."
+    },
+    "runtime_infusion": {
+      "message": "Escalón {index}: volumen de agua de infusión no transferido."
+    },
+    "runtime_mash_default": {
+      "message": "Temperatura de empaste propuesta según el primer escalón; ajustable en HA."
+    },
+    "runtime_mash_override": {
+      "message": "Temperatura de empaste indicada en HA."
+    },
+    "runtime_boil_duration": {
+      "message": "Duración del hervor"
+    },
+    "runtime_hops_list": {
+      "message": "Las adiciones de lúpulo deben ser una lista."
+    },
+    "runtime_bad_hop": {
+      "message": "Adición de lúpulo inválida."
+    },
+    "runtime_hop_unit": {
+      "message": "{label}: el tiempo del lúpulo de hervor debe estar en minutos."
+    },
+    "runtime_flameout": {
+      "message": "{label}: adición al apagar (0 min) no transferida como alarma."
+    },
+    "runtime_remaining": {
+      "message": "{label}, tiempo restante de hervor"
+    },
+    "runtime_hop_omitted": {
+      "message": "{label}: {use} no transferido como alarma de lúpulo de hervor."
+    },
+    "runtime_unknown_hop": {
+      "message": "{label}: uso de lúpulo desconocido {use}."
+    },
+    "runtime_grouped": {
+      "message": "Adiciones simultáneas agrupadas en una alarma del equipo."
+    },
+    "runtime_hop_count": {
+      "message": "Más de seis tiempos distintos de lúpulo de hervor."
+    },
+    "runtime_boil_default": {
+      "message": "La temperatura de hervor es un ajuste del equipo (103 °C por defecto), modificable en HA."
+    },
+    "runtime_mash_field": {
+      "message": "Temperatura de empaste"
+    },
+    "runtime_boil_field": {
+      "message": "Temperatura de hervor"
+    },
+    "runtime_ingredients": {
+      "message": "Ingredientes y cantidades"
+    },
+    "runtime_water": {
+      "message": "Agua y química del agua"
+    },
+    "runtime_fermentation": {
+      "message": "Fermentación y envasado"
+    },
+    "runtime_targets": {
+      "message": "Objetivos y mediciones"
+    },
+    "runtime_other_additions": {
+      "message": "Whirlpool, lúpulo en seco y otros ingredientes"
+    },
+    "runtime_unknown_source": {
+      "message": "Origen desconocido."
+    },
+    "runtime_rate_limit": {
+      "message": "Límite de solicitudes de Brewfather alcanzado. Inténtalo más tarde."
+    },
+    "runtime_bad_id": {
+      "message": "ID de Brewfather inválido."
+    },
+    "runtime_auth": {
+      "message": "Falta acceso a Brewfather o permisos de lectura de recetas/lotes."
+    },
+    "runtime_http": {
+      "message": "Error de solicitud a Brewfather (HTTP {status})."
+    },
+    "runtime_connection": {
+      "message": "Brewfather no disponible o respuesta inválida."
+    },
+    "runtime_response": {
+      "message": "Formato de respuesta Brewfather inesperado."
+    },
+    "runtime_catalog_entry": {
+      "message": "Entrada de catálogo Brewfather inválida."
+    },
+    "runtime_pagination": {
+      "message": "No se pudo completar la paginación de Brewfather."
+    },
+    "runtime_bridge_missing": {
+      "message": "Faltan acciones Bridge de PR #30. Actualiza la integración HA y la Bridge."
+    },
+    "runtime_bridge_response": {
+      "message": "Respuesta Bridge inválida."
+    },
+    "runtime_locked": {
+      "message": "Envío en curso o resultado desconocido. Comprueba primero la tarea."
+    },
+    "runtime_stale_revision": {
+      "message": "La lista ha cambiado. Actualiza la vista."
+    },
+    "runtime_capacity": {
+      "message": "Máximo nueve espacios."
+    },
+    "runtime_preview_expired": {
+      "message": "Vista previa caducada. Revisa de nuevo la receta."
+    },
+    "runtime_duplicate": {
+      "message": "El nombre abreviado ya está en la lista."
+    },
+    "runtime_bad_slot": {
+      "message": "Posición desconocida."
+    },
+    "runtime_bad_target": {
+      "message": "Posición de destino inválida."
+    },
+    "runtime_confirm": {
+      "message": "Revisa la lista actual y confirma la sustitución de todos los espacios."
+    },
+    "runtime_queue_count": {
+      "message": "La lista debe contener de 1 a 9 recetas."
+    },
+    "runtime_not_ready": {
+      "message": "Equipo no listo: {reasons}"
+    },
+    "runtime_no_receipt": {
+      "message": "La respuesta no contiene ID de tarea."
+    },
+    "runtime_bad_status": {
+      "message": "Estado de tarea inválido."
+    },
+    "runtime_unknown_outcome": {
+      "message": "Resultado desconocido. No reenvíes; comprueba el equipo y la Bridge."
+    },
+    "runtime_release_check": {
+      "message": "Desbloquea solo tras comprobar manualmente el equipo y que la tarea terminó."
+    },
+    "runtime_unknown_action": {
+      "message": "Acción HBAC desconocida."
+    },
+    "runtime_no_job_id": {
+      "message": "No hay ID de tarea. Comprueba manualmente el equipo y la Bridge."
+    },
+    "runtime_wrong_job": {
+      "message": "La respuesta Bridge no corresponde a la tarea."
+    },
+    "runtime_poll_failed": {
+      "message": "Estado no disponible. No vuelvas a enviar; consulta el estado más tarde."
+    },
+    "runtime_entry": {
+      "message": "Entrada HBAC ausente o ambigua. Indica entry_id."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "upload": {
+        "name": "Equipo y tarea de envío",
+        "state": {
+          "idle": "Inactivo",
+          "queued": "En cola",
+          "sending": "Enviando",
+          "submitting": "Solicitando envío",
+          "confirmed": "Número de recetas confirmado por el equipo",
+          "state_changed": "Interrumpido: cambió el estado del equipo",
+          "unconfirmed": "Envío no confirmado",
+          "outcome_unknown": "Resultado desconocido – no reenviar",
+          "manually_released": "Desbloqueado tras comprobar el equipo"
+        }
+      }
+    }
+  }
+}

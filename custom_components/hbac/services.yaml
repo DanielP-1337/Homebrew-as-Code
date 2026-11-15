@@ -1,20 +1,20 @@
 state:
-  name: Liste und Status lesen
-  description: Liest die lokale Liste und den zuletzt bekannten Auftragsstatus.
+  name: Read list and status
+  description: Read list and status
   fields:
     entry_id: &id001
-      name: HBAC-Integration
+      name: HBAC
       required: false
       selector:
         config_entry:
           integration: hbac
 catalog:
-  name: Brewfather-Liste abrufen
-  description: Listet Rezepte oder Batches mit Paginierung; fünf Minuten Cache.
+  name: Load list from Brewfather
+  description: Load list from Brewfather
   fields:
     entry_id: *id001
     kind: &id002
-      name: Quelle
+      name: Source
       required: true
       selector:
         select:
@@ -22,24 +22,23 @@ catalog:
           - recipes
           - batches
     refresh:
-      name: Cache aktualisieren
+      name: Refresh cache
       default: false
       selector:
         boolean: {}
 preview:
-  name: Rezept konvertieren
-  description: Lädt den vollständigen Datensatz und erstellt eine Vorschau. Batch
-    verwendet sein eigenes Rezept.
+  name: Fetch and preview
+  description: Fetch and preview
   fields:
     entry_id: *id001
     kind: *id002
     source_id:
-      name: Brewfather-ID
+      name: Recipe/batch ID (direct entry supported)
       required: true
       selector:
         text: {}
     mash_in:
-      name: 'Einmaischtemperatur (leer: erste Rast)'
+      name: 'Mash-in temperature °C – blank: first rest'
       selector:
         number:
           min: 20
@@ -48,7 +47,7 @@ preview:
           unit_of_measurement: °C
           mode: box
     boil_temperature:
-      name: Kochtemperatur
+      name: Boil temperature °C
       default: 103
       selector:
         number:
@@ -58,27 +57,27 @@ preview:
           unit_of_measurement: °C
           mode: box
 add:
-  name: Geprüfte Vorschau hinzufügen
-  description: Fügt die unveränderte Vorschau der Upload-Liste hinzu.
+  name: Reviewed · Add to upload list
+  description: Reviewed · Add to upload list
   fields:
     entry_id: *id001
     preview_id:
-      name: Vorschau-ID
+      name: Preview ID
       required: true
       selector:
         text: {}
     revision: &id003
-      name: Aktuelle Listenrevision
+      name: Current list revision
       required: true
       selector:
         text: {}
 remove:
-  name: Listenplatz entfernen
-  description: Entfernt einen Platz aus der lokalen Upload-Liste.
+  name: Remove
+  description: Remove
   fields:
     entry_id: *id001
     index: &id004
-      name: Listenindex (0–8)
+      name: List index (0–8)
       required: true
       selector:
         number:
@@ -88,13 +87,13 @@ remove:
           mode: box
     revision: *id003
 move:
-  name: Listenplatz verschieben
-  description: Ändert die Reihenfolge der Geräterezeptplätze.
+  name: Move list slot
+  description: Move list slot
   fields:
     entry_id: *id001
     index: *id004
     target:
-      name: Zielindex (0–8)
+      name: Target index (0–8)
       required: true
       selector:
         number:
@@ -104,41 +103,42 @@ move:
           mode: box
     revision: *id003
 clear:
-  name: Lokale Liste leeren
-  description: Leert nur die lokale Liste, sendet nichts zum Gerät.
+  name: Clear local list
+  description: Clear local list
   fields:
     entry_id: *id001
     revision: *id003
 readiness:
-  name: Gerätebereitschaft prüfen
-  description: 'Fragt die aktuelle Bereitschaft über PR #30 ab.'
+  name: Check device readiness
+  description: Check device readiness
   fields:
     entry_id: *id001
 upload:
-  name: Alle Geräteplätze ersetzen
-  description: Ersetzt alle Geräterezeptplätze. Nur die geprüfte Listenrevision wird
-    gesendet; kein automatischer Wiederholungsversuch.
+  name: Replace all device slots
+  description: Uploading replaces ALL recipes on the device with this list in the
+    displayed order.
   fields:
     entry_id: *id001
     revision: *id003
     replace_all:
-      name: Alle Geräterezeptplätze ersetzen
+      name: I have reviewed the list and want to replace all device slots.
       required: true
       selector:
         boolean: {}
 status:
-  name: Auftragsstatus abfragen
-  description: Fragt genau die gespeicherte Auftrags-ID ab; sendet keine Rezepte.
+  name: Check job status again
+  description: Check job status again
   fields:
     entry_id: *id001
 acknowledge_unknown:
-  name: Uploads nach Geräteprüfung freigeben
-  description: Nur nach manueller Prüfung, dass kein Upload mehr läuft. Sendet keine
-    Rezepte.
+  name: Device checked, job ended · Unlock
+  description: Use only after checking the device and Bridge and confirming no job
+    is running. An interrupted upload can leave an incomplete recipe list.
   fields:
     entry_id: *id001
     device_checked:
-      name: Gerät manuell geprüft, kein Auftrag läuft mehr
+      name: No upload is running and you checked the device manually? This does not
+        send a recipe.
       required: true
       selector:
         boolean: {}

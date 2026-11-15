@@ -22,6 +22,7 @@ jobs:
         with:
           node-version: '22'
       - run: node tests_frontend/card.test.cjs
+      - run: node tests_frontend/i18n.test.cjs
   hacs:
     runs-on: ubuntu-latest
     steps:

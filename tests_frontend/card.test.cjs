@@ -17,6 +17,13 @@ global.document = {createElement: tag => new Element(tag)};
 const registry = new Map();
 global.customElements = {get: key => registry.get(key), define: (key, cls) => registry.set(key, cls)};
 global.window = {confirm: () => true};
+const fs = require('node:fs');
+const path = require('node:path');
+global.fetch = async url => {
+  if (!url.startsWith('/hbac/locales/')) return {ok: false};
+  const file = path.join(__dirname, '../custom_components/hbac/frontend/locales', url.split('/').at(-1).split('?')[0]);
+  return fs.existsSync(file) ? {ok: true, json: async () => JSON.parse(fs.readFileSync(file, 'utf8'))} : {ok: false};
+};
 require('../custom_components/hbac/frontend/hbac-card.js');
 
 const flush = () => new Promise(resolve => setImmediate(resolve));
@@ -28,7 +35,7 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
       boil_minutes: 60, boil_temperature: 103, hop_additions: [60, 15]}, warnings: ['Test warning'], not_transferred: ['Gärung']};
   let state = {entry_id: 'h1', queue: [], revision: 'rev1', job: null};
   card.setConfig({entry_id: 'h1'});
-  card.hass = {callWS: async msg => {
+  card.hass = {locale: {language: 'de'}, callWS: async msg => {
     calls.push(msg);
     assert.equal(msg.service_data.entry_id, 'h1');
     assert.equal(msg.return_response, true);
@@ -46,6 +53,7 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
     }
     return {response: structuredClone(state)};
   }};
+  await card.localeReady;
   await flush();
   const button = label => card.shadowRoot.querySelectorAll('button').find(b => b.textContent === label);
   const click = async label => { const b = button(label); assert(b, label); assert(!b.disabled, label); b.onclick(); await flush(); };

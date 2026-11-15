@@ -11,6 +11,7 @@ from homeassistant.helpers.event import async_track_time_interval
 
 from .api import BrewfatherClient, BrewfatherError
 from .const import DOMAIN
+from .i18n import service_error
 from .manager import Manager
 
 KINDS = vol.In(["recipes", "batches"])
@@ -35,7 +36,7 @@ SCHEMAS = {
 async def async_setup(hass, config):
     hass.data.setdefault(DOMAIN, {})
     await hass.http.async_register_static_paths([
-        StaticPathConfig("/hbac/hbac-card.js", str(Path(__file__).parent / "frontend" / "hbac-card.js"), False)
+        StaticPathConfig("/hbac", str(Path(__file__).parent / "frontend"), False)
     ])
 
     def make_handler(action):
@@ -46,11 +47,11 @@ async def async_setup(hass, config):
                 entry_id = next(iter(managers))
             manager = managers.get(entry_id)
             if manager is None:
-                raise HomeAssistantError("HBAC-Eintrag fehlt oder ist mehrdeutig. entry_id angeben.")
+                raise service_error(HomeAssistantError("HBAC-Eintrag fehlt oder ist mehrdeutig. entry_id angeben."))
             try:
                 return await manager.dispatch(action, call.data)
-            except (BrewfatherError, ValueError) as err:
-                raise HomeAssistantError(str(err)) from err
+            except (BrewfatherError, ValueError, HomeAssistantError) as err:
+                raise service_error(err) from err
         return handle
 
     for action, fields in SCHEMAS.items():

@@ -3,180 +3,392 @@
   "config": {
     "step": {
       "user": {
-        "title": "Brewfather und Braumeister verbinden",
-        "description": "Brewfather API-Key mit recipes.read und batches.read verwenden. Zugangsdaten bleiben in Home Assistant.",
+        "title": "Connect Brewfather and Braumeister",
+        "description": "Use a Brewfather API key with recipes.read and batches.read. Credentials stay in Home Assistant.",
         "data": {
-          "user_id": "Brewfather User-ID",
-          "api_key": "Brewfather API-Key",
+          "user_id": "Brewfather User ID",
+          "api_key": "Brewfather API key",
           "bridge_entry_id": "Braumeister"
         }
       },
       "reconfigure": {
-        "title": "Brewfather-Zugang erneuern",
+        "title": "Update Brewfather credentials",
         "data": {
-          "user_id": "Brewfather User-ID",
-          "api_key": "Neuer API-Key"
+          "user_id": "Brewfather User ID",
+          "api_key": "Brewfather API key"
         }
       }
     },
     "error": {
-      "invalid_auth": "Zugangsdaten ungültig oder Leserechte für Rezepte/Batches fehlen.",
-      "cannot_connect": "Brewfather nicht erreichbar oder Anfragelimit erreicht."
+      "invalid_auth": "Invalid credentials or recipe/batch read permissions missing.",
+      "cannot_connect": "Brewfather unreachable or request limit reached."
     },
     "abort": {
-      "no_bridge": "Zuerst die Speidel-Braumeister-Integration einrichten.",
-      "already_configured": "HBAC ist für diesen Braumeister bereits eingerichtet.",
-      "reconfigure_successful": "Zugangsdaten aktualisiert."
+      "no_bridge": "Set up the Speidel Braumeister integration first.",
+      "already_configured": "HBAC is already configured for this Braumeister.",
+      "reconfigure_successful": "Credentials updated."
     }
   },
   "services": {
     "state": {
-      "name": "Liste und Status lesen",
-      "description": "Liest die lokale Liste und den zuletzt bekannten Auftragsstatus.",
+      "name": "Read list and status",
+      "description": "Read list and status",
       "fields": {
         "entry_id": {
-          "name": "HBAC-Integration"
+          "name": "HBAC"
         }
       }
     },
     "catalog": {
-      "name": "Brewfather-Liste abrufen",
-      "description": "Listet Rezepte oder Batches mit Paginierung; fünf Minuten Cache.",
+      "name": "Load list from Brewfather",
+      "description": "Load list from Brewfather",
       "fields": {
         "entry_id": {
-          "name": "HBAC-Integration"
+          "name": "HBAC"
         },
         "kind": {
-          "name": "Quelle"
+          "name": "Source"
         },
         "refresh": {
-          "name": "Cache aktualisieren"
+          "name": "Refresh cache"
         }
       }
     },
     "preview": {
-      "name": "Rezept konvertieren",
-      "description": "Lädt den vollständigen Datensatz und erstellt eine Vorschau. Batch verwendet sein eigenes Rezept.",
+      "name": "Fetch and preview",
+      "description": "Fetch and preview",
       "fields": {
         "entry_id": {
-          "name": "HBAC-Integration"
+          "name": "HBAC"
         },
         "kind": {
-          "name": "Quelle"
+          "name": "Source"
         },
         "source_id": {
-          "name": "Brewfather-ID"
+          "name": "Recipe/batch ID (direct entry supported)"
         },
         "mash_in": {
-          "name": "Einmaischtemperatur (leer: erste Rast)"
+          "name": "Mash-in temperature °C – blank: first rest"
         },
         "boil_temperature": {
-          "name": "Kochtemperatur"
+          "name": "Boil temperature °C"
         }
       }
     },
     "add": {
-      "name": "Geprüfte Vorschau hinzufügen",
-      "description": "Fügt die unveränderte Vorschau der Upload-Liste hinzu.",
+      "name": "Reviewed · Add to upload list",
+      "description": "Reviewed · Add to upload list",
       "fields": {
         "entry_id": {
-          "name": "HBAC-Integration"
+          "name": "HBAC"
         },
         "preview_id": {
-          "name": "Vorschau-ID"
+          "name": "Preview ID"
         },
         "revision": {
-          "name": "Aktuelle Listenrevision"
+          "name": "Current list revision"
         }
       }
     },
     "remove": {
-      "name": "Listenplatz entfernen",
-      "description": "Entfernt einen Platz aus der lokalen Upload-Liste.",
+      "name": "Remove",
+      "description": "Remove",
       "fields": {
         "entry_id": {
-          "name": "HBAC-Integration"
+          "name": "HBAC"
         },
         "index": {
-          "name": "Listenindex (0–8)"
+          "name": "List index (0–8)"
         },
         "revision": {
-          "name": "Aktuelle Listenrevision"
+          "name": "Current list revision"
         }
       }
     },
     "move": {
-      "name": "Listenplatz verschieben",
-      "description": "Ändert die Reihenfolge der Geräterezeptplätze.",
+      "name": "Move list slot",
+      "description": "Move list slot",
       "fields": {
         "entry_id": {
-          "name": "HBAC-Integration"
+          "name": "HBAC"
         },
         "index": {
-          "name": "Listenindex (0–8)"
+          "name": "List index (0–8)"
         },
         "target": {
-          "name": "Zielindex (0–8)"
+          "name": "Target index (0–8)"
         },
         "revision": {
-          "name": "Aktuelle Listenrevision"
+          "name": "Current list revision"
         }
       }
     },
     "clear": {
-      "name": "Lokale Liste leeren",
-      "description": "Leert nur die lokale Liste, sendet nichts zum Gerät.",
+      "name": "Clear local list",
+      "description": "Clear local list",
       "fields": {
         "entry_id": {
-          "name": "HBAC-Integration"
+          "name": "HBAC"
         },
         "revision": {
-          "name": "Aktuelle Listenrevision"
+          "name": "Current list revision"
         }
       }
     },
     "readiness": {
-      "name": "Gerätebereitschaft prüfen",
-      "description": "Fragt die aktuelle Bereitschaft über PR #30 ab.",
+      "name": "Check device readiness",
+      "description": "Check device readiness",
       "fields": {
         "entry_id": {
-          "name": "HBAC-Integration"
+          "name": "HBAC"
         }
       }
     },
     "upload": {
-      "name": "Alle Geräteplätze ersetzen",
-      "description": "Ersetzt alle Geräterezeptplätze. Nur die geprüfte Listenrevision wird gesendet; kein automatischer Wiederholungsversuch.",
+      "name": "Replace all device slots",
+      "description": "Uploading replaces ALL recipes on the device with this list in the displayed order.",
       "fields": {
         "entry_id": {
-          "name": "HBAC-Integration"
+          "name": "HBAC"
         },
         "revision": {
-          "name": "Aktuelle Listenrevision"
+          "name": "Current list revision"
         },
         "replace_all": {
-          "name": "Alle Geräterezeptplätze ersetzen"
+          "name": "I have reviewed the list and want to replace all device slots."
         }
       }
     },
     "status": {
-      "name": "Auftragsstatus abfragen",
-      "description": "Fragt genau die gespeicherte Auftrags-ID ab; sendet keine Rezepte.",
+      "name": "Check job status again",
+      "description": "Check job status again",
       "fields": {
         "entry_id": {
-          "name": "HBAC-Integration"
+          "name": "HBAC"
         }
       }
     },
     "acknowledge_unknown": {
-      "name": "Uploads nach Geräteprüfung freigeben",
-      "description": "Nur nach manueller Prüfung, dass kein Upload mehr läuft. Sendet keine Rezepte.",
+      "name": "Device checked, job ended · Unlock",
+      "description": "Use only after checking the device and Bridge and confirming no job is running. An interrupted upload can leave an incomplete recipe list.",
       "fields": {
         "entry_id": {
-          "name": "HBAC-Integration"
+          "name": "HBAC"
         },
         "device_checked": {
-          "name": "Gerät manuell geprüft, kein Auftrag läuft mehr"
+          "name": "No upload is running and you checked the device manually? This does not send a recipe."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "runtime_integer": {
+      "message": "{field}: a whole number from {low} to {high} is required."
+    },
+    "runtime_bad_source": {
+      "message": "Invalid Brewfather record."
+    },
+    "runtime_no_batch_recipe": {
+      "message": "The batch does not contain a complete recipe."
+    },
+    "runtime_no_name": {
+      "message": "Recipe name is missing."
+    },
+    "runtime_bad_name": {
+      "message": "Recipe name has no characters supported by the device."
+    },
+    "runtime_name_changed": {
+      "message": "Device name: {original} → {name}"
+    },
+    "runtime_rest_count": {
+      "message": "The device requires 1 to 5 mash rests."
+    },
+    "runtime_bad_rest": {
+      "message": "Rest {index}: invalid data."
+    },
+    "runtime_rest_type": {
+      "message": "Rest {index}: type {type} is not supported."
+    },
+    "runtime_rest_temp": {
+      "message": "Rest {index}, temperature"
+    },
+    "runtime_rest_minutes": {
+      "message": "Rest {index}, minutes"
+    },
+    "runtime_ramp": {
+      "message": "Rest {index}: ramp time not transferred; the device controls heating."
+    },
+    "runtime_end_temp": {
+      "message": "Rest {index}: a different end temperature cannot be represented."
+    },
+    "runtime_infusion": {
+      "message": "Rest {index}: infusion water amount not transferred."
+    },
+    "runtime_mash_default": {
+      "message": "Mash-in suggested from the first rest; adjust in HA if needed."
+    },
+    "runtime_mash_override": {
+      "message": "Mash-in temperature specified in HA."
+    },
+    "runtime_boil_duration": {
+      "message": "Boil duration"
+    },
+    "runtime_hops_list": {
+      "message": "Hop additions must be a list."
+    },
+    "runtime_bad_hop": {
+      "message": "Invalid hop addition."
+    },
+    "runtime_hop_unit": {
+      "message": "{label}: boil hop time must be in minutes."
+    },
+    "runtime_flameout": {
+      "message": "{label}: flameout addition at 0 minutes not transferred as a device alarm."
+    },
+    "runtime_remaining": {
+      "message": "{label}, remaining boil time"
+    },
+    "runtime_hop_omitted": {
+      "message": "{label}: {use} not transferred as a boil hop alarm."
+    },
+    "runtime_unknown_hop": {
+      "message": "{label}: unknown hop use {use}."
+    },
+    "runtime_grouped": {
+      "message": "Simultaneous boil hop additions grouped into one device alarm."
+    },
+    "runtime_hop_count": {
+      "message": "More than six distinct boil hop times."
+    },
+    "runtime_boil_default": {
+      "message": "Boil temperature is a device setting (default 103 °C), editable in HA."
+    },
+    "runtime_mash_field": {
+      "message": "Mash-in temperature"
+    },
+    "runtime_boil_field": {
+      "message": "Boil temperature"
+    },
+    "runtime_ingredients": {
+      "message": "Ingredients and amounts"
+    },
+    "runtime_water": {
+      "message": "Water and water chemistry"
+    },
+    "runtime_fermentation": {
+      "message": "Fermentation and packaging"
+    },
+    "runtime_targets": {
+      "message": "Targets and measurements"
+    },
+    "runtime_other_additions": {
+      "message": "Whirlpool, dry hops and other ingredients"
+    },
+    "runtime_unknown_source": {
+      "message": "Unknown source."
+    },
+    "runtime_rate_limit": {
+      "message": "Brewfather request limit reached. Please try again later."
+    },
+    "runtime_bad_id": {
+      "message": "Invalid Brewfather ID."
+    },
+    "runtime_auth": {
+      "message": "Brewfather access or recipe/batch read permissions are missing."
+    },
+    "runtime_http": {
+      "message": "Brewfather request failed (HTTP {status})."
+    },
+    "runtime_connection": {
+      "message": "Brewfather unreachable or invalid response."
+    },
+    "runtime_response": {
+      "message": "Unexpected Brewfather response format."
+    },
+    "runtime_catalog_entry": {
+      "message": "Invalid Brewfather catalog entry."
+    },
+    "runtime_pagination": {
+      "message": "Could not complete Brewfather pagination."
+    },
+    "runtime_bridge_missing": {
+      "message": "Bridge actions from PR #30 are missing. Update the HA integration and Bridge."
+    },
+    "runtime_bridge_response": {
+      "message": "Invalid Bridge response."
+    },
+    "runtime_locked": {
+      "message": "Upload running or outcome unknown. Check the job first."
+    },
+    "runtime_stale_revision": {
+      "message": "The list has changed. Refresh the view."
+    },
+    "runtime_capacity": {
+      "message": "Maximum nine device slots."
+    },
+    "runtime_preview_expired": {
+      "message": "Preview expired. Review the recipe again."
+    },
+    "runtime_duplicate": {
+      "message": "The shortened device name is already in the list."
+    },
+    "runtime_bad_slot": {
+      "message": "Unknown list slot."
+    },
+    "runtime_bad_target": {
+      "message": "Invalid target slot."
+    },
+    "runtime_confirm": {
+      "message": "Review the current list and confirm replacing all device slots."
+    },
+    "runtime_queue_count": {
+      "message": "The upload list must contain 1 to 9 recipes."
+    },
+    "runtime_not_ready": {
+      "message": "Device not ready: {reasons}"
+    },
+    "runtime_no_receipt": {
+      "message": "Upload response has no job ID."
+    },
+    "runtime_bad_status": {
+      "message": "Invalid job status."
+    },
+    "runtime_unknown_outcome": {
+      "message": "Upload outcome unknown. Do not resend; check the device and Bridge."
+    },
+    "runtime_release_check": {
+      "message": "Unlock only after manually checking the device and confirming the job has ended."
+    },
+    "runtime_unknown_action": {
+      "message": "Unknown HBAC action."
+    },
+    "runtime_no_job_id": {
+      "message": "No job ID available. Check the device and Bridge manually."
+    },
+    "runtime_wrong_job": {
+      "message": "Bridge response belongs to an unexpected job."
+    },
+    "runtime_poll_failed": {
+      "message": "Job status currently unavailable. Do not upload again; check status later."
+    },
+    "runtime_entry": {
+      "message": "HBAC entry missing or ambiguous. Specify entry_id."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "upload": {
+        "name": "Device and upload job",
+        "state": {
+          "idle": "Idle",
+          "queued": "Queued",
+          "sending": "Uploading",
+          "submitting": "Requesting upload",
+          "confirmed": "Recipe count confirmed by device",
+          "state_changed": "Aborted: device state changed",
+          "unconfirmed": "Upload not confirmed",
+          "outcome_unknown": "Upload outcome unknown – do not resend",
+          "manually_released": "Unlocked after manual device check"
         }
       }
     }

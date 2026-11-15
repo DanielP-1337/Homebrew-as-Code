@@ -1,8 +1,27 @@
-# HBAC 0.4.0-beta.1 – verification, 2026-11-15
+# HBAC 0.4.0-beta.2 – verification, 2026-11-15
+
+## Beta 2 localization
+
+- 39 HA/conversion/API tests passed, including native error translation keys,
+  static serving of locale JSON and both card types, and eight native HA catalogs.
+- Eight complete catalogs, each with 165 keys; key/type/placeholder parity checked.
+- Frontend tests cover the operating card and guide, HA profile language changes,
+  per-card overrides, regional fallback, partial additional user JSON, malformed
+  JSON, invalid placeholders, safe locale paths and complete offline en-US fallback.
+- Persisted Beta 1 German messages are translated for display without changing
+  the stored recipe programs. Language changes do not send service calls.
+- Existing card interaction tests still pass. Device conversion/upload logic is
+  unchanged; the full 547 core tests passed for the preceding publication.
+
+The user reported a successful Beta 1 two-recipe Brewfather upload with subsequent
+matching content readback on 15 November 2026. MySpeidel's device view also showed
+the names and the selected recipe's rests. This does not establish creation of full
+recipes in the personal cloud recipe library. Beta 2 localization has not yet had
+live dashboard acceptance testing.
 
 ## Results
 
-- **36 HA/converter/API tests passed** in Linux Docker, Python 3.13.18,
+- **36 original HA/converter/API tests passed** in Linux Docker, Python 3.13.18,
   Home Assistant 2026.2.3, pytest-homeassistant-custom-component 0.13.316.
 - **12 existing HBAC Bridge export/upload tests passed** on Python 3.11.2.
 - **18 checks passed against the actual PR #30 Bridge encoder**: all nine slots
@@ -46,8 +65,8 @@ The HA test dependencies are pinned in `requirements_test_ha.txt`.
 ## Limits
 
 No live Brewfather account, running user HA instance or Braumeister was contacted.
-The card interaction test is not a screenshot/browser layout test. This release
-still needs user acceptance on the actual HA dashboard and device. PR #30 was open
+The card interaction test is not a screenshot/browser layout test. The localization
+still needs user acceptance on the actual HA dashboard. PR #30 was open
 at implementation time; matching Bridge/HA versions are required.
 
 The install ZIP contains only the HBAC integration, card and documentation. It does

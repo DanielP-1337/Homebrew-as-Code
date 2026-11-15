@@ -1,4 +1,24 @@
-# HBAC 0.4.0-beta.1 – Brewfather in Home Assistant
+# HBAC 0.4.0-beta.2 – Brewfather in Home Assistant
+
+Neu: Die gesamte Bedienkarte und Anleitung sind in acht Sprachen verfügbar:
+Englisch (en-US), Deutsch, Französisch, Spanisch, Italienisch, Portugiesisch,
+Polnisch und Niederländisch. Die Karte folgt der HA-Benutzersprache;
+fehlende Texte fallen auf en-US zurück. [Weitere Sprachen hinzufügen](I18N.md).
+
+## Update von Beta 1
+
+1. Im Marketplace die Vorabversion **v0.4.0-beta.2** installieren und HA neu starten.
+2. Die vorhandene Dashboard-Ressource auf
+   `/hbac/hbac-card.js?v=0.4.0-beta.2` ändern (nicht doppelt hinzufügen).
+3. Den Browser neu laden. Bedienkarte und eingeklappte Anleitung sind automatisch
+   lokalisiert; die gespeicherte Upload-Liste und der Auftrag bleiben erhalten.
+4. Für die separate Hilfeansicht die bisherigen deutschen Markdown-Karten durch
+   `type: custom:hbac-help-card` ersetzen. Ein vollständiges Dashboard liegt unter
+   [dashboard/hbac-test.yaml](dashboard/hbac-test.yaml).
+
+Optional pro Bedien- oder Hilfekarte `language: nl` setzen, um die Profil-Sprache
+zu übersteuern. Eigene JSON-Dateien unter `/config/www/hbac/locales/` ergänzen;
+Details stehen in [I18N.md](I18N.md).
 
 Neue eigene HA-Integration mit Dashboard-Karte: Rezepte oder angepasste Batch-Rezepte
 aus Brewfather abrufen, Geräteprogramm prüfen, bis zu neun Plätze zusammenstellen,
@@ -25,7 +45,8 @@ Die bisherigen HBAC-CLI-Exporte bleiben verfügbar.
 In HACS über das Drei-Punkte-Menü **Benutzerdefinierte Repositories** öffnen:
 `https://github.com/DanielP-1337/Homebrew-as-Code` hinzufügen, Typ **Integration**.
 **HBAC – Brewfather to Braumeister** öffnen, Beta-/Vorabversionen anzeigen lassen
-und **v0.4.0-beta.1** herunterladen. Danach HA neu starten und mit Schritt 3 unten
+und **v0.4.0-beta.2** herunterladen. Bei einem Update HA neu starten; bei einer
+Erstinstallation im Marketplace auf HA 2026.11+ nur, wenn HA dazu auffordert. Mit Schritt 3 unten
 fortfahren. Die Dashboard-Ressource wird separat wie in Schritt 4 eingerichtet.
 
 ### Manuelle ZIP-Installation
@@ -37,7 +58,7 @@ fortfahren. Die Dashboard-Ressource wird separat wie in Schritt 4 eingerichtet.
    Brewfather-Zugang eingeben und den bereits eingerichteten Braumeister auswählen.
 4. Unter **Einstellungen → Dashboards → Ressourcen** folgende JavaScript-Modul-Ressource
    hinzufügen (ggf. erweiterten Modus im Benutzerprofil einschalten):
-   `/hbac/hbac-card.js?v=0.4.0-beta.1`
+   `/hbac/hbac-card.js?v=0.4.0-beta.2`
 5. Dashboard bearbeiten, manuelle Karte hinzufügen:
 
 ```yaml

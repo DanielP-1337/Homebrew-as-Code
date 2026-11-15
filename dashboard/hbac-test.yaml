@@ -1,0 +1,19 @@
+# HBAC 0.4.0-beta.2 – localized operating and help cards
+# Add /hbac/hbac-card.js?v=0.4.0-beta.2 as a JavaScript module dashboard resource.
+# Paste this entire file into a NEW dashboard's raw configuration editor.
+# Language follows the HA user profile. Optional per card: language: de
+# With multiple HBAC integrations set entry_id on the operating card.
+title: HBAC
+views:
+  - title: HBAC
+    path: import
+    icon: mdi:beer
+    type: panel
+    cards:
+      - type: custom:hbac-card
+  - title: "ℹ"
+    path: help
+    icon: mdi:clipboard-check-outline
+    type: panel
+    cards:
+      - type: custom:hbac-help-card
