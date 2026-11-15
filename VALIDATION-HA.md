@@ -16,8 +16,27 @@
 The user reported a successful Beta 1 two-recipe Brewfather upload with subsequent
 matching content readback on 15 November 2026. MySpeidel's device view also showed
 the names and the selected recipe's rests. This does not establish creation of full
-recipes in the personal cloud recipe library. Beta 2 localization has not yet had
-live dashboard acceptance testing.
+recipes in the personal cloud recipe library.
+
+## User-operated Beta 2 localization acceptance, 2026-11-15
+
+The user installed Beta 2 in their existing HA instance and confirmed that language
+switching works after placing `language` inside each card configuration. The supplied
+screenshot shows the HBAC operating card in English while the surrounding HA editor
+still displays German ("Fertig"). Visible translated content includes the introduction,
+instruction heading, source selection, buttons, recipe/batch ID, mash-in temperature
+and boiling temperature. This is live dashboard evidence in addition to the automated
+tests, not an automated browser test.
+
+The preceding configuration example used Dutch (`nl`), but the screenshot shows
+English; it is not evidence that all eight languages or every help section were
+manually reviewed. Those remain covered by catalog/rendering tests, with broader
+native-speaker acceptance still welcome. No new hardware upload is claimed for this
+localization test. The screenshot is retained in the conversation, not published.
+
+See [the full dashboard language example](I18N.md#select-a-language). Set `language`
+on both the operating card and help card, not at dashboard or view level. Remove
+both overrides to follow the HA user's profile language.
 
 ## Results
 
@@ -64,9 +83,9 @@ The HA test dependencies are pinned in `requirements_test_ha.txt`.
 
 ## Limits
 
-No live Brewfather account, running user HA instance or Braumeister was contacted.
-The card interaction test is not a screenshot/browser layout test. The localization
-still needs user acceptance on the actual HA dashboard. PR #30 was open
+The automated tests did not contact a live Brewfather account, running user HA
+instance or Braumeister. The card interaction test is not a screenshot/browser
+layout test; the separate user-operated checks are described above. PR #30 was open
 at implementation time; matching Bridge/HA versions are required.
 
 The install ZIP contains only the HBAC integration, card and documentation. It does
