@@ -1,0 +1,144 @@
+state:
+  name: Liste und Status lesen
+  description: Liest die lokale Liste und den zuletzt bekannten Auftragsstatus.
+  fields:
+    entry_id: &id001
+      name: HBAC-Integration
+      required: false
+      selector:
+        config_entry:
+          integration: hbac
+catalog:
+  name: Brewfather-Liste abrufen
+  description: Listet Rezepte oder Batches mit Paginierung; fünf Minuten Cache.
+  fields:
+    entry_id: *id001
+    kind: &id002
+      name: Quelle
+      required: true
+      selector:
+        select:
+          options:
+          - recipes
+          - batches
+    refresh:
+      name: Cache aktualisieren
+      default: false
+      selector:
+        boolean: {}
+preview:
+  name: Rezept konvertieren
+  description: Lädt den vollständigen Datensatz und erstellt eine Vorschau. Batch
+    verwendet sein eigenes Rezept.
+  fields:
+    entry_id: *id001
+    kind: *id002
+    source_id:
+      name: Brewfather-ID
+      required: true
+      selector:
+        text: {}
+    mash_in:
+      name: 'Einmaischtemperatur (leer: erste Rast)'
+      selector:
+        number:
+          min: 20
+          max: 80
+          step: 1
+          unit_of_measurement: °C
+          mode: box
+    boil_temperature:
+      name: Kochtemperatur
+      default: 103
+      selector:
+        number:
+          min: 95
+          max: 105
+          step: 1
+          unit_of_measurement: °C
+          mode: box
+add:
+  name: Geprüfte Vorschau hinzufügen
+  description: Fügt die unveränderte Vorschau der Upload-Liste hinzu.
+  fields:
+    entry_id: *id001
+    preview_id:
+      name: Vorschau-ID
+      required: true
+      selector:
+        text: {}
+    revision: &id003
+      name: Aktuelle Listenrevision
+      required: true
+      selector:
+        text: {}
+remove:
+  name: Listenplatz entfernen
+  description: Entfernt einen Platz aus der lokalen Upload-Liste.
+  fields:
+    entry_id: *id001
+    index: &id004
+      name: Listenindex (0–8)
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 8
+          step: 1
+          mode: box
+    revision: *id003
+move:
+  name: Listenplatz verschieben
+  description: Ändert die Reihenfolge der Geräterezeptplätze.
+  fields:
+    entry_id: *id001
+    index: *id004
+    target:
+      name: Zielindex (0–8)
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 8
+          step: 1
+          mode: box
+    revision: *id003
+clear:
+  name: Lokale Liste leeren
+  description: Leert nur die lokale Liste, sendet nichts zum Gerät.
+  fields:
+    entry_id: *id001
+    revision: *id003
+readiness:
+  name: Gerätebereitschaft prüfen
+  description: 'Fragt die aktuelle Bereitschaft über PR #30 ab.'
+  fields:
+    entry_id: *id001
+upload:
+  name: Alle Geräteplätze ersetzen
+  description: Ersetzt alle Geräterezeptplätze. Nur die geprüfte Listenrevision wird
+    gesendet; kein automatischer Wiederholungsversuch.
+  fields:
+    entry_id: *id001
+    revision: *id003
+    replace_all:
+      name: Alle Geräterezeptplätze ersetzen
+      required: true
+      selector:
+        boolean: {}
+status:
+  name: Auftragsstatus abfragen
+  description: Fragt genau die gespeicherte Auftrags-ID ab; sendet keine Rezepte.
+  fields:
+    entry_id: *id001
+acknowledge_unknown:
+  name: Uploads nach Geräteprüfung freigeben
+  description: Nur nach manueller Prüfung, dass kein Upload mehr läuft. Sendet keine
+    Rezepte.
+  fields:
+    entry_id: *id001
+    device_checked:
+      name: Gerät manuell geprüft, kein Auftrag läuft mehr
+      required: true
+      selector:
+        boolean: {}

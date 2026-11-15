@@ -1,5 +1,22 @@
 # Homebrew-as-Code
 
+## HBAC 0.4.0-beta.1 – Home Assistant / HACS
+
+Fetch Brewfather recipes or batch recipe snapshots, review the converted Braumeister
+program, arrange up to nine device slots, and upload through the PR #30 Bridge actions.
+
+**Test beta:** Add `https://github.com/DanielP-1337/Homebrew-as-Code` in HACS under
+**Custom repositories → Integration**, enable beta versions and download
+**v0.4.0-beta.1**. Restart Home Assistant and add the **HBAC** integration.
+
+[Installation and dashboard setup (Deutsch)](HBAC-HA.de.md) ·
+[Validation and limitations](VALIDATION-HA.md)
+
+The matching Speidel integration and Bridge with PR #30 actions are required.
+Every upload replaces all device recipes. This beta has automated tests but has
+not yet been accepted on a live Brewfather/HA/device installation.
+
+
 Version-controlled homebrewing recipes, water chemistry,
 batch tracking, and experimental MySpeidel Cloud integrations.
 

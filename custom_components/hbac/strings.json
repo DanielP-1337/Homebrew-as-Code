@@ -1,0 +1,184 @@
+{
+  "title": "HBAC – Brewfather to Braumeister",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Brewfather und Braumeister verbinden",
+        "description": "Brewfather API-Key mit recipes.read und batches.read verwenden. Zugangsdaten bleiben in Home Assistant.",
+        "data": {
+          "user_id": "Brewfather User-ID",
+          "api_key": "Brewfather API-Key",
+          "bridge_entry_id": "Braumeister"
+        }
+      },
+      "reconfigure": {
+        "title": "Brewfather-Zugang erneuern",
+        "data": {
+          "user_id": "Brewfather User-ID",
+          "api_key": "Neuer API-Key"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Zugangsdaten ungültig oder Leserechte für Rezepte/Batches fehlen.",
+      "cannot_connect": "Brewfather nicht erreichbar oder Anfragelimit erreicht."
+    },
+    "abort": {
+      "no_bridge": "Zuerst die Speidel-Braumeister-Integration einrichten.",
+      "already_configured": "HBAC ist für diesen Braumeister bereits eingerichtet.",
+      "reconfigure_successful": "Zugangsdaten aktualisiert."
+    }
+  },
+  "services": {
+    "state": {
+      "name": "Liste und Status lesen",
+      "description": "Liest die lokale Liste und den zuletzt bekannten Auftragsstatus.",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC-Integration"
+        }
+      }
+    },
+    "catalog": {
+      "name": "Brewfather-Liste abrufen",
+      "description": "Listet Rezepte oder Batches mit Paginierung; fünf Minuten Cache.",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC-Integration"
+        },
+        "kind": {
+          "name": "Quelle"
+        },
+        "refresh": {
+          "name": "Cache aktualisieren"
+        }
+      }
+    },
+    "preview": {
+      "name": "Rezept konvertieren",
+      "description": "Lädt den vollständigen Datensatz und erstellt eine Vorschau. Batch verwendet sein eigenes Rezept.",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC-Integration"
+        },
+        "kind": {
+          "name": "Quelle"
+        },
+        "source_id": {
+          "name": "Brewfather-ID"
+        },
+        "mash_in": {
+          "name": "Einmaischtemperatur (leer: erste Rast)"
+        },
+        "boil_temperature": {
+          "name": "Kochtemperatur"
+        }
+      }
+    },
+    "add": {
+      "name": "Geprüfte Vorschau hinzufügen",
+      "description": "Fügt die unveränderte Vorschau der Upload-Liste hinzu.",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC-Integration"
+        },
+        "preview_id": {
+          "name": "Vorschau-ID"
+        },
+        "revision": {
+          "name": "Aktuelle Listenrevision"
+        }
+      }
+    },
+    "remove": {
+      "name": "Listenplatz entfernen",
+      "description": "Entfernt einen Platz aus der lokalen Upload-Liste.",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC-Integration"
+        },
+        "index": {
+          "name": "Listenindex (0–8)"
+        },
+        "revision": {
+          "name": "Aktuelle Listenrevision"
+        }
+      }
+    },
+    "move": {
+      "name": "Listenplatz verschieben",
+      "description": "Ändert die Reihenfolge der Geräterezeptplätze.",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC-Integration"
+        },
+        "index": {
+          "name": "Listenindex (0–8)"
+        },
+        "target": {
+          "name": "Zielindex (0–8)"
+        },
+        "revision": {
+          "name": "Aktuelle Listenrevision"
+        }
+      }
+    },
+    "clear": {
+      "name": "Lokale Liste leeren",
+      "description": "Leert nur die lokale Liste, sendet nichts zum Gerät.",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC-Integration"
+        },
+        "revision": {
+          "name": "Aktuelle Listenrevision"
+        }
+      }
+    },
+    "readiness": {
+      "name": "Gerätebereitschaft prüfen",
+      "description": "Fragt die aktuelle Bereitschaft über PR #30 ab.",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC-Integration"
+        }
+      }
+    },
+    "upload": {
+      "name": "Alle Geräteplätze ersetzen",
+      "description": "Ersetzt alle Geräterezeptplätze. Nur die geprüfte Listenrevision wird gesendet; kein automatischer Wiederholungsversuch.",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC-Integration"
+        },
+        "revision": {
+          "name": "Aktuelle Listenrevision"
+        },
+        "replace_all": {
+          "name": "Alle Geräterezeptplätze ersetzen"
+        }
+      }
+    },
+    "status": {
+      "name": "Auftragsstatus abfragen",
+      "description": "Fragt genau die gespeicherte Auftrags-ID ab; sendet keine Rezepte.",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC-Integration"
+        }
+      }
+    },
+    "acknowledge_unknown": {
+      "name": "Uploads nach Geräteprüfung freigeben",
+      "description": "Nur nach manueller Prüfung, dass kein Upload mehr läuft. Sendet keine Rezepte.",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC-Integration"
+        },
+        "device_checked": {
+          "name": "Gerät manuell geprüft, kein Auftrag läuft mehr"
+        }
+      }
+    }
+  }
+}

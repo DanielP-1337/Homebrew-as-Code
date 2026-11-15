@@ -1,0 +1,32 @@
+name: HBAC Home Assistant
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r requirements_test_ha.txt
+      - run: python -m pytest -c tests_ha/pytest.ini tests_ha -q
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node tests_frontend/card.test.cjs
+  hacs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hacs/action@main
+        with:
+          category: integration
+          # Existing repository has no declared license; do not invent one here.
+          ignore: license
