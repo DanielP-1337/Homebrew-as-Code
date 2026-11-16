@@ -25,8 +25,9 @@ Add the **HBAC** integration under Devices & services.
 The matching Speidel integration and Bridge with PR #30 actions are required.
 Every upload replaces all device recipes. A user-operated Beta 1 test successfully
 transferred two Brewfather recipes with matching content readback. The 0.4.0-beta.2 localization was subsequently accepted in the live HA dashboard.
-The new 0.5.0 import paths have automated tests; live Brewer’s Friend account and
-hardware acceptance are still pending. PR #30 has been merged upstream; install
+The user also confirmed local BeerXML upload and, with 0.5.0-beta.3, successful
+Brewer’s Friend conversion/upload. Southern Tier is visible in HA and MySpeidel
+with the expected mash-in temperature and rest. See the validation record for scope. PR #30 has been merged upstream; install
 Speidel integration and Bridge versions containing its actions.
 
 

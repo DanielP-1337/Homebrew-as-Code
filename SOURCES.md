@@ -33,8 +33,10 @@ errors, rate limiting and invalid responses produce errors without exposing the 
 A live empty-account check confirmed that the collection endpoint returns HTTP 404
 with `{"message":"not-found","detail":"no recipes found"}`. Beta 2 treats only this
 exact collection response as an empty list, including during setup. Other 404s and
-recipe-detail failures remain errors. Live retrieval of a populated recipe library
-and hardware acceptance remain pending; those paths use mocked HTTP tests.
+recipe-detail failures remain errors. The user subsequently confirmed successful conversion and upload from a populated
+account with 0.5.0-beta.3. Southern Tier is shown in HA and MySpeidel with the
+expected 73 °C mash-in and 73 °C/90 min rest; see
+[the acceptance record](VALIDATION-HA.md#user-operated-brewers-friend-hardware-acceptance).
 Setup errors are attached to the failing provider field; sanitized failures are
 also recorded in HA logs without credentials or response bodies.
 

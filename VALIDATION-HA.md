@@ -11,13 +11,37 @@ The supplied Sierra Nevada export confirmed an empty INFUSE_AMOUNT and fractiona
 Celsius temperatures. With the user-approved rounding and explicit manual-sparge
 selection, it now converts successfully in a read-only local check: rests 67 °C/60 min
 and 76 °C/10 min, mash-in 67 °C, boil 70 min, hop alarms 60/30/10. The original file
-was not added to the repository. Live HA acceptance remains pending.
+was not added to the repository. The subsequent live Brewer’s Friend acceptance
+is recorded below; the supplied device screenshot specifically shows Southern Tier.
 
 104 HA tests passed; frontend/i18n tests and Ruff passed. Tests cover half-up
 temperature rounding, unmodified source snapshots, manual-step choices, all-manual
 rejection, capacity after selection, source-token identity, and explicit UI selection
 for Sparge with preview invalidation when the choice changes. All eight catalogs
 contain 206 keys. Duration validation is unchanged.
+
+## User-operated Brewer’s Friend hardware acceptance
+
+On November 16, 2026, the user reported successful conversion and upload with
+HBAC 0.5.0-beta.3 after testing Brewer’s Friend recipes. The supplied screenshots
+specifically document **Southern Tier Pumking clone**, shortened to **Southern Tier**:
+
+- HBAC preview: mash-in 73 °C; one rest at 73 °C for 90 minutes; boil 60 minutes
+  at the configured 103 °C; hop alarms at 50 and 10 minutes remaining.
+- The preview explicitly reports rounding the source temperature from 72.7778 °C
+  to 73 °C and shortening the recipe name.
+- HA's device display and MySpeidel's device control view both show Southern Tier
+  at the mash-in/water-confirmation screen, with target 73 °C.
+- MySpeidel also shows the first rest as 73 °C for 90 minutes, matching the preview.
+
+This is live acceptance of the Brewer’s Friend-to-HBAC conversion/upload path,
+in addition to the local BeerXML hardware check below. The supplied images do not
+show a job-level content-readback result, completed heating/brewing, or the device
+program for Sierra Nevada. The mash-in screen is a user-operated observation;
+HBAC's upload action does not automatically start brewing. Visibility in MySpeidel's
+device control view does not establish creation in its personal recipe library.
+Screenshots are retained in the conversation and are not published; no account
+identifiers or credentials are included in this record.
 
 ## User-operated BeerXML hardware acceptance
 
