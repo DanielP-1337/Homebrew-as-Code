@@ -1,5 +1,7 @@
 """Persistent review queue and conservative upload lifecycle."""
 import asyncio
+import base64
+import binascii
 import time
 from copy import deepcopy
 from uuid import uuid4
@@ -9,6 +11,13 @@ from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.storage import Store
 
 from .api import BrewfatherError
+from .beerxml import (
+    import_directory,
+    list_files,
+    normalized_recipe,
+    parse_beerxml,
+    read_file,
+)
 from .const import ACTIVE, BRIDGE_DOMAIN, DOMAIN
 from .converter import convert
 
@@ -25,6 +34,8 @@ class Manager:
         self.previews = {}
         self.catalogs = {}
         self.error = None
+        self.brewersfriend = None
+        self.imports = {}
 
     @property
     def signal(self):
@@ -49,7 +60,9 @@ class Manager:
     def state(self):
         queue = [{k: deepcopy(v) for k, v in item.items() if k != "source_recipe"} for item in self.queue]
         return {"entry_id": self.entry.entry_id, "queue": queue, "revision": self.revision,
-                "job": deepcopy(self.job), "readiness": deepcopy(self.readiness), "error": self.error}
+                "job": deepcopy(self.job), "readiness": deepcopy(self.readiness), "error": self.error,
+                "sources": (["recipes", "batches"] if self.client else []) +
+                           (["brewersfriend"] if self.brewersfriend else []) + ["beerxml_folder", "beerxml_upload"]}
 
     async def bridge(self, action, data=None):
         if not self.hass.services.has_service(BRIDGE_DOMAIN, action):
@@ -81,16 +94,57 @@ class Manager:
     async def _dispatch(self, action, data):
         if action == "state":
             return self.state()
+        if action in ("import_file", "open_file"):
+            if action == "import_file":
+                try:
+                    raw = base64.b64decode(data["content"], validate=True)
+                except (ValueError, binascii.Error) as err:
+                    raise ValueError("BeerXML: invalid or unsafe XML.") from err
+                records = await self.hass.async_add_executor_job(parse_beerxml, raw)
+                kind = "beerxml_upload"
+            else:
+                directory = await self.hass.async_add_executor_job(import_directory, self.hass, self.entry.data.get("import_directory"))
+                records = await self.hass.async_add_executor_job(read_file, directory, data["filename"])
+                kind = "beerxml_folder"
+            token = uuid4().hex
+            self.imports[token] = (kind, records)
+            while len(self.imports) > 5:
+                del self.imports[next(iter(self.imports))]
+            return {"items": [{"id": f"{token}:{index}", "name": record.findtext("NAME") or f"#{index + 1}"}
+                              for index, record in enumerate(records)]}
         if action == "catalog":
             kind = data["kind"]
+            if kind == "beerxml_folder":
+                directory = await self.hass.async_add_executor_job(import_directory, self.hass, self.entry.data.get("import_directory"))
+                return {"items": await self.hass.async_add_executor_job(list_files, directory)}
+            client = self.brewersfriend if kind == "brewersfriend" else self.client
+            if client is None or kind not in ("recipes", "batches", "brewersfriend"):
+                raise ValueError("Recipe source is not configured.")
             cached = self.catalogs.get(kind)
             if not cached or data.get("refresh") or time.monotonic() - cached[0] > 300:
-                items = await self.client.catalog(kind)
+                items = await client.catalog(kind)
                 self.catalogs[kind] = (time.monotonic(), items)
             return {"items": self.catalogs[kind][1]}
         if action == "preview":
-            source = await self.client.get(data["kind"], data["source_id"])
-            preview = convert(source, data["kind"], data["source_id"], data.get("mash_in"), data.get("boil_temperature", 103))
+            kind = data["kind"]
+            if kind in ("beerxml_upload", "beerxml_folder"):
+                try:
+                    token, index = data["source_id"].split(":")
+                    stored_kind, records = self.imports[token]
+                    if stored_kind != kind or not index.isdigit() or int(index) >= len(records):
+                        raise ValueError
+                    source = normalized_recipe(records[int(index)])
+                except (KeyError, IndexError, ValueError) as err:
+                    if isinstance(err, ValueError) and str(err).startswith("BeerXML:"):
+                        raise
+                    raise ValueError("BeerXML: selection expired. Load the file again.") from err
+            else:
+                client = self.brewersfriend if kind == "brewersfriend" else self.client
+                if client is None or kind not in ("recipes", "batches", "brewersfriend"):
+                    raise ValueError("Recipe source is not configured.")
+                source = await client.get(kind, data["source_id"])
+            preview = convert(source, "batches" if kind == "batches" else "recipes", data["source_id"], data.get("mash_in"), data.get("boil_temperature", 103))
+            preview["source"]["kind"] = kind
             token = uuid4().hex
             self.previews[token] = preview
             while len(self.previews) > 20:

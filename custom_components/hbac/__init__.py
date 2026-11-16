@@ -10,11 +10,12 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.event import async_track_time_interval
 
 from .api import BrewfatherClient, BrewfatherError
+from .brewersfriend import BrewersFriendClient
 from .const import DOMAIN
 from .i18n import service_error
 from .manager import Manager
 
-KINDS = vol.In(["recipes", "batches"])
+KINDS = vol.In(["recipes", "batches", "brewersfriend", "beerxml_folder", "beerxml_upload"])
 INDEX = vol.All(int, vol.Range(min=0, max=8))
 SCHEMAS = {
     "state": {},
@@ -22,6 +23,8 @@ SCHEMAS = {
     "preview": {vol.Required("kind"): KINDS, vol.Required("source_id"): str,
                 vol.Optional("mash_in"): vol.All(int, vol.Range(min=20, max=80)),
                 vol.Optional("boil_temperature", default=103): vol.All(int, vol.Range(min=95, max=105))},
+    "import_file": {vol.Required("content"): vol.All(str, vol.Length(max=700000))},
+    "open_file": {vol.Required("filename"): str},
     "add": {vol.Required("preview_id"): str, vol.Required("revision"): str},
     "remove": {vol.Required("index"): INDEX, vol.Required("revision"): str},
     "move": {vol.Required("index"): INDEX, vol.Required("target"): INDEX, vol.Required("revision"): str},
@@ -61,8 +64,11 @@ async def async_setup(hass, config):
 
 
 async def async_setup_entry(hass, entry):
-    client = BrewfatherClient(async_get_clientsession(hass), entry.data["user_id"], entry.data["api_key"])
+    session = async_get_clientsession(hass)
+    client = BrewfatherClient(session, entry.data["user_id"], entry.data["api_key"]) if entry.data.get("user_id") and entry.data.get("api_key") else None
     manager = Manager(hass, entry, client)
+    if entry.data.get("brewersfriend_api_key"):
+        manager.brewersfriend = BrewersFriendClient(session, entry.data["brewersfriend_api_key"])
     await manager.load()
     hass.data[DOMAIN][entry.entry_id] = manager
     entry.async_on_unload(async_track_time_interval(hass, manager.poll, timedelta(seconds=2)))

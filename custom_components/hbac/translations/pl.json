@@ -1,27 +1,34 @@
 {
-  "title": "HBAC – Brewfather to Braumeister",
+  "title": "HBAC – Recipes to Braumeister",
   "config": {
     "step": {
       "user": {
         "title": "Połącz Brewfather i Braumeister",
-        "description": "Użyj klucza API Brewfather z recipes.read i batches.read. Dane logowania pozostają w Home Assistant.",
+        "description": "Wybierz Braumeister. Konta chmurowe są opcjonalne: Brewfather, Brewer’s Friend, oba lub sam BeerXML. Puste dane wyłączają dostawcę.",
         "data": {
           "user_id": "ID użytkownika Brewfather",
           "api_key": "Klucz API Brewfather",
+          "brewersfriend_api_key": "Klucz API Brewer’s Friend (opcjonalny)",
+          "import_directory": "Folder BeerXML w HA",
           "bridge_entry_id": "Braumeister"
         }
       },
       "reconfigure": {
         "title": "Zaktualizuj dane logowania Brewfather",
+        "description": "Wybierz Braumeister. Konta chmurowe są opcjonalne: Brewfather, Brewer’s Friend, oba lub sam BeerXML. Puste dane wyłączają dostawcę.",
         "data": {
           "user_id": "ID użytkownika Brewfather",
-          "api_key": "Klucz API Brewfather"
+          "api_key": "Klucz API Brewfather",
+          "brewersfriend_api_key": "Klucz API Brewer’s Friend (opcjonalny)",
+          "import_directory": "Folder BeerXML w HA"
         }
       }
     },
     "error": {
-      "invalid_auth": "Nieprawidłowe dane logowania lub brak uprawnień odczytu.",
-      "cannot_connect": "Brewfather niedostępny lub osiągnięto limit zapytań."
+      "invalid_auth": "Nieprawidłowe dane API lub brak prawa odczytu.",
+      "cannot_connect": "Dostawca receptur niedostępny lub nieprawidłowa odpowiedź.",
+      "incomplete_brewfather": "Podaj identyfikator i klucz API Brewfather albo pozostaw oba puste.",
+      "invalid_directory": "Użyj bezwzględnej ścieżki folderu w HA."
     },
     "abort": {
       "no_bridge": "Najpierw skonfiguruj integrację Speidel Braumeister.",
@@ -40,8 +47,8 @@
       }
     },
     "catalog": {
-      "name": "Wczytaj listę z Brewfather",
-      "description": "Wczytaj listę z Brewfather",
+      "name": "Wczytaj listę źródła",
+      "description": "Wczytaj listę źródła",
       "fields": {
         "entry_id": {
           "name": "HBAC"
@@ -177,6 +184,30 @@
         },
         "device_checked": {
           "name": "Żaden transfer nie trwa i urządzenie zostało ręcznie sprawdzone? Ta operacja nie wysyła receptury."
+        }
+      }
+    },
+    "import_file": {
+      "name": "BeerXML · Prześlij plik",
+      "description": "BeerXML · Prześlij plik",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "content": {
+          "name": "BeerXML · Prześlij plik"
+        }
+      }
+    },
+    "open_file": {
+      "name": "Odczytaj wybrany plik",
+      "description": "Odczytaj wybrany plik",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "filename": {
+          "name": "Plik XML"
         }
       }
     }
@@ -373,6 +404,60 @@
     },
     "runtime_entry": {
       "message": "Brak lub niejednoznaczny wpis HBAC. Podaj entry_id."
+    },
+    "runtime_xml_size": {
+      "message": "BeerXML: plik pusty lub większy niż 512 KiB."
+    },
+    "runtime_xml_invalid": {
+      "message": "BeerXML: nieprawidłowy lub niebezpieczny XML."
+    },
+    "runtime_xml_root": {
+      "message": "BeerXML: oczekiwano RECIPES z 1–100 recepturami."
+    },
+    "runtime_xml_field": {
+      "message": "BeerXML: brak pola {key} lub jest powielone."
+    },
+    "runtime_xml_number": {
+      "message": "BeerXML: nieprawidłowa liczba w {key}."
+    },
+    "runtime_xml_version": {
+      "message": "BeerXML: obsługiwana jest tylko wersja 1."
+    },
+    "runtime_xml_folder": {
+      "message": "BeerXML: folder importu jest niedostępny."
+    },
+    "runtime_xml_selection": {
+      "message": "BeerXML: nieprawidłowy wybór pliku."
+    },
+    "runtime_xml_file": {
+      "message": "BeerXML: plik jest niedostępny."
+    },
+    "runtime_xml_expired": {
+      "message": "BeerXML: wybór wygasł. Wczytaj plik ponownie."
+    },
+    "runtime_source_missing": {
+      "message": "Źródło receptur nie jest skonfigurowane."
+    },
+    "runtime_bf_rate": {
+      "message": "Brewer's Friend: limit zapytań. Spróbuj później."
+    },
+    "runtime_bf_auth": {
+      "message": "Brewer's Friend: nieprawidłowy klucz API lub brak dostępu."
+    },
+    "runtime_bf_http": {
+      "message": "Brewer's Friend: błąd zapytania (HTTP {status})."
+    },
+    "runtime_bf_size": {
+      "message": "Brewer's Friend: odpowiedź zbyt duża."
+    },
+    "runtime_bf_invalid": {
+      "message": "Brewer's Friend: niedostępny lub nieprawidłowa odpowiedź."
+    },
+    "runtime_bf_many": {
+      "message": "Brewer's Friend: za dużo receptur. Użyj ID."
+    },
+    "runtime_bf_id": {
+      "message": "Brewer's Friend: nieprawidłowe ID receptury."
     }
   },
   "entity": {

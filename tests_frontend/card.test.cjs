@@ -41,7 +41,15 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
     assert.equal(msg.return_response, true);
     switch (msg.service) {
       case 'state': break;
-      case 'catalog': return {response: {items: [{id: 'b1', name: 'Batch Test', batch_no: 7}]}};
+      case 'import_file':
+        assert.equal(Buffer.from(msg.service_data.content, 'base64').toString(), '<RECIPES/>');
+        return {response: {items: [{id: 'token:0', name: 'XML Recipe'}]}};
+      case 'open_file':
+        assert.equal(msg.service_data.filename, 'one.xml');
+        return {response: {items: [{id: 'filetoken:0', name: 'Folder Recipe'}]}};
+      case 'catalog':
+        if (msg.service_data.kind === 'beerxml_folder') return {response: {items: [{id: 'one.xml', name: 'one.xml'}]}};
+        return {response: {items: [{id: 'b1', name: 'Batch Test', batch_no: 7}]}};
       case 'preview': return {response: structuredClone(preview)};
       case 'add': state.queue.push(structuredClone(preview)); state.revision = 'rev2'; break;
       case 'upload':
@@ -60,7 +68,7 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
   assert(button('Alle Geräteplätze ersetzen').disabled);
   const source = card.shadowRoot.querySelectorAll('select')[0];
   source.value = 'batches'; source.onchange();
-  await click('Liste aus Brewfather laden');
+  await click('Quellenliste laden');
   const selection = card.shadowRoot.querySelectorAll('select')[1];
   selection.value = 'b1'; selection.onchange();
   await click('Abrufen und Vorschau erstellen');
@@ -86,5 +94,41 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
   assert(!button('Geprüft · Zur Upload-Liste hinzufügen'));
   await click('Abrufen und Vorschau erstellen');
   assert.equal(calls.at(-1).service_data.mash_in, 55);
+  const previousUploads = calls.filter(c => c.service === 'upload').length;
+  card.state.sources = ['recipes', 'batches', 'brewersfriend', 'beerxml_folder', 'beerxml_upload'];
+  card.render();
+  const changeSource = kind => {
+    const select = card.shadowRoot.querySelectorAll('select')[0];
+    select.value = kind; select.onchange();
+  };
+  changeSource('brewersfriend');
+  await click('Quellenliste laden');
+  assert.equal(calls.at(-1).service_data.kind, 'brewersfriend');
+  changeSource('beerxml_upload');
+  let file = card.shadowRoot.querySelectorAll('input').find(e => e.type === 'file');
+  file.files = [{size: 10, arrayBuffer: async () => Buffer.from('<RECIPES/>')}];
+  file.onchange(); await flush();
+  let recipeSelect = card.shadowRoot.querySelectorAll('select')[1];
+  recipeSelect.value = 'token:0'; recipeSelect.onchange();
+  await click('Abrufen und Vorschau erstellen');
+  assert.equal(calls.at(-1).service_data.kind, 'beerxml_upload');
+  assert.equal(calls.at(-1).service_data.source_id, 'token:0');
+  file = card.shadowRoot.querySelectorAll('input').find(e => e.type === 'file');
+  file.files = [{size: 512 * 1024 + 1, arrayBuffer: () => { throw new Error('Must reject before reading'); }}];
+  const beforeOversize = calls.length;
+  file.onchange(); await flush();
+  assert.equal(calls.length, beforeOversize);
+  assert(card.error.includes('512'));
+  changeSource('beerxml_folder');
+  await click('Quellenliste laden');
+  const folderSelect = card.shadowRoot.querySelectorAll('select')[1];
+  folderSelect.value = 'one.xml'; folderSelect.onchange();
+  await click('Ausgewählte Datei einlesen');
+  recipeSelect = card.shadowRoot.querySelectorAll('select')[2];
+  recipeSelect.value = 'filetoken:0'; recipeSelect.onchange();
+  await click('Abrufen und Vorschau erstellen');
+  assert.equal(calls.at(-1).service_data.kind, 'beerxml_folder');
+  assert.equal(calls.at(-1).service_data.source_id, 'filetoken:0');
+  assert.equal(calls.filter(c => c.service === 'upload').length, previousUploads);
   console.log('Card interactions passed: batch selection, preview, review, confirmation, single upload, status, editable mash-in, source text escaping.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

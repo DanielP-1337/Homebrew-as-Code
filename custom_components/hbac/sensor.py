@@ -22,7 +22,7 @@ class UploadSensor(SensorEntity):
         self.manager = manager
         self._attr_unique_id = manager.entry.entry_id + "_upload"
         self._attr_device_info = {"identifiers": {(DOMAIN, manager.entry.entry_id)},
-                                  "name": manager.entry.title, "manufacturer": "HBAC", "model": "Brewfather → Braumeister"}
+                                  "name": manager.entry.title, "manufacturer": "HBAC", "model": "Recipes → Braumeister"}
 
     @property
     def native_value(self):

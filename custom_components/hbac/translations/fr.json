@@ -1,27 +1,34 @@
 {
-  "title": "HBAC – Brewfather to Braumeister",
+  "title": "HBAC – Recipes to Braumeister",
   "config": {
     "step": {
       "user": {
         "title": "Connecter Brewfather et Braumeister",
-        "description": "Utilisez une clé API Brewfather avec recipes.read et batches.read. Les identifiants restent dans Home Assistant.",
+        "description": "Choisissez un Braumeister. Comptes cloud facultatifs : Brewfather, Brewer’s Friend, les deux ou BeerXML seul. Des identifiants vides désactivent le fournisseur.",
         "data": {
           "user_id": "ID utilisateur Brewfather",
           "api_key": "Clé API Brewfather",
+          "brewersfriend_api_key": "Clé API Brewer’s Friend (facultative)",
+          "import_directory": "Dossier BeerXML dans HA",
           "bridge_entry_id": "Braumeister"
         }
       },
       "reconfigure": {
         "title": "Modifier les identifiants Brewfather",
+        "description": "Choisissez un Braumeister. Comptes cloud facultatifs : Brewfather, Brewer’s Friend, les deux ou BeerXML seul. Des identifiants vides désactivent le fournisseur.",
         "data": {
           "user_id": "ID utilisateur Brewfather",
-          "api_key": "Clé API Brewfather"
+          "api_key": "Clé API Brewfather",
+          "brewersfriend_api_key": "Clé API Brewer’s Friend (facultative)",
+          "import_directory": "Dossier BeerXML dans HA"
         }
       }
     },
     "error": {
-      "invalid_auth": "Identifiants invalides ou droits de lecture manquants.",
-      "cannot_connect": "Brewfather inaccessible ou limite de requêtes atteinte."
+      "invalid_auth": "Identifiants API invalides ou accès en lecture manquant.",
+      "cannot_connect": "Fournisseur de recettes indisponible ou réponse invalide.",
+      "incomplete_brewfather": "Renseignez l’identifiant et la clé API Brewfather, ou laissez les deux vides.",
+      "invalid_directory": "Utilisez un chemin de dossier absolu dans HA."
     },
     "abort": {
       "no_bridge": "Configurez d'abord l'intégration Speidel Braumeister.",
@@ -40,8 +47,8 @@
       }
     },
     "catalog": {
-      "name": "Charger la liste Brewfather",
-      "description": "Charger la liste Brewfather",
+      "name": "Charger la liste des sources",
+      "description": "Charger la liste des sources",
       "fields": {
         "entry_id": {
           "name": "HBAC"
@@ -177,6 +184,30 @@
         },
         "device_checked": {
           "name": "Aucun envoi en cours et appareil vérifié manuellement ? Aucune recette ne sera envoyée."
+        }
+      }
+    },
+    "import_file": {
+      "name": "BeerXML · Importer un fichier",
+      "description": "BeerXML · Importer un fichier",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "content": {
+          "name": "BeerXML · Importer un fichier"
+        }
+      }
+    },
+    "open_file": {
+      "name": "Lire le fichier sélectionné",
+      "description": "Lire le fichier sélectionné",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "filename": {
+          "name": "Fichier XML"
         }
       }
     }
@@ -373,6 +404,60 @@
     },
     "runtime_entry": {
       "message": "Entrée HBAC absente ou ambiguë. Indiquez entry_id."
+    },
+    "runtime_xml_size": {
+      "message": "BeerXML : fichier vide ou supérieur à 512 Kio."
+    },
+    "runtime_xml_invalid": {
+      "message": "BeerXML : XML invalide ou non sécurisé."
+    },
+    "runtime_xml_root": {
+      "message": "BeerXML : RECIPES avec 1 à 100 recettes attendu."
+    },
+    "runtime_xml_field": {
+      "message": "BeerXML : champ {key} absent ou dupliqué."
+    },
+    "runtime_xml_number": {
+      "message": "BeerXML : nombre invalide dans {key}."
+    },
+    "runtime_xml_version": {
+      "message": "BeerXML : seule la version 1 est prise en charge."
+    },
+    "runtime_xml_folder": {
+      "message": "BeerXML : dossier d’import inaccessible."
+    },
+    "runtime_xml_selection": {
+      "message": "BeerXML : sélection de fichier invalide."
+    },
+    "runtime_xml_file": {
+      "message": "BeerXML : fichier inaccessible."
+    },
+    "runtime_xml_expired": {
+      "message": "BeerXML : sélection expirée. Rechargez le fichier."
+    },
+    "runtime_source_missing": {
+      "message": "Source de recettes non configurée."
+    },
+    "runtime_bf_rate": {
+      "message": "Brewer's Friend : limite atteinte. Réessayez plus tard."
+    },
+    "runtime_bf_auth": {
+      "message": "Brewer's Friend : clé API invalide ou accès manquant."
+    },
+    "runtime_bf_http": {
+      "message": "Brewer's Friend : échec de requête (HTTP {status})."
+    },
+    "runtime_bf_size": {
+      "message": "Brewer's Friend : réponse trop volumineuse."
+    },
+    "runtime_bf_invalid": {
+      "message": "Brewer's Friend : indisponible ou réponse invalide."
+    },
+    "runtime_bf_many": {
+      "message": "Brewer's Friend : trop de recettes. Utilisez un identifiant."
+    },
+    "runtime_bf_id": {
+      "message": "Brewer's Friend : identifiant de recette invalide."
     }
   },
   "entity": {

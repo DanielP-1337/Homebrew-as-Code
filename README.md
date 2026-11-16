@@ -1,18 +1,21 @@
 # Homebrew-as-Code
 
-## HBAC 0.4.0-beta.2 – Home Assistant / Marketplace
+## HBAC 0.5.0-beta.1 – Home Assistant / Marketplace
 
 The interface and built-in guide now follow your HA language: English (en-US
 fallback), German, French, Spanish, Italian, Portuguese, Polish and Dutch.
 Add more languages with JSON files. [Translation guide](I18N.md) ·
 [Localized test dashboard](dashboard/hbac-test.yaml)
 
-Fetch Brewfather recipes or batch recipe snapshots, review the converted Braumeister
-program, arrange up to nine device slots, and upload through the PR #30 Bridge actions.
+Fetch Brewfather recipes/batch snapshots or Brewer’s Friend recipes through REST,
+or import BeerXML using a browser file upload or an HA handoff folder. Review the
+converted Braumeister program, arrange up to nine device slots from any source,
+and upload through the generic Bridge actions. Cloud accounts are optional.
+[New source setup and BeerXML limits](SOURCES.md).
 
 **Test beta:** Add `https://github.com/DanielP-1337/Homebrew-as-Code` in HACS under
 **Custom repositories → Integration**, enable beta versions and download
-**v0.4.0-beta.2**. After updating, restart Home Assistant. New installations with
+**v0.5.0-beta.1**. After updating, restart Home Assistant. New installations with
 UI setup can load immediately in Marketplace on HA 2026.11 or later.
 Add the **HBAC** integration under Devices & services.
 
@@ -21,8 +24,10 @@ Add the **HBAC** integration under Devices & services.
 
 The matching Speidel integration and Bridge with PR #30 actions are required.
 Every upload replaces all device recipes. A user-operated Beta 1 test successfully
-transferred two Brewfather recipes with matching content readback. The Beta 2
-localization changes have automated tests and await user acceptance in HA.
+transferred two Brewfather recipes with matching content readback. The 0.4.0-beta.2 localization was subsequently accepted in the live HA dashboard.
+The new 0.5.0 import paths have automated tests; live Brewer’s Friend account and
+hardware acceptance are still pending. PR #30 has been merged upstream; install
+Speidel integration and Bridge versions containing its actions.
 
 
 Version-controlled homebrewing recipes, water chemistry,

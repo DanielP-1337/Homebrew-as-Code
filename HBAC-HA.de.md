@@ -1,15 +1,15 @@
-# HBAC 0.4.0-beta.2 – Brewfather in Home Assistant
+# HBAC 0.5.0-beta.1 – Rezeptquellen in Home Assistant
 
 Neu: Die gesamte Bedienkarte und Anleitung sind in acht Sprachen verfügbar:
 Englisch (en-US), Deutsch, Französisch, Spanisch, Italienisch, Portugiesisch,
 Polnisch und Niederländisch. Die Karte folgt der HA-Benutzersprache;
 fehlende Texte fallen auf en-US zurück. [Weitere Sprachen hinzufügen](I18N.md).
 
-## Update von Beta 1
+## Update von 0.4.0
 
-1. Im Marketplace die Vorabversion **v0.4.0-beta.2** installieren und HA neu starten.
+1. Im Marketplace die Vorabversion **v0.5.0-beta.1** installieren und HA neu starten.
 2. Die vorhandene Dashboard-Ressource auf
-   `/hbac/hbac-card.js?v=0.4.0-beta.2` ändern (nicht doppelt hinzufügen).
+   `/hbac/hbac-card.js?v=0.5.0-beta.1` ändern (nicht doppelt hinzufügen).
 3. Den Browser neu laden. Bedienkarte und eingeklappte Anleitung sind automatisch
    lokalisiert; die gespeicherte Upload-Liste und der Auftrag bleiben erhalten.
 4. Für die separate Hilfeansicht die bisherigen deutschen Markdown-Karten durch
@@ -25,17 +25,35 @@ aus Brewfather abrufen, Geräteprogramm prüfen, bis zu neun Plätze zusammenste
 über die Braumeister-Bridge hochladen und den zugehörigen Auftrag verfolgen.
 Die bisherigen HBAC-CLI-Exporte bleiben verfügbar.
 
+## Neue Quellen in 0.5.0
+
+In der HBAC-Integration **Neu konfigurieren** öffnen, um den optionalen
+Brewer’s-Friend-API-Schlüssel zu ergänzen. Brewfather-Zugangsdaten können bestehen
+bleiben. Ohne Cloud-Zugangsdaten ist ein reiner BeerXML-Betrieb möglich.
+
+- **Brewer’s Friend:** Quelle wählen, Liste laden oder numerische Rezept-ID eingeben.
+- **BeerXML · Datei hochladen:** XML-Datei auf dem Rechner auswählen, enthaltenes
+  Rezept wählen, Vorschau prüfen und zur Upload-Liste hinzufügen.
+- **BeerXML · HA-Ordner:** `/config/hbac/import` in HA anlegen und XML-Dateien ablegen.
+  Alternativ bei der Neukonfiguration einen anderen absoluten HA-Pfad einstellen.
+  Quellenliste laden, Datei wählen und einlesen, danach Rezept auswählen.
+
+Der Ordner wird nicht automatisch überwacht. Dateien werden weder verändert noch
+entfernt. Kein Import startet automatisch einen Geräteupload. Bis zu 100 Rezepte
+pro Datei (512 KiB), weiterhin maximal neun geprüfte Rezepte pro Upload-Liste.
+Weitere Details und Testdateien: [SOURCES.md](SOURCES.md).
+
 ## Voraussetzungen
 
 - Home Assistant mit Custom-Integration-Unterstützung; Tests mit HA 2026.2.3.
 - Speidel-Braumeister-Integration und Bridge mit den drei Aktionen aus
   [PR #30](https://github.com/omphteliba/ha-speidel-braumeister/pull/30):
   `recipe_upload_readiness`, `start_recipe_upload`, `recipe_upload_status`.
-  PR #30 war am 15.11.2026 noch offen. Die bereits vorhandenen Fork-Betas
-  Integration 3.2.1-beta.5 / Bridge 0.5.1-beta.3 enthalten diese Schnittstelle.
+  PR #30 ist inzwischen in Upstream-main enthalten. Installierte Integration und
+  Bridge müssen diese Aktionen unterstützen; ein Merge allein aktualisiert HA nicht.
 - Bridge mit `recipe_write_enabled: true`. Für rein lokalen Betrieb
   `forward_to_cloud: false`; sonst kann die Cloud Rezepte später überschreiben.
-- Brewfather API-Zugang: User-ID und ein Key mit **recipes.read** und **batches.read**.
+- Optionaler Brewfather API-Zugang: User-ID und ein Key mit **recipes.read** und **batches.read**.
   Es werden ausschließlich GET-Anfragen an Brewfather gesendet.
 
 ## Installation
@@ -44,8 +62,8 @@ Die bisherigen HBAC-CLI-Exporte bleiben verfügbar.
 
 In HACS über das Drei-Punkte-Menü **Benutzerdefinierte Repositories** öffnen:
 `https://github.com/DanielP-1337/Homebrew-as-Code` hinzufügen, Typ **Integration**.
-**HBAC – Brewfather to Braumeister** öffnen, Beta-/Vorabversionen anzeigen lassen
-und **v0.4.0-beta.2** herunterladen. Bei einem Update HA neu starten; bei einer
+**HBAC – Recipes to Braumeister** öffnen, Beta-/Vorabversionen anzeigen lassen
+und **v0.5.0-beta.1** herunterladen. Bei einem Update HA neu starten; bei einer
 Erstinstallation im Marketplace auf HA 2026.11+ nur, wenn HA dazu auffordert. Mit Schritt 3 unten
 fortfahren. Die Dashboard-Ressource wird separat wie in Schritt 4 eingerichtet.
 
@@ -58,7 +76,7 @@ fortfahren. Die Dashboard-Ressource wird separat wie in Schritt 4 eingerichtet.
    Brewfather-Zugang eingeben und den bereits eingerichteten Braumeister auswählen.
 4. Unter **Einstellungen → Dashboards → Ressourcen** folgende JavaScript-Modul-Ressource
    hinzufügen (ggf. erweiterten Modus im Benutzerprofil einschalten):
-   `/hbac/hbac-card.js?v=0.4.0-beta.2`
+   `/hbac/hbac-card.js?v=0.5.0-beta.1`
 5. Dashboard bearbeiten, manuelle Karte hinzufügen:
 
 ```yaml

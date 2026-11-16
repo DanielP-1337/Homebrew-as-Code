@@ -9,8 +9,8 @@ state:
         config_entry:
           integration: hbac
 catalog:
-  name: Load list from Brewfather
-  description: Load list from Brewfather
+  name: Load source list
+  description: Load source list
   fields:
     entry_id: *id001
     kind: &id002
@@ -21,6 +21,9 @@ catalog:
           options:
           - recipes
           - batches
+          - brewersfriend
+          - beerxml_folder
+          - beerxml_upload
     refresh:
       name: Refresh cache
       default: false
@@ -142,3 +145,23 @@ acknowledge_unknown:
       required: true
       selector:
         boolean: {}
+import_file:
+  fields:
+    entry_id: *id001
+    content:
+      required: true
+      selector:
+        text: {}
+      name: BeerXML · Upload file
+  name: BeerXML · Upload file
+  description: BeerXML · Upload file
+open_file:
+  fields:
+    entry_id: *id001
+    filename:
+      required: true
+      selector:
+        text: {}
+      name: XML file
+  name: Read selected file
+  description: Read selected file

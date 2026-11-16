@@ -52,7 +52,7 @@ const fresh = () => { I18n.cache.clear(); return new I18n(); };
     guide.hass = {locale: {language: locale}, callWS: () => { throw new Error('Help must not call services'); }};
     await guide.localeReady;
     assert.equal(guide.shadowRoot.querySelectorAll('h2')[0].textContent, dictionaries[locale]['ui.help'] || dictionaries['en-US']['ui.help']);
-    assert.equal(guide.shadowRoot.querySelectorAll('h3').length, 4);
+    assert.equal(guide.shadowRoot.querySelectorAll('h3').length, 5);
   }
   let t = fresh(); await t.load('de-AT'); assert.equal(t.t('ui.upload'), dictionaries.de['ui.upload']);
   t = fresh(); await t.load('pt-BR'); assert.equal(t.t('ui.upload'), dictionaries.pt['ui.upload']);

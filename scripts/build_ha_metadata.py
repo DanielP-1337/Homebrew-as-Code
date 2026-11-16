@@ -9,10 +9,10 @@ COMPONENT = ROOT / "custom_components/hbac"
 LOCALES = COMPONENT / "frontend/locales"
 fallback = json.loads((LOCALES / "en-US.json").read_text(encoding="utf-8"))
 services = yaml.safe_load((COMPONENT / "services.yaml").read_text(encoding="utf-8"))
-action_keys = {"state": "ui.state", "catalog": "ui.load_catalog", "preview": "ui.preview", "add": "ui.add",
+action_keys = {"import_file": "ui.file_upload", "open_file": "ui.open_file", "state": "ui.state", "catalog": "ui.load_catalog", "preview": "ui.preview", "add": "ui.add",
                "remove": "ui.remove", "move": "ui.move", "clear": "ui.clear", "readiness": "ui.readiness",
                "upload": "ui.upload", "status": "ui.refresh_status", "acknowledge_unknown": "ui.release"}
-field_keys = {"entry_id": None, "kind": "ui.source", "refresh": "ui.refresh", "source_id": "ui.source_id",
+field_keys = {"content": "ui.file_upload", "filename": "ui.file", "entry_id": None, "kind": "ui.source", "refresh": "ui.refresh", "source_id": "ui.source_id",
               "mash_in": "ui.mash_in", "boil_temperature": "ui.boil_temperature", "preview_id": "ui.preview_id",
               "revision": "ui.revision", "index": "ui.index", "target": "ui.target", "replace_all": "ui.consent",
               "device_checked": "ui.release_confirm"}
@@ -22,12 +22,12 @@ def generate(catalog):
     def t(key):
         return catalog.get(key) or fallback[key]
 
-    data = {"user_id": t("config.user_id"), "api_key": t("config.api_key")}
-    result = {"title": "HBAC – Brewfather to Braumeister", "config": {
+    data = {"user_id": t("config.user_id"), "api_key": t("config.api_key"), "brewersfriend_api_key": t("config.brewersfriend_api_key"), "import_directory": t("config.import_directory")}
+    result = {"title": "HBAC – Recipes to Braumeister", "config": {
         "step": {"user": {"title": t("config.setup"), "description": t("config.description"),
                            "data": {**data, "bridge_entry_id": "Braumeister"}},
-                 "reconfigure": {"title": t("config.reconfigure"), "data": data}},
-        "error": {key: t("config." + key) for key in ("invalid_auth", "cannot_connect")},
+                 "reconfigure": {"title": t("config.reconfigure"), "description": t("config.description"), "data": data}},
+        "error": {key: t("config." + key) for key in ("invalid_auth", "cannot_connect", "incomplete_brewfather", "invalid_directory")},
         "abort": {key: t("config." + key) for key in ("no_bridge", "already_configured")}},
         "services": {}, "exceptions": {},
         "entity": {"sensor": {"upload": {"name": t("ui.status_title"), "state": {"idle": t("ui.idle")}}}}}

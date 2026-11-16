@@ -1,27 +1,34 @@
 {
-  "title": "HBAC – Brewfather to Braumeister",
+  "title": "HBAC – Recipes to Braumeister",
   "config": {
     "step": {
       "user": {
         "title": "Brewfather en Braumeister verbinden",
-        "description": "Gebruik een Brewfather-API-sleutel met recipes.read en batches.read. Inloggegevens blijven in Home Assistant.",
+        "description": "Kies een Braumeister. Cloudaccounts zijn optioneel: Brewfather, Brewer’s Friend, beide of alleen BeerXML. Lege gegevens schakelen de aanbieder uit.",
         "data": {
           "user_id": "Brewfather-gebruikers-ID",
           "api_key": "Brewfather-API-sleutel",
+          "brewersfriend_api_key": "Brewer’s Friend-API-sleutel (optioneel)",
+          "import_directory": "BeerXML-map in HA",
           "bridge_entry_id": "Braumeister"
         }
       },
       "reconfigure": {
         "title": "Brewfather-inloggegevens bijwerken",
+        "description": "Kies een Braumeister. Cloudaccounts zijn optioneel: Brewfather, Brewer’s Friend, beide of alleen BeerXML. Lege gegevens schakelen de aanbieder uit.",
         "data": {
           "user_id": "Brewfather-gebruikers-ID",
-          "api_key": "Brewfather-API-sleutel"
+          "api_key": "Brewfather-API-sleutel",
+          "brewersfriend_api_key": "Brewer’s Friend-API-sleutel (optioneel)",
+          "import_directory": "BeerXML-map in HA"
         }
       }
     },
     "error": {
-      "invalid_auth": "Ongeldige inloggegevens of ontbrekende leesrechten.",
-      "cannot_connect": "Brewfather onbereikbaar of aanvraaglimiet bereikt."
+      "invalid_auth": "Ongeldige API-gegevens of ontbrekende leestoegang.",
+      "cannot_connect": "Receptaanbieder niet bereikbaar of ongeldig antwoord.",
+      "incomplete_brewfather": "Vul zowel Brewfather-gebruikers-ID als API-sleutel in, of laat beide leeg.",
+      "invalid_directory": "Gebruik een absoluut mappad binnen HA."
     },
     "abort": {
       "no_bridge": "Stel eerst de Speidel Braumeister-integratie in.",
@@ -40,8 +47,8 @@
       }
     },
     "catalog": {
-      "name": "Lijst uit Brewfather laden",
-      "description": "Lijst uit Brewfather laden",
+      "name": "Bronlijst laden",
+      "description": "Bronlijst laden",
       "fields": {
         "entry_id": {
           "name": "HBAC"
@@ -177,6 +184,30 @@
         },
         "device_checked": {
           "name": "Loopt er geen upload meer en is het apparaat handmatig gecontroleerd? Dit verstuurt geen recept."
+        }
+      }
+    },
+    "import_file": {
+      "name": "BeerXML · Bestand uploaden",
+      "description": "BeerXML · Bestand uploaden",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "content": {
+          "name": "BeerXML · Bestand uploaden"
+        }
+      }
+    },
+    "open_file": {
+      "name": "Geselecteerd bestand lezen",
+      "description": "Geselecteerd bestand lezen",
+      "fields": {
+        "entry_id": {
+          "name": "HBAC"
+        },
+        "filename": {
+          "name": "XML-bestand"
         }
       }
     }
@@ -373,6 +404,60 @@
     },
     "runtime_entry": {
       "message": "HBAC-item ontbreekt of is niet eenduidig. Geef entry_id op."
+    },
+    "runtime_xml_size": {
+      "message": "BeerXML: leeg bestand of groter dan 512 KiB."
+    },
+    "runtime_xml_invalid": {
+      "message": "BeerXML: ongeldige of onveilige XML."
+    },
+    "runtime_xml_root": {
+      "message": "BeerXML: RECIPES met 1 tot 100 recepten verwacht."
+    },
+    "runtime_xml_field": {
+      "message": "BeerXML: veld {key} ontbreekt of is dubbel."
+    },
+    "runtime_xml_number": {
+      "message": "BeerXML: ongeldig getal in {key}."
+    },
+    "runtime_xml_version": {
+      "message": "BeerXML: alleen versie 1 wordt ondersteund."
+    },
+    "runtime_xml_folder": {
+      "message": "BeerXML: importmap is niet toegankelijk."
+    },
+    "runtime_xml_selection": {
+      "message": "BeerXML: ongeldige bestandsselectie."
+    },
+    "runtime_xml_file": {
+      "message": "BeerXML: bestand is niet toegankelijk."
+    },
+    "runtime_xml_expired": {
+      "message": "BeerXML: selectie verlopen. Laad het bestand opnieuw."
+    },
+    "runtime_source_missing": {
+      "message": "Receptbron is niet ingesteld."
+    },
+    "runtime_bf_rate": {
+      "message": "Brewer's Friend: aanvraaglimiet bereikt. Probeer later opnieuw."
+    },
+    "runtime_bf_auth": {
+      "message": "Brewer's Friend: ongeldige API-sleutel of ontbrekende toegang."
+    },
+    "runtime_bf_http": {
+      "message": "Brewer's Friend: aanvraag mislukt (HTTP {status})."
+    },
+    "runtime_bf_size": {
+      "message": "Brewer's Friend: antwoord is te groot."
+    },
+    "runtime_bf_invalid": {
+      "message": "Brewer's Friend: niet bereikbaar of ongeldig antwoord."
+    },
+    "runtime_bf_many": {
+      "message": "Brewer's Friend: te veel recepten. Gebruik een recept-ID."
+    },
+    "runtime_bf_id": {
+      "message": "Brewer's Friend: ongeldig recept-ID."
     }
   },
   "entity": {

@@ -1,3 +1,27 @@
+# HBAC 0.5.0-beta.1 – source import verification, 2026-11-16
+
+- 74 HA/converter/API tests passed in Linux Docker (Python 3.13.18, HA 2026.2.3).
+- New coverage: Brewer’s Friend list pagination, repeated-page detection, API-key
+  header, XML detail endpoint, HTTP/auth/rate-limit/redirect failures, bounded
+  responses and invalid IDs; no key leakage in error messages.
+- BeerXML coverage: multi-recipe selection, canonical Celsius/minute units,
+  legacy XML encoding, XML entity/DTD rejection, malformed/oversized documents,
+  duplicate/missing fields, fractional/non-finite values, unsupported rests,
+  file path traversal and symlink rejection, source snapshots and no device calls.
+- Full HA service import without a cloud account, and adding Brewer’s Friend to an
+  existing Brewfather entry, passed. Existing queue/upload tests still pass.
+- Frontend interaction tests now cover provider selection, browser file input,
+  oversized file rejection before reading, folder/file/recipe selection and preview.
+- Eight locale catalogs each contain 195 complete keys; i18n and guide tests passed.
+- Ruff and Git whitespace checks passed. Automated UI tests use a minimal DOM,
+  not a real browser. No live Brewer’s Friend account or new device upload was tested.
+
+The synthetic test file and manual acceptance steps are in [SOURCES.md](SOURCES.md).
+The earlier hardware and localization acceptance records below remain historical;
+they do not establish hardware acceptance of the new source adapters.
+
+---
+
 # HBAC 0.4.0-beta.2 – verification, 2026-11-15
 
 ## Beta 2 localization

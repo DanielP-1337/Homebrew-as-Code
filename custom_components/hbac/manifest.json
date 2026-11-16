@@ -1,14 +1,22 @@
 {
   "domain": "hbac",
-  "name": "HBAC – Brewfather to Braumeister",
-  "version": "0.4.0-beta.2",
+  "name": "HBAC \u2013 Recipes to Braumeister",
+  "version": "0.5.0-beta.1",
   "config_flow": true,
   "documentation": "https://github.com/DanielP-1337/Homebrew-as-Code",
   "issue_tracker": "https://github.com/DanielP-1337/Homebrew-as-Code/issues",
-  "codeowners": ["@DanielP-1337"],
-  "dependencies": ["http"],
-  "after_dependencies": ["speidel_braumeister"],
+  "codeowners": [
+    "@DanielP-1337"
+  ],
+  "dependencies": [
+    "http"
+  ],
+  "after_dependencies": [
+    "speidel_braumeister"
+  ],
   "iot_class": "cloud_polling",
   "integration_type": "service",
-  "requirements": []
+  "requirements": [
+    "defusedxml==0.7.1"
+  ]
 }
