@@ -1,7 +1,7 @@
 {
   "domain": "hbac",
   "name": "HBAC \u2013 Recipes to Braumeister",
-  "version": "0.5.0-beta.2",
+  "version": "0.5.0-beta.3",
   "config_flow": true,
   "documentation": "https://github.com/DanielP-1337/Homebrew-as-Code",
   "issue_tracker": "https://github.com/DanielP-1337/Homebrew-as-Code/issues",

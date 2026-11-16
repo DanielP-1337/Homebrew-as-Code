@@ -38,7 +38,9 @@ def normalized_recipe(node):
 
     def number(parent, key, required=True):
         value = text(parent, key, required)
-        if value is None:
+        # Exporters may emit an empty element instead of omitting an optional
+        # value. Keep that distinct from zero; required fields stay strict.
+        if value is None or (not required and value == ""):
             return None
         try:
             result = float(value)

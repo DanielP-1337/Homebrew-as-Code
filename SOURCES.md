@@ -1,4 +1,4 @@
-# Recipe sources in HBAC 0.5.0-beta.2
+# Recipe sources in HBAC 0.5.0-beta.3
 
 All sources use the same review queue, conversion rules and explicit replace-all
 confirmation. Mix sources in one list of up to nine device programs. Importing or
@@ -73,6 +73,9 @@ silently change a preview or a recipe already in the queue.
   `MASH`/`VERSION`/`MASH_STEPS`, each step's `VERSION`, `TYPE`, `STEP_TEMP`,
   `STEP_TIME`, and `HOPS` (which may be empty). Hops require `VERSION`, `NAME`,
   `USE`, `TIME`. This is a device-program importer, not a complete BeerXML validator.
+- Empty optional numeric elements (INFUSE_AMOUNT, RAMP_TIME, END_TEMP) are
+  treated as absent, including whitespace-only elements. Empty required fields and
+  nonempty invalid numeric values remain errors.
 - Existing device limits apply: 1–5 rests, integer representable temperatures and
   durations, at most six distinct boiling-hop alarms. No silent rounding or
   truncation of steps. Decoction and incompatible end temperatures are rejected.
@@ -99,8 +102,8 @@ requires explicitly confirming replacement of every recipe slot.
 
 ## Upgrade
 
-Install 0.5.0-beta.2, restart HA, update the existing JavaScript-module resource to
-`/hbac/hbac-card.js?v=0.5.0-beta.2` and reload the browser. Existing card YAML remains
+Install 0.5.0-beta.3, restart HA, update the existing JavaScript-module resource to
+`/hbac/hbac-card.js?v=0.5.0-beta.3` and reload the browser. Existing card YAML remains
 valid. Use [dashboard/hbac-test.yaml](dashboard/hbac-test.yaml) for a new dashboard.
 The Speidel integration and Bridge must include the generic recipe-upload actions
 from merged upstream PR #30; merging a PR does not update installed components.

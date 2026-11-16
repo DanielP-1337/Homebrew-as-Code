@@ -240,3 +240,37 @@ async def test_setup_error_identifies_provider_and_safe_log(hass, caplog):
             'brewersfriend_api_key': 'cannot_connect'}
     assert 'HTTP 500' in caplog.text
     assert 'bf-secret' not in caplog.text and 'other-secret' not in caplog.text
+
+@pytest.mark.parametrize('tag,key', [('INFUSE_AMOUNT', 'infuseAmount'), ('RAMP_TIME', 'rampTime'), ('END_TEMP', 'endTemp')])
+@pytest.mark.parametrize('element', ['<{tag}/>', '<{tag}></{tag}>', '<{tag}> \n </{tag}>'])
+def test_empty_optional_numeric_fields_equal_omitted(tag, key, element):
+    base = XML.replace(b'<INFUSE_AMOUNT>20</INFUSE_AMOUNT>', b'')
+    raw = base.replace(b'</MASH_STEP>', element.format(tag=tag).encode() + b'</MASH_STEP>')
+    source = normalized_recipe(parse_beerxml(raw)[0])
+    assert source['mash']['steps'][0][key] is None
+    assert convert(source, 'recipes', 'xml') == convert(normalized_recipe(parse_beerxml(base)[0]), 'recipes', 'xml')
+
+
+@pytest.mark.parametrize('tag', ['STEP_TEMP', 'STEP_TIME', 'BOIL_TIME'])
+def test_empty_required_numbers_still_rejected(tag):
+    import re
+    raw = re.sub(rb'<' + tag.encode() + rb'>[^<]*</' + tag.encode() + rb'>',
+                 b'<' + tag.encode() + b'/>', XML)
+    with pytest.raises(ConversionError, match=tag):
+        normalized_recipe(parse_beerxml(raw)[0])
+
+
+@pytest.mark.parametrize('value', ['not-a-number', 'NaN', 'Infinity', '20 L'])
+def test_nonempty_invalid_optional_numbers_still_rejected(value):
+    raw = XML.replace(b'<INFUSE_AMOUNT>20</INFUSE_AMOUNT>', f'<INFUSE_AMOUNT>{value}</INFUSE_AMOUNT>'.encode())
+    with pytest.raises(ConversionError, match='INFUSE_AMOUNT'):
+        normalized_recipe(parse_beerxml(raw)[0])
+
+
+async def test_brewersfriend_empty_infusion_field_through_api_and_conversion(hass, aioclient_mock):
+    raw = XML.replace(b'<INFUSE_AMOUNT>20</INFUSE_AMOUNT>', b'<INFUSE_AMOUNT/>')
+    aioclient_mock.get('https://api.brewersfriend.com/v1/recipes/42.xml', content=raw)
+    client = BrewersFriendClient(async_get_clientsession(hass), 'test-key')
+    result = convert(await client.get('brewersfriend', '42'), 'recipes', '42')
+    assert result['program']['rests'] == [{'temperature': 63, 'minutes': 40}]
+    assert result['program']['hop_additions'] == [15]

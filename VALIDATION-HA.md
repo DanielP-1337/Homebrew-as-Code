@@ -1,3 +1,29 @@
+# HBAC 0.5.0-beta.3 – optional BeerXML numbers, 2026-11-16
+
+Two user-selected Brewer’s Friend recipes failed with `invalid number in INFUSE_AMOUNT`.
+The screenshots identify the field but do not reveal its raw XML value. Inspection
+found that empty optional numeric elements were rejected while absent elements were
+accepted. This release treats empty/whitespace-only INFUSE_AMOUNT, RAMP_TIME and
+END_TEMP as absent, without inventing zero values or weakening required fields.
+Nonempty invalid and non-finite numbers still fail. Regression fixtures are synthetic,
+including an HTTP XML response through the Brewer’s Friend adapter and converter.
+Live acceptance with the two failing recipes remains pending.
+
+96 HA tests passed; frontend/i18n tests and Ruff passed.
+
+## User-operated BeerXML hardware acceptance
+
+On November 16, the user supplied the HBAC XML Demo preview with mash-in 63 °C,
+rests 63 °C/40 min and 78 °C/10 min, boil 60 min at 103 °C, and hop alarms 60/15.
+A subsequent screenshot showed HBAC XML Demo alongside Sample Blonde and
+Lebkuchen-Zaub in both the HA device display and MySpeidel device control view.
+MySpeidel displayed mash-in and both expected rests. This confirms the local
+BeerXML-to-device path reported by the user; it does not establish cloud-library
+creation, a particular content-readback job result or successful Brewer’s Friend
+recipe conversion. Screenshots remain in the conversation and are not published.
+
+---
+
 # HBAC 0.5.0-beta.2 – empty Brewer’s Friend account fix, 2026-11-16
 
 The user reported setup failure with a newly created, empty Brewer’s Friend account.

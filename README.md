@@ -1,6 +1,6 @@
 # Homebrew-as-Code
 
-## HBAC 0.5.0-beta.2 – Home Assistant / Marketplace
+## HBAC 0.5.0-beta.3 – Home Assistant / Marketplace
 
 The interface and built-in guide now follow your HA language: English (en-US
 fallback), German, French, Spanish, Italian, Portuguese, Polish and Dutch.
@@ -15,7 +15,7 @@ and upload through the generic Bridge actions. Cloud accounts are optional.
 
 **Test beta:** Add `https://github.com/DanielP-1337/Homebrew-as-Code` in HACS under
 **Custom repositories → Integration**, enable beta versions and download
-**v0.5.0-beta.2**. After updating, restart Home Assistant. New installations with
+**v0.5.0-beta.3**. After updating, restart Home Assistant. New installations with
 UI setup can load immediately in Marketplace on HA 2026.11 or later.
 Add the **HBAC** integration under Devices & services.
 
