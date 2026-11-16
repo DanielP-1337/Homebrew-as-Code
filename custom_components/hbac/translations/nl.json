@@ -14,7 +14,7 @@
         }
       },
       "reconfigure": {
-        "title": "Brewfather-inloggegevens bijwerken",
+        "title": "Receptbronnen bijwerken",
         "description": "Kies een Braumeister. Cloudaccounts zijn optioneel: Brewfather, Brewer’s Friend, beide of alleen BeerXML. Lege gegevens schakelen de aanbieder uit.",
         "data": {
           "user_id": "Brewfather-gebruikers-ID",

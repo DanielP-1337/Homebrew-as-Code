@@ -1,3 +1,22 @@
+# HBAC 0.5.0-beta.2 – empty Brewer’s Friend account fix, 2026-11-16
+
+The user reported setup failure with a newly created, empty Brewer’s Friend account.
+A read-only live collection request confirmed HTTP 404 with the JSON object
+`{"message":"not-found","detail":"no recipes found"}`. No recipe data or account
+credentials are included in this record or the test fixtures.
+
+Only this exact response from the collection endpoint is normalized to an empty
+list. A 404 for a recipe detail or another error payload remains an error. Setup
+errors now identify the provider field, sanitized diagnostic logging is available,
+and the reconfiguration heading describes all recipe sources in all eight locales.
+
+79 HA tests passed, including empty-account setup, catalog handling, rejection of
+other 404 responses and safe provider-specific diagnostics. Frontend/i18n tests
+and Ruff passed. Populated-account import and new-source device upload still need
+live acceptance. The records below describe preceding versions.
+
+---
+
 # HBAC 0.5.0-beta.1 – source import verification, 2026-11-16
 
 - 74 HA/converter/API tests passed in Linux Docker (Python 3.13.18, HA 2026.2.3).

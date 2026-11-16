@@ -1,4 +1,4 @@
-# Recipe sources in HBAC 0.5.0-beta.1
+# Recipe sources in HBAC 0.5.0-beta.2
 
 All sources use the same review queue, conversion rules and explicit replace-all
 confirmation. Mix sources in one list of up to nine device programs. Importing or
@@ -30,8 +30,13 @@ Only recipes are supported in this beta, not Brewer’s Friend brew sessions.
 Pagination is bounded at 10,000 recipes; direct IDs remain usable for larger lists.
 HTTP redirects are not followed with credentials. Authentication failures, HTTP
 errors, rate limiting and invalid responses produce errors without exposing the key.
-No Brewer’s Friend account was available for a live acceptance test; tests use the
-published response contract and mocked HTTP responses.
+A live empty-account check confirmed that the collection endpoint returns HTTP 404
+with `{"message":"not-found","detail":"no recipes found"}`. Beta 2 treats only this
+exact collection response as an empty list, including during setup. Other 404s and
+recipe-detail failures remain errors. Live retrieval of a populated recipe library
+and hardware acceptance remain pending; those paths use mocked HTTP tests.
+Setup errors are attached to the failing provider field; sanitized failures are
+also recorded in HA logs without credentials or response bodies.
 
 Official references: [Recipe API](https://docs.brewersfriend.com/api/recipes) and
 [Recipe BeerXML endpoint](https://docs.brewersfriend.com/api/recipes/recipe).
@@ -94,8 +99,8 @@ requires explicitly confirming replacement of every recipe slot.
 
 ## Upgrade
 
-Install 0.5.0-beta.1, restart HA, update the existing JavaScript-module resource to
-`/hbac/hbac-card.js?v=0.5.0-beta.1` and reload the browser. Existing card YAML remains
+Install 0.5.0-beta.2, restart HA, update the existing JavaScript-module resource to
+`/hbac/hbac-card.js?v=0.5.0-beta.2` and reload the browser. Existing card YAML remains
 valid. Use [dashboard/hbac-test.yaml](dashboard/hbac-test.yaml) for a new dashboard.
 The Speidel integration and Bridge must include the generic recipe-upload actions
 from merged upstream PR #30; merging a PR does not update installed components.

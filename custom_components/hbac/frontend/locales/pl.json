@@ -141,7 +141,7 @@
   "config.description": "Wybierz Braumeister. Konta chmurowe są opcjonalne: Brewfather, Brewer’s Friend, oba lub sam BeerXML. Puste dane wyłączają dostawcę.",
   "config.user_id": "ID użytkownika Brewfather",
   "config.api_key": "Klucz API Brewfather",
-  "config.reconfigure": "Zaktualizuj dane logowania Brewfather",
+  "config.reconfigure": "Zaktualizuj źródła receptur",
   "config.invalid_auth": "Nieprawidłowe dane API lub brak prawa odczytu.",
   "config.cannot_connect": "Dostawca receptur niedostępny lub nieprawidłowa odpowiedź.",
   "config.no_bridge": "Najpierw skonfiguruj integrację Speidel Braumeister.",

@@ -14,7 +14,7 @@
         }
       },
       "reconfigure": {
-        "title": "Modifier les identifiants Brewfather",
+        "title": "Mettre à jour les sources de recettes",
         "description": "Choisissez un Braumeister. Comptes cloud facultatifs : Brewfather, Brewer’s Friend, les deux ou BeerXML seul. Des identifiants vides désactivent le fournisseur.",
         "data": {
           "user_id": "ID utilisateur Brewfather",

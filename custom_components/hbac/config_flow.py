@@ -1,4 +1,5 @@
 """Optional recipe providers; BeerXML-only setup requires no cloud account."""
+import logging
 from pathlib import Path
 
 import voluptuous as vol
@@ -14,6 +15,8 @@ from .api import BrewfatherAuthError, BrewfatherClient, BrewfatherError
 from .brewersfriend import BrewersFriendClient
 from .const import BRIDGE_DOMAIN, DOMAIN
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class HbacConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
@@ -25,17 +28,24 @@ class HbacConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if directory and not Path(directory).is_absolute():
             return {"base": "invalid_directory"}
         session = async_get_clientsession(self.hass)
+        provider_field = "api_key"
+        provider = "Brewfather"
         try:
             if data.get("user_id"):
                 client = BrewfatherClient(session, data["user_id"], data["api_key"])
                 await client.get("recipes", limit=1)
                 await client.get("batches", limit=1)
             if data.get("brewersfriend_api_key"):
+                provider_field = "brewersfriend_api_key"
+                provider = "Brewer’s Friend"
                 await BrewersFriendClient(session, data["brewersfriend_api_key"]).page(limit=1)
         except BrewfatherAuthError:
-            return {"base": "invalid_auth"}
-        except BrewfatherError:
-            return {"base": "cannot_connect"}
+            return {provider_field: "invalid_auth"}
+        except BrewfatherError as err:
+            # Owned exception messages are sanitized by the API clients. Never log
+            # credentials, response bodies or transport exception details.
+            _LOGGER.warning("HBAC %s setup check failed: %s", provider, err)
+            return {provider_field: "cannot_connect"}
         return {}
 
     def fields(self, current=None):

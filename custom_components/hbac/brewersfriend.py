@@ -31,13 +31,22 @@ class BrewersFriendClient:
                         delay = 60
                     self.retry_at = time.monotonic() + delay
                     raise BrewfatherError("Brewer's Friend: rate limit reached. Try again later.")
-                if response.status != 200:
-                    raise BrewfatherError(f"Brewer's Friend: request failed (HTTP {response.status}).")
                 raw = bytearray()
                 async for chunk in response.content.iter_chunked(65536):
                     raw.extend(chunk)
                     if len(raw) > MAX_BYTES:
                         raise BrewfatherError("Brewer's Friend: response is too large.")
+                if response.status == 404 and not suffix:
+                    # The live collection endpoint uses this exact error for an
+                    # authenticated account with no recipes (also end of paging).
+                    try:
+                        empty = json.loads(raw)
+                    except (ValueError, UnicodeError):
+                        empty = None
+                    if empty == {"message": "not-found", "detail": "no recipes found"}:
+                        return b'{"recipes": []}'
+                if response.status != 200:
+                    raise BrewfatherError(f"Brewer's Friend: request failed (HTTP {response.status}).")
                 return bytes(raw)
         except (ClientError, TimeoutError) as err:
             raise BrewfatherError("Brewer's Friend: unavailable or invalid response.") from err

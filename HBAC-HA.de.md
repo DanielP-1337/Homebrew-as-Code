@@ -1,4 +1,4 @@
-# HBAC 0.5.0-beta.1 – Rezeptquellen in Home Assistant
+# HBAC 0.5.0-beta.2 – Rezeptquellen in Home Assistant
 
 Neu: Die gesamte Bedienkarte und Anleitung sind in acht Sprachen verfügbar:
 Englisch (en-US), Deutsch, Französisch, Spanisch, Italienisch, Portugiesisch,
@@ -7,9 +7,9 @@ fehlende Texte fallen auf en-US zurück. [Weitere Sprachen hinzufügen](I18N.md)
 
 ## Update von 0.4.0
 
-1. Im Marketplace die Vorabversion **v0.5.0-beta.1** installieren und HA neu starten.
+1. Im Marketplace die Vorabversion **v0.5.0-beta.2** installieren und HA neu starten.
 2. Die vorhandene Dashboard-Ressource auf
-   `/hbac/hbac-card.js?v=0.5.0-beta.1` ändern (nicht doppelt hinzufügen).
+   `/hbac/hbac-card.js?v=0.5.0-beta.2` ändern (nicht doppelt hinzufügen).
 3. Den Browser neu laden. Bedienkarte und eingeklappte Anleitung sind automatisch
    lokalisiert; die gespeicherte Upload-Liste und der Auftrag bleiben erhalten.
 4. Für die separate Hilfeansicht die bisherigen deutschen Markdown-Karten durch
@@ -63,7 +63,7 @@ Weitere Details und Testdateien: [SOURCES.md](SOURCES.md).
 In HACS über das Drei-Punkte-Menü **Benutzerdefinierte Repositories** öffnen:
 `https://github.com/DanielP-1337/Homebrew-as-Code` hinzufügen, Typ **Integration**.
 **HBAC – Recipes to Braumeister** öffnen, Beta-/Vorabversionen anzeigen lassen
-und **v0.5.0-beta.1** herunterladen. Bei einem Update HA neu starten; bei einer
+und **v0.5.0-beta.2** herunterladen. Bei einem Update HA neu starten; bei einer
 Erstinstallation im Marketplace auf HA 2026.11+ nur, wenn HA dazu auffordert. Mit Schritt 3 unten
 fortfahren. Die Dashboard-Ressource wird separat wie in Schritt 4 eingerichtet.
 
@@ -76,7 +76,7 @@ fortfahren. Die Dashboard-Ressource wird separat wie in Schritt 4 eingerichtet.
    Brewfather-Zugang eingeben und den bereits eingerichteten Braumeister auswählen.
 4. Unter **Einstellungen → Dashboards → Ressourcen** folgende JavaScript-Modul-Ressource
    hinzufügen (ggf. erweiterten Modus im Benutzerprofil einschalten):
-   `/hbac/hbac-card.js?v=0.5.0-beta.1`
+   `/hbac/hbac-card.js?v=0.5.0-beta.2`
 5. Dashboard bearbeiten, manuelle Karte hinzufügen:
 
 ```yaml

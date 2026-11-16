@@ -14,7 +14,7 @@
         }
       },
       "reconfigure": {
-        "title": "Update Brewfather credentials",
+        "title": "Update recipe sources",
         "description": "Select a Braumeister. Cloud accounts are optional: configure Brewfather, Brewer’s Friend, both, or only BeerXML. Empty credentials disable that provider.",
         "data": {
           "user_id": "Brewfather User ID",

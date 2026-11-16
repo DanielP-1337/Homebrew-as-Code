@@ -141,7 +141,7 @@
   "config.description": "Choisissez un Braumeister. Comptes cloud facultatifs : Brewfather, Brewer’s Friend, les deux ou BeerXML seul. Des identifiants vides désactivent le fournisseur.",
   "config.user_id": "ID utilisateur Brewfather",
   "config.api_key": "Clé API Brewfather",
-  "config.reconfigure": "Modifier les identifiants Brewfather",
+  "config.reconfigure": "Mettre à jour les sources de recettes",
   "config.invalid_auth": "Identifiants API invalides ou accès en lecture manquant.",
   "config.cannot_connect": "Fournisseur de recettes indisponible ou réponse invalide.",
   "config.no_bridge": "Configurez d'abord l'intégration Speidel Braumeister.",

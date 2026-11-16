@@ -141,7 +141,7 @@
   "config.description": "Braumeister wählen. Cloud-Zugänge sind optional: Brewfather, Brewer’s Friend, beide oder nur BeerXML. Leere Zugangsdaten deaktivieren den jeweiligen Anbieter.",
   "config.user_id": "Brewfather User-ID",
   "config.api_key": "Brewfather API-Key",
-  "config.reconfigure": "Brewfather-Zugang erneuern",
+  "config.reconfigure": "Rezeptquellen aktualisieren",
   "config.invalid_auth": "Ungültige API-Zugangsdaten oder fehlende Leserechte.",
   "config.cannot_connect": "Rezeptanbieter nicht erreichbar oder ungültige Antwort.",
   "config.no_bridge": "Zuerst die Speidel-Braumeister-Integration einrichten.",

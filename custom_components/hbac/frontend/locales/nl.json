@@ -141,7 +141,7 @@
   "config.description": "Kies een Braumeister. Cloudaccounts zijn optioneel: Brewfather, Brewer’s Friend, beide of alleen BeerXML. Lege gegevens schakelen de aanbieder uit.",
   "config.user_id": "Brewfather-gebruikers-ID",
   "config.api_key": "Brewfather-API-sleutel",
-  "config.reconfigure": "Brewfather-inloggegevens bijwerken",
+  "config.reconfigure": "Receptbronnen bijwerken",
   "config.invalid_auth": "Ongeldige API-gegevens of ontbrekende leestoegang.",
   "config.cannot_connect": "Receptaanbieder niet bereikbaar of ongeldig antwoord.",
   "config.no_bridge": "Stel eerst de Speidel Braumeister-integratie in.",

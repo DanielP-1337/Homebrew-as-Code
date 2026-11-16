@@ -14,7 +14,7 @@
         }
       },
       "reconfigure": {
-        "title": "Actualizar credenciales Brewfather",
+        "title": "Actualizar fuentes de recetas",
         "description": "Seleccione un Braumeister. Cuentas en la nube opcionales: Brewfather, Brewer’s Friend, ambos o solo BeerXML. Las credenciales vacías desactivan ese proveedor.",
         "data": {
           "user_id": "ID de usuario Brewfather",

@@ -14,7 +14,7 @@
         }
       },
       "reconfigure": {
-        "title": "Aggiorna credenziali Brewfather",
+        "title": "Aggiorna le fonti di ricette",
         "description": "Seleziona un Braumeister. Account cloud facoltativi: Brewfather, Brewer’s Friend, entrambi o solo BeerXML. Credenziali vuote disattivano il fornitore.",
         "data": {
           "user_id": "ID utente Brewfather",

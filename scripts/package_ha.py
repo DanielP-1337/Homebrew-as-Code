@@ -4,7 +4,7 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "0.5.0-beta.1"
+VERSION = "0.5.0-beta.2"
 output = ROOT.parent / f"HBAC-{VERSION}-home-assistant.zip"
 component = ROOT / "custom_components" / "hbac"
 files = sorted(p for p in component.rglob("*") if p.is_file() and p.suffix in {".py", ".json", ".yaml", ".js", ".png"} and "__pycache__" not in p.parts)

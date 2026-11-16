@@ -167,7 +167,7 @@ async def test_beerxml_only_config_and_provider_validation(hass):
     assert await flow.validate({'user_id': 'alone'}) == {'base': 'incomplete_brewfather'}
     assert await flow.validate({'import_directory': 'relative'}) == {'base': 'invalid_directory'}
     with patch('custom_components.hbac.config_flow.BrewersFriendClient.page', AsyncMock(side_effect=BrewfatherAuthError())):
-        assert await flow.validate({'brewersfriend_api_key': 'bad'}) == {'base': 'invalid_auth'}
+        assert await flow.validate({'brewersfriend_api_key': 'bad'}) == {'brewersfriend_api_key': 'invalid_auth'}
 
 async def test_file_only_setup_and_service_import(hass):
     from homeassistant.setup import async_setup_component
@@ -205,3 +205,38 @@ async def test_brewersfriend_response_bounds(hass, aioclient_mock, body):
     aioclient_mock.get('https://api.brewersfriend.com/v1/recipes', content=body)
     with pytest.raises(BrewfatherError):
         await client.page()
+
+async def test_brewersfriend_empty_account_is_valid_in_setup_and_catalog(hass, aioclient_mock):
+    from custom_components.hbac.config_flow import HbacConfigFlow
+    aioclient_mock.get('https://api.brewersfriend.com/v1/recipes', status=404,
+                      json={'message': 'not-found', 'detail': 'no recipes found'})
+    client = BrewersFriendClient(async_get_clientsession(hass), 'test-key')
+    assert await client.catalog() == []
+    flow = HbacConfigFlow()
+    flow.hass = hass
+    assert await flow.validate({'brewersfriend_api_key': 'test-key'}) == {}
+
+
+@pytest.mark.parametrize('suffix,payload', [
+    ('', {'message': 'not-found', 'detail': 'unknown route'}),
+    ('', {'message': 'unauthorized', 'detail': 'no recipes found'}),
+    ('/42.xml', {'message': 'not-found', 'detail': 'no recipes found'}),
+])
+async def test_other_404s_are_not_empty_libraries(hass, aioclient_mock, suffix, payload):
+    aioclient_mock.get('https://api.brewersfriend.com/v1/recipes' + suffix, status=404, json=payload)
+    client = BrewersFriendClient(async_get_clientsession(hass), 'test-key')
+    with pytest.raises(BrewfatherError, match='HTTP 404'):
+        await client.request(suffix)
+
+
+async def test_setup_error_identifies_provider_and_safe_log(hass, caplog):
+    from custom_components.hbac.config_flow import HbacConfigFlow
+    flow = HbacConfigFlow()
+    flow.hass = hass
+    with patch('custom_components.hbac.config_flow.BrewfatherClient.get', AsyncMock(return_value=[])), patch(
+        'custom_components.hbac.config_flow.BrewersFriendClient.page',
+        AsyncMock(side_effect=BrewfatherError("Brewer's Friend: request failed (HTTP 500)."))):
+        assert await flow.validate({'user_id': 'u', 'api_key': 'bf-secret', 'brewersfriend_api_key': 'other-secret'}) == {
+            'brewersfriend_api_key': 'cannot_connect'}
+    assert 'HTTP 500' in caplog.text
+    assert 'bf-secret' not in caplog.text and 'other-secret' not in caplog.text

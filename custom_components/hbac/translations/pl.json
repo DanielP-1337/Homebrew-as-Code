@@ -14,7 +14,7 @@
         }
       },
       "reconfigure": {
-        "title": "Zaktualizuj dane logowania Brewfather",
+        "title": "Zaktualizuj źródła receptur",
         "description": "Wybierz Braumeister. Konta chmurowe są opcjonalne: Brewfather, Brewer’s Friend, oba lub sam BeerXML. Puste dane wyłączają dostawcę.",
         "data": {
           "user_id": "ID użytkownika Brewfather",

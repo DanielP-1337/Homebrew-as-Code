@@ -14,7 +14,7 @@
         }
       },
       "reconfigure": {
-        "title": "Brewfather-Zugang erneuern",
+        "title": "Rezeptquellen aktualisieren",
         "description": "Braumeister wählen. Cloud-Zugänge sind optional: Brewfather, Brewer’s Friend, beide oder nur BeerXML. Leere Zugangsdaten deaktivieren den jeweiligen Anbieter.",
         "data": {
           "user_id": "Brewfather User-ID",
