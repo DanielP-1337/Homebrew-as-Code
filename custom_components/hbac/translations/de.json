@@ -79,6 +79,15 @@
         },
         "boil_temperature": {
           "name": "Kochtemperatur °C"
+        },
+        "review_steps": {
+          "name": "Quellschritte prüfen"
+        },
+        "source_token": {
+          "name": "Quellprüfungs-ID"
+        },
+        "step_roles": {
+          "name": "Rolle je Quellschritt"
         }
       }
     },
@@ -458,6 +467,18 @@
     },
     "runtime_bf_id": {
       "message": "Brewer's Friend: ungültige Rezept-ID."
+    },
+    "runtime_rounded_temp": {
+      "message": "Schritt {index}: Temperatur von {original} °C auf {rounded} °C gerundet."
+    },
+    "runtime_manual_step": {
+      "message": "Schritt {index} ({label}): manueller Nachguss; nicht an das Gerät übertragen."
+    },
+    "runtime_choose_roles": {
+      "message": "Für jeden Quellschritt Rast oder manuellen Nachguss wählen."
+    },
+    "runtime_review_expired": {
+      "message": "Quellprüfung abgelaufen. Rezept erneut abrufen."
     }
   },
   "entity": {

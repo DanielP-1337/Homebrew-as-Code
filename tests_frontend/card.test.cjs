@@ -30,6 +30,7 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
 (async () => {
   const card = new (registry.get('hbac-card'))();
   const calls = [];
+  let reviewSteps = [{name: 'Rest', temperature: 63, minutes: 40}];
   const preview = {preview_id: 'p1', source: {name: '<img src=x onerror=alert(1)>', kind: 'batches', id: 'b1'},
     program: {name: 'Batch Test', mash_in_temperature: 63, rests: [{temperature: 63, minutes: 40}],
       boil_minutes: 60, boil_temperature: 103, hop_additions: [60, 15]}, warnings: ['Test warning'], not_transferred: ['Gärung']};
@@ -50,7 +51,11 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
       case 'catalog':
         if (msg.service_data.kind === 'beerxml_folder') return {response: {items: [{id: 'one.xml', name: 'one.xml'}]}};
         return {response: {items: [{id: 'b1', name: 'Batch Test', batch_no: 7}]}};
-      case 'preview': return {response: structuredClone(preview)};
+      case 'preview':
+        if (msg.service_data.review_steps) return {response: {source_token: 'snapshot', steps: reviewSteps}};
+        assert.equal(msg.service_data.source_token, 'snapshot');
+        assert.equal(msg.service_data.step_roles.length, reviewSteps.length);
+        return {response: structuredClone(preview)};
       case 'add': state.queue.push(structuredClone(preview)); state.revision = 'rev2'; break;
       case 'upload':
         assert.equal(msg.service_data.replace_all, true);
@@ -64,7 +69,13 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
   await card.localeReady;
   await flush();
   const button = label => card.shadowRoot.querySelectorAll('button').find(b => b.textContent === label);
-  const click = async label => { const b = button(label); assert(b, label); assert(!b.disabled, label); b.onclick(); await flush(); };
+  const click = async label => { const b = button(label); assert(b, label); assert(!b.disabled, label); b.onclick(); await flush();
+    if (label === 'Abrufen und Vorschau erstellen') {
+      assert(card.stepReview); assert.equal(card.preview, null);
+      const convert = button('Programmvorschau erstellen'); assert(convert && !convert.disabled);
+      convert.onclick(); await flush();
+    }
+  };
   assert(button('Alle Geräteplätze ersetzen').disabled);
   const source = card.shadowRoot.querySelectorAll('select')[0];
   source.value = 'batches'; source.onchange();
@@ -129,6 +140,20 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
   await click('Abrufen und Vorschau erstellen');
   assert.equal(calls.at(-1).service_data.kind, 'beerxml_folder');
   assert.equal(calls.at(-1).service_data.source_id, 'filetoken:0');
+  assert.equal(calls.filter(c => c.service === 'upload').length, previousUploads);
+  reviewSteps = [{name: 'Rest', temperature: 67.2222, minutes: 60}, {name: 'Sparge', temperature: 76.6667, minutes: 10}];
+  changeSource('brewersfriend'); card.selected = '42'; card.render();
+  button('Abrufen und Vorschau erstellen').onclick(); await flush();
+  assert(button('Programmvorschau erstellen').disabled, 'Sparge requires an explicit choice');
+  assert(!button('Geprüft · Zur Upload-Liste hinzufügen'));
+  let stepSelect = card.shadowRoot.querySelector('#step-review').querySelectorAll('select')[1];
+  stepSelect.value = 'manual_sparge'; stepSelect.onchange();
+  await click('Programmvorschau erstellen');
+  assert.deepEqual(calls.at(-1).service_data.step_roles, ['rest', 'manual_sparge']);
+  stepSelect = card.shadowRoot.querySelector('#step-review').querySelectorAll('select')[1];
+  stepSelect.value = 'rest'; stepSelect.onchange();
+  assert.equal(card.preview, null, 'Changed step role invalidates program preview');
+  assert(!button('Geprüft · Zur Upload-Liste hinzufügen'));
   assert.equal(calls.filter(c => c.service === 'upload').length, previousUploads);
   console.log('Card interactions passed: batch selection, preview, review, confirmation, single upload, status, editable mash-in, source text escaping.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

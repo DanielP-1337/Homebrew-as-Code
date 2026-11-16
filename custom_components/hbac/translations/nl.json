@@ -79,6 +79,15 @@
         },
         "boil_temperature": {
           "name": "Kooktemperatuur °C"
+        },
+        "review_steps": {
+          "name": "Bronstappen controleren"
+        },
+        "source_token": {
+          "name": "Broncontrole-ID"
+        },
+        "step_roles": {
+          "name": "Rol van elke bronstap"
         }
       }
     },
@@ -458,6 +467,18 @@
     },
     "runtime_bf_id": {
       "message": "Brewer's Friend: ongeldig recept-ID."
+    },
+    "runtime_rounded_temp": {
+      "message": "Stap {index}: temperatuur afgerond van {original} °C naar {rounded} °C."
+    },
+    "runtime_manual_step": {
+      "message": "Stap {index} ({label}): handmatig spoelen; niet naar het apparaat gestuurd."
+    },
+    "runtime_choose_roles": {
+      "message": "Kies voor elke stap rust of handmatig spoelen."
+    },
+    "runtime_review_expired": {
+      "message": "Broncontrole verlopen. Haal het recept opnieuw op."
     }
   },
   "entity": {

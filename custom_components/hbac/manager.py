@@ -36,6 +36,7 @@ class Manager:
         self.error = None
         self.brewersfriend = None
         self.imports = {}
+        self.source_reviews = {}
 
     @property
     def signal(self):
@@ -127,7 +128,12 @@ class Manager:
             return {"items": self.catalogs[kind][1]}
         if action == "preview":
             kind = data["kind"]
-            if kind in ("beerxml_upload", "beerxml_folder"):
+            if data.get("source_token"):
+                snapshot = self.source_reviews.get(data["source_token"])
+                if not snapshot or snapshot[0:2] != (kind, data["source_id"]):
+                    raise ValueError("Source review expired. Fetch the recipe again.")
+                source = deepcopy(snapshot[2])
+            elif kind in ("beerxml_upload", "beerxml_folder"):
                 try:
                     token, index = data["source_id"].split(":")
                     stored_kind, records = self.imports[token]
@@ -143,7 +149,20 @@ class Manager:
                 if client is None or kind not in ("recipes", "batches", "brewersfriend"):
                     raise ValueError("Recipe source is not configured.")
                 source = await client.get(kind, data["source_id"])
-            preview = convert(source, "batches" if kind == "batches" else "recipes", data["source_id"], data.get("mash_in"), data.get("boil_temperature", 103))
+            if data.get("review_steps"):
+                recipe = source.get("recipe") if kind == "batches" else source
+                mash = recipe.get("mash") if isinstance(recipe, dict) else None
+                steps = mash.get("steps") if isinstance(mash, dict) else None
+                if not isinstance(steps, list) or not 1 <= len(steps) <= 100 or any(not isinstance(s, dict) for s in steps):
+                    raise ValueError("Das Gerät benötigt 1 bis 5 Maischerasten.")
+                token = uuid4().hex
+                self.source_reviews[token] = (kind, data["source_id"], deepcopy(source))
+                while len(self.source_reviews) > 20:
+                    del self.source_reviews[next(iter(self.source_reviews))]
+                return {"source_token": token, "steps": [{"name": str(s.get("name") or i + 1),
+                        "temperature": s.get("stepTemp"), "minutes": s.get("stepTime"),
+                        "type": s.get("type"), "water_liters": s.get("infuseAmount")} for i, s in enumerate(steps)]}
+            preview = convert(source, "batches" if kind == "batches" else "recipes", data["source_id"], data.get("mash_in"), data.get("boil_temperature", 103), data.get("step_roles"))
             preview["source"]["kind"] = kind
             token = uuid4().hex
             self.previews[token] = preview

@@ -79,6 +79,15 @@
         },
         "boil_temperature": {
           "name": "Temperatura gotowania °C"
+        },
+        "review_steps": {
+          "name": "Sprawdź kroki źródłowe"
+        },
+        "source_token": {
+          "name": "Identyfikator przeglądu źródła"
+        },
+        "step_roles": {
+          "name": "Rola każdego kroku źródłowego"
         }
       }
     },
@@ -458,6 +467,18 @@
     },
     "runtime_bf_id": {
       "message": "Brewer's Friend: nieprawidłowe ID receptury."
+    },
+    "runtime_rounded_temp": {
+      "message": "Krok {index}: temperatura zaokrąglona z {original} °C do {rounded} °C."
+    },
+    "runtime_manual_step": {
+      "message": "Krok {index} ({label}): wysładzanie ręczne; nie wysłano do urządzenia."
+    },
+    "runtime_choose_roles": {
+      "message": "Wybierz przerwę lub ręczne wysładzanie dla każdego kroku."
+    },
+    "runtime_review_expired": {
+      "message": "Przegląd wygasł. Wczytaj recepturę ponownie."
     }
   },
   "entity": {

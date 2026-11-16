@@ -175,7 +175,7 @@
   "config.incomplete_brewfather": "Podaj identyfikator i klucz API Brewfather albo pozostaw oba puste.",
   "config.invalid_directory": "Użyj bezwzględnej ścieżki folderu w HA.",
   "help.sources.title": "Dodatkowe źródła receptur",
-  "help.sources.body": "Dodaj klucz API Brewer’s Friend w rekonfiguracji HBAC, potem wczytaj listę lub wpisz ID receptury. Dla BeerXML prześlij plik albo wybierz XML ze skonfigurowanego folderu HA (domyślnie /config/hbac/import); utwórz folder w razie potrzeby. Pliki pozostają bez zmian. Wybierz recepturę, sprawdź podgląd i dodaj do wspólnej listy. Powtórz dla kolejnych receptur. Import nie wysyła nic do urządzenia. BeerXML używa stopni Celsjusza i minut; nieobsługiwane etapy i ułamki są odrzucane.",
+  "help.sources.body": "Dodaj klucz API Brewer’s Friend w rekonfiguracji HBAC, potem wczytaj listę lub wpisz ID receptury. Dla BeerXML prześlij plik albo wybierz XML ze skonfigurowanego folderu HA (domyślnie /config/hbac/import); utwórz folder w razie potrzeby. Pliki pozostają bez zmian. Wybierz recepturę, sprawdź podgląd i dodaj do wspólnej listy. Powtórz dla kolejnych receptur. Import nie wysyła nic do urządzenia. BeerXML używa stopni Celsjusza i minut; nieobsługiwane etapy i ułamkowe czasy są odrzucane. Wybierz przerwę zacierania lub ręczne wysładzanie dla każdego kroku. Sparge/Nachguss wymaga jawnego wyboru. Temperatury są zaokrąglane do całych °C; zmiany i pominięcia widać w podglądzie. Kroki ręczne wykonaj osobno.",
   "runtime.xml_size": "BeerXML: plik pusty lub większy niż 512 KiB.",
   "runtime.xml_invalid": "BeerXML: nieprawidłowy lub niebezpieczny XML.",
   "runtime.xml_root": "BeerXML: oczekiwano RECIPES z 1–100 recepturami.",
@@ -193,5 +193,16 @@
   "runtime.bf_size": "Brewer's Friend: odpowiedź zbyt duża.",
   "runtime.bf_invalid": "Brewer's Friend: niedostępny lub nieprawidłowa odpowiedź.",
   "runtime.bf_many": "Brewer's Friend: za dużo receptur. Użyj ID.",
-  "runtime.bf_id": "Brewer's Friend: nieprawidłowe ID receptury."
+  "runtime.bf_id": "Brewer's Friend: nieprawidłowe ID receptury.",
+  "ui.step_review": "Sprawdź kroki źródłowe",
+  "ui.device_rest": "Przerwa zacierania w urządzeniu",
+  "ui.manual_sparge": "Wysładzanie ręczne (bez wysyłania)",
+  "ui.convert_steps": "Utwórz podgląd programu",
+  "ui.step_hint": "Wybierz przerwę zacierania lub ręczne wysładzanie dla każdego kroku. Sparge/Nachguss wymaga jawnego wyboru. Temperatury są zaokrąglane do całych °C; zmiany i pominięcia widać w podglądzie. Kroki ręczne wykonaj osobno.",
+  "ui.source_token": "Identyfikator przeglądu źródła",
+  "ui.step_roles": "Rola każdego kroku źródłowego",
+  "runtime.rounded_temp": "Krok {index}: temperatura zaokrąglona z {original} °C do {rounded} °C.",
+  "runtime.manual_step": "Krok {index} ({label}): wysładzanie ręczne; nie wysłano do urządzenia.",
+  "runtime.choose_roles": "Wybierz przerwę lub ręczne wysładzanie dla każdego kroku.",
+  "runtime.review_expired": "Przegląd wygasł. Wczytaj recepturę ponownie."
 }

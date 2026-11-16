@@ -79,6 +79,15 @@
         },
         "boil_temperature": {
           "name": "Température d'ébullition °C"
+        },
+        "review_steps": {
+          "name": "Vérifier les étapes source"
+        },
+        "source_token": {
+          "name": "Identifiant de vérification source"
+        },
+        "step_roles": {
+          "name": "Rôle de chaque étape source"
         }
       }
     },
@@ -458,6 +467,18 @@
     },
     "runtime_bf_id": {
       "message": "Brewer's Friend : identifiant de recette invalide."
+    },
+    "runtime_rounded_temp": {
+      "message": "Étape {index} : température arrondie de {original} °C à {rounded} °C."
+    },
+    "runtime_manual_step": {
+      "message": "Étape {index} ({label}) : rinçage manuel ; non envoyé à l’appareil."
+    },
+    "runtime_choose_roles": {
+      "message": "Choisissez palier ou rinçage manuel pour chaque étape."
+    },
+    "runtime_review_expired": {
+      "message": "Vérification source expirée. Rechargez la recette."
     }
   },
   "entity": {

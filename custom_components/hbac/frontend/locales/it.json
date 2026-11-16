@@ -175,7 +175,7 @@
   "config.incomplete_brewfather": "Inserisci ID utente e chiave API Brewfather oppure lascia entrambi vuoti.",
   "config.invalid_directory": "Usa un percorso assoluto di cartella in HA.",
   "help.sources.title": "Altre fonti di ricette",
-  "help.sources.body": "Aggiungi una chiave API Brewer’s Friend riconfigurando HBAC; carica l’elenco o inserisci un ID. Per BeerXML, carica un file o scegli un XML nella cartella HA configurata (predefinita /config/hbac/import), da creare se necessario. I file restano invariati. Seleziona una ricetta, controlla l’anteprima e aggiungila all’elenco comune. Ripeti per altre ricette. Nessun invio automatico al dispositivo. BeerXML usa Celsius e minuti; passaggi e frazioni non supportati vengono rifiutati.",
+  "help.sources.body": "Aggiungi una chiave API Brewer’s Friend riconfigurando HBAC; carica l’elenco o inserisci un ID. Per BeerXML, carica un file o scegli un XML nella cartella HA configurata (predefinita /config/hbac/import), da creare se necessario. I file restano invariati. Seleziona una ricetta, controlla l’anteprima e aggiungila all’elenco comune. Ripeti per altre ricette. Nessun invio automatico al dispositivo. BeerXML usa Celsius e minuti; passaggi non supportati e durate frazionarie vengono rifiutati. Scegli sosta o risciacquo manuale per ogni passaggio. Sparge/Nachguss richiede una scelta esplicita. Le temperature sono arrotondate a °C interi; modifiche e passaggi omessi appaiono nell’anteprima. Esegui separatamente i passaggi manuali.",
   "runtime.xml_size": "BeerXML: file vuoto o superiore a 512 KiB.",
   "runtime.xml_invalid": "BeerXML: XML non valido o non sicuro.",
   "runtime.xml_root": "BeerXML: previsto RECIPES con 1–100 ricette.",
@@ -193,5 +193,16 @@
   "runtime.bf_size": "Brewer's Friend: risposta troppo grande.",
   "runtime.bf_invalid": "Brewer's Friend: non disponibile o risposta non valida.",
   "runtime.bf_many": "Brewer's Friend: troppe ricette. Usa un ID.",
-  "runtime.bf_id": "Brewer's Friend: ID ricetta non valido."
+  "runtime.bf_id": "Brewer's Friend: ID ricetta non valido.",
+  "ui.step_review": "Verifica i passaggi originali",
+  "ui.device_rest": "Sosta sul dispositivo",
+  "ui.manual_sparge": "Risciacquo manuale (non inviato)",
+  "ui.convert_steps": "Crea anteprima del programma",
+  "ui.step_hint": "Scegli sosta o risciacquo manuale per ogni passaggio. Sparge/Nachguss richiede una scelta esplicita. Le temperature sono arrotondate a °C interi; modifiche e passaggi omessi appaiono nell’anteprima. Esegui separatamente i passaggi manuali.",
+  "ui.source_token": "ID verifica origine",
+  "ui.step_roles": "Ruolo di ogni passaggio originale",
+  "runtime.rounded_temp": "Passaggio {index}: temperatura arrotondata da {original} °C a {rounded} °C.",
+  "runtime.manual_step": "Passaggio {index} ({label}): risciacquo manuale; non inviato al dispositivo.",
+  "runtime.choose_roles": "Scegli sosta o risciacquo manuale per ogni passaggio.",
+  "runtime.review_expired": "Verifica scaduta. Ricarica la ricetta."
 }

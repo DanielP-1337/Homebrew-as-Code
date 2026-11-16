@@ -79,6 +79,15 @@
         },
         "boil_temperature": {
           "name": "Boil temperature °C"
+        },
+        "review_steps": {
+          "name": "Review source steps"
+        },
+        "source_token": {
+          "name": "Source review token"
+        },
+        "step_roles": {
+          "name": "Role of each source step"
         }
       }
     },
@@ -458,6 +467,18 @@
     },
     "runtime_bf_id": {
       "message": "Brewer's Friend: invalid recipe ID."
+    },
+    "runtime_rounded_temp": {
+      "message": "Step {index}: temperature rounded from {original} °C to {rounded} °C."
+    },
+    "runtime_manual_step": {
+      "message": "Step {index} ({label}): manual sparge; not sent to the device."
+    },
+    "runtime_choose_roles": {
+      "message": "Choose rest or manual sparge for every source step."
+    },
+    "runtime_review_expired": {
+      "message": "Source review expired. Fetch the recipe again."
     }
   },
   "entity": {

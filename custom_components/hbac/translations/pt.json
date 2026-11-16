@@ -79,6 +79,15 @@
         },
         "boil_temperature": {
           "name": "Temperatura de fervura °C"
+        },
+        "review_steps": {
+          "name": "Revisar etapas de origem"
+        },
+        "source_token": {
+          "name": "ID de revisão da origem"
+        },
+        "step_roles": {
+          "name": "Função de cada etapa de origem"
         }
       }
     },
@@ -458,6 +467,18 @@
     },
     "runtime_bf_id": {
       "message": "Brewer's Friend: ID de receita inválido."
+    },
+    "runtime_rounded_temp": {
+      "message": "Etapa {index}: temperatura arredondada de {original} °C para {rounded} °C."
+    },
+    "runtime_manual_step": {
+      "message": "Etapa {index} ({label}): lavagem manual; não enviada ao equipamento."
+    },
+    "runtime_choose_roles": {
+      "message": "Escolha rampa ou lavagem manual para cada etapa."
+    },
+    "runtime_review_expired": {
+      "message": "Revisão expirada. Carregue a receita novamente."
     }
   },
   "entity": {

@@ -15,7 +15,7 @@ def integer(value, low, high, field):
     return int(value)
 
 
-def convert(source, kind, source_id, mash_in=None, boil_temperature=103):
+def convert(source, kind, source_id, mash_in=None, boil_temperature=103, step_roles=None):
     """Project a recipe or the batch's own recipe; never substitute a parent."""
     if kind not in ("recipes", "batches") or not isinstance(source, dict):
         raise ConversionError("Ungültiger Brewfather-Datensatz.")
@@ -37,23 +37,40 @@ def convert(source, kind, source_id, mash_in=None, boil_temperature=103):
         warnings.append(f"Gerätename: {original} → {name}")
     mash = recipe.get("mash")
     steps = mash.get("steps") if isinstance(mash, dict) else None
-    if not isinstance(steps, list) or not 1 <= len(steps) <= 5:
+    if not isinstance(steps, list) or not 1 <= len(steps) <= 100:
         raise ConversionError("Das Gerät benötigt 1 bis 5 Maischerasten.")
+    if step_roles is None:
+        step_roles = ["rest"] * len(steps)
+    if (not isinstance(step_roles, list) or len(step_roles) != len(steps)
+            or any(role not in ("rest", "manual_sparge") for role in step_roles)):
+        raise ConversionError("Choose rest or manual sparge for every source step.")
     rests = []
     for index, step in enumerate(steps, 1):
         if not isinstance(step, dict):
             raise ConversionError(f"Rast {index}: ungültige Daten.")
+        if step_roles[index - 1] == "manual_sparge":
+            label = str(step.get("name") or index)
+            warnings.append(f"Step {index} ({label}): manual sparge; not sent to the device.")
+            continue
         if step.get("type") not in (None, "Temperature", "Infusion"):
             raise ConversionError(f"Rast {index}: Rasttyp {step.get('type')} wird nicht unterstützt.")
-        temp = integer(step.get("stepTemp"), 20, 80, f"Rast {index}, Temperatur")
+        original_temp = step.get("stepTemp")
+        if (isinstance(original_temp, bool) or not isinstance(original_temp, (float, int))
+                or not math.isfinite(original_temp) or not 20 <= original_temp <= 80):
+            raise ConversionError(f"Rast {index}, Temperatur: ganze Zahl zwischen 20 und 80 erforderlich.")
+        temp = math.floor(original_temp + 0.5)
+        if temp != original_temp:
+            warnings.append(f"Step {index}: temperature rounded from {original_temp:g} °C to {temp} °C.")
         minutes = integer(step.get("stepTime"), 1, 180, f"Rast {index}, Minuten")
         if step.get("rampTime") not in (None, 0):
             warnings.append(f"Rast {index}: Rampenzeit nicht übertragen; das Gerät regelt die Aufheizung.")
-        if step.get("endTemp") not in (None, temp):
+        if step.get("endTemp") not in (None, original_temp):
             raise ConversionError(f"Rast {index}: abweichende Endtemperatur ist nicht darstellbar.")
         if step.get("infuseAmount"):
             warnings.append(f"Rast {index}: Infusionswassermenge nicht übertragen.")
         rests.append({"temperature": temp, "minutes": minutes})
+    if not 1 <= len(rests) <= 5:
+        raise ConversionError("Das Gerät benötigt 1 bis 5 Maischerasten.")
     if mash_in is None:
         mash_in = rests[0]["temperature"]
         warnings.append("Einmaischtemperatur aus erster Rast vorgeschlagen; bei Bedarf in HA ändern.")
@@ -98,4 +115,4 @@ def convert(source, kind, source_id, mash_in=None, boil_temperature=103):
             "warnings": warnings,
             "not_transferred": ["Zutaten und Mengen", "Wasser und Wasserchemie", "Gärung und Abfüllung",
                                 "Zielwerte und Messwerte", "Whirlpool, Stopfhopfen und weitere Zutaten"],
-            "source_recipe": deepcopy(recipe)}
+            "source_recipe": deepcopy(recipe), "step_roles": list(step_roles)}

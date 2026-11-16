@@ -40,7 +40,7 @@ def test_batch_snapshot_and_no_mutation():
     assert any("Dry Hop" in w for w in result["warnings"])
 
 
-@pytest.mark.parametrize("value", [None, True, 19, 81, 63.5, float("nan"), float("inf")])
+@pytest.mark.parametrize("value", [None, True, 19, 81, float("nan"), float("inf")])
 def test_invalid_mash_temperature(value):
     source = recipe()
     source["mash"]["steps"][0]["stepTemp"] = value

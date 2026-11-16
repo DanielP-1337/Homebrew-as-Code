@@ -64,6 +64,32 @@ are excluded. At most 500 filenames are listed. A missing folder produces an emp
 list. The selected file is read into a snapshot, so later file changes do not
 silently change a preview or a recipe already in the queue.
 
+## Review source steps and temperature rounding
+
+After fetching a recipe, the card shows every source mash step with its name,
+temperature, duration and infusion volume if provided. Choose **Device mash rest**
+or **Manual sparge (not uploaded)** for each step, then **Create program preview**.
+Steps named Sparge/Nachguss start without a selected role; the button remains
+unavailable until you choose. This is a prompt only, never automatic omission.
+Other steps default to device rests and can also be changed. Changing any role
+invalidates the program preview and requires generating a new one before adding.
+
+Rest temperatures within 20–80 °C are rounded to the nearest whole °C; .5 rounds
+up. Every changed temperature is identified with its original value and target
+in the preview. Values outside that range, non-finite values and fractional
+*durations* remain errors. A different end temperature remains unsupported.
+The original source snapshot is retained unmodified. Mash-in defaults to the first
+retained rest's rounded temperature. At least one and at most five device rests
+must remain. Manual sparge steps appear as omission warnings and must be performed
+separately; they do not create a controller stage or alarm.
+
+The second preview request uses a server-held source token, so changing a source
+recipe after fetching it cannot silently change the reviewed steps. Existing
+queued recipes are not recalculated. For HA action clients, call `hbac.preview`
+with `review_steps: true`, then call it again with the returned `source_token`
+and `step_roles` (`rest` or `manual_sparge`, in original source order), keeping the
+same `kind` and `source_id`. Without step roles the API retains all source steps.
+
 ## Format and limits
 
 - BeerXML v1 `<RECIPES>` containing 1–100 `<RECIPE>` records; maximum 512 KiB/file.
@@ -76,7 +102,7 @@ silently change a preview or a recipe already in the queue.
 - Empty optional numeric elements (INFUSE_AMOUNT, RAMP_TIME, END_TEMP) are
   treated as absent, including whitespace-only elements. Empty required fields and
   nonempty invalid numeric values remain errors.
-- Existing device limits apply: 1–5 rests, integer representable temperatures and
+- Existing device limits apply: 1–5 rests, rounded whole-degree rest temperatures and integer
   durations, at most six distinct boiling-hop alarms. No silent rounding or
   truncation of steps. Decoction and incompatible end temperatures are rejected.
 - Ramp timing and infusion amounts produce omission warnings; zero-minute,

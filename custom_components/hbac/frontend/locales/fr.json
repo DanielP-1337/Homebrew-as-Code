@@ -175,7 +175,7 @@
   "config.incomplete_brewfather": "Renseignez l’identifiant et la clé API Brewfather, ou laissez les deux vides.",
   "config.invalid_directory": "Utilisez un chemin de dossier absolu dans HA.",
   "help.sources.title": "Autres sources de recettes",
-  "help.sources.body": "Ajoutez une clé API Brewer’s Friend dans la reconfiguration HBAC, puis chargez la liste ou saisissez un identifiant. Pour BeerXML, importez un fichier ou choisissez un XML dans le dossier HA configuré (par défaut /config/hbac/import), à créer si nécessaire. Les fichiers restent inchangés. Sélectionnez une recette, vérifiez l’aperçu et ajoutez-la à la liste commune. Répétez pour les autres recettes. Aucun envoi automatique à l’appareil. BeerXML utilise les degrés Celsius et les minutes ; les paliers non pris en charge et les valeurs fractionnaires incompatibles sont refusés.",
+  "help.sources.body": "Ajoutez une clé API Brewer’s Friend dans la reconfiguration HBAC, puis chargez la liste ou saisissez un identifiant. Pour BeerXML, importez un fichier ou choisissez un XML dans le dossier HA configuré (par défaut /config/hbac/import), à créer si nécessaire. Les fichiers restent inchangés. Sélectionnez une recette, vérifiez l’aperçu et ajoutez-la à la liste commune. Répétez pour les autres recettes. Aucun envoi automatique à l’appareil. BeerXML utilise les degrés Celsius et les minutes ; les paliers non pris en charge et les durées fractionnaires sont refusés. Choisissez un palier ou un rinçage manuel pour chaque étape. Sparge/Nachguss exige un choix explicite. Les températures sont arrondies au °C entier ; modifications et étapes omises figurent dans l’aperçu. Effectuez les étapes manuelles séparément.",
   "runtime.xml_size": "BeerXML : fichier vide ou supérieur à 512 Kio.",
   "runtime.xml_invalid": "BeerXML : XML invalide ou non sécurisé.",
   "runtime.xml_root": "BeerXML : RECIPES avec 1 à 100 recettes attendu.",
@@ -193,5 +193,16 @@
   "runtime.bf_size": "Brewer's Friend : réponse trop volumineuse.",
   "runtime.bf_invalid": "Brewer's Friend : indisponible ou réponse invalide.",
   "runtime.bf_many": "Brewer's Friend : trop de recettes. Utilisez un identifiant.",
-  "runtime.bf_id": "Brewer's Friend : identifiant de recette invalide."
+  "runtime.bf_id": "Brewer's Friend : identifiant de recette invalide.",
+  "ui.step_review": "Vérifier les étapes source",
+  "ui.device_rest": "Palier sur l’appareil",
+  "ui.manual_sparge": "Rinçage manuel (non envoyé)",
+  "ui.convert_steps": "Créer l’aperçu du programme",
+  "ui.step_hint": "Choisissez un palier ou un rinçage manuel pour chaque étape. Sparge/Nachguss exige un choix explicite. Les températures sont arrondies au °C entier ; modifications et étapes omises figurent dans l’aperçu. Effectuez les étapes manuelles séparément.",
+  "ui.source_token": "Identifiant de vérification source",
+  "ui.step_roles": "Rôle de chaque étape source",
+  "runtime.rounded_temp": "Étape {index} : température arrondie de {original} °C à {rounded} °C.",
+  "runtime.manual_step": "Étape {index} ({label}) : rinçage manuel ; non envoyé à l’appareil.",
+  "runtime.choose_roles": "Choisissez palier ou rinçage manuel pour chaque étape.",
+  "runtime.review_expired": "Vérification source expirée. Rechargez la recette."
 }

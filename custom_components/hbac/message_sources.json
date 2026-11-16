@@ -80,5 +80,9 @@
   "runtime.bf_size": "Brewer's Friend: response is too large.",
   "runtime.bf_invalid": "Brewer's Friend: unavailable or invalid response.",
   "runtime.bf_many": "Brewer's Friend: too many recipes. Use a recipe ID.",
-  "runtime.bf_id": "Brewer's Friend: invalid recipe ID."
+  "runtime.bf_id": "Brewer's Friend: invalid recipe ID.",
+  "runtime.rounded_temp": "Step {index}: temperature rounded from {original} °C to {rounded} °C.",
+  "runtime.manual_step": "Step {index} ({label}): manual sparge; not sent to the device.",
+  "runtime.choose_roles": "Choose rest or manual sparge for every source step.",
+  "runtime.review_expired": "Source review expired. Fetch the recipe again."
 }

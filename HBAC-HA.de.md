@@ -43,6 +43,15 @@ entfernt. Kein Import startet automatisch einen Geräteupload. Bis zu 100 Rezept
 pro Datei (512 KiB), weiterhin maximal neun geprüfte Rezepte pro Upload-Liste.
 Weitere Details und Testdateien: [SOURCES.md](SOURCES.md).
 
+## Quellschritte prüfen
+
+Nach dem Abruf je Schritt **Maischerast am Gerät** oder **Manueller Nachguss** wählen.
+Bei Schritten namens Sparge/Nachguss ist eine ausdrückliche Auswahl erforderlich.
+Dann **Programmvorschau erstellen** drücken. Temperaturen werden auf ganze °C
+kaufmännisch gerundet und jede Änderung wird angezeigt. Manuell markierte Schritte
+werden mit Hinweis ausgelassen; sie müssen separat ausgeführt werden. Änderungen
+an der Auswahl verwerfen die Vorschau, nicht die schon gespeicherte Upload-Liste.
+
 ## Voraussetzungen
 
 - Home Assistant mit Custom-Integration-Unterstützung; Tests mit HA 2026.2.3.

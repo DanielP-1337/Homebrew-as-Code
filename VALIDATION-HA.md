@@ -7,9 +7,17 @@ accepted. This release treats empty/whitespace-only INFUSE_AMOUNT, RAMP_TIME and
 END_TEMP as absent, without inventing zero values or weakening required fields.
 Nonempty invalid and non-finite numbers still fail. Regression fixtures are synthetic,
 including an HTTP XML response through the Brewer’s Friend adapter and converter.
-Live acceptance with the two failing recipes remains pending.
+The supplied Sierra Nevada export confirmed an empty INFUSE_AMOUNT and fractional
+Celsius temperatures. With the user-approved rounding and explicit manual-sparge
+selection, it now converts successfully in a read-only local check: rests 67 °C/60 min
+and 76 °C/10 min, mash-in 67 °C, boil 70 min, hop alarms 60/30/10. The original file
+was not added to the repository. Live HA acceptance remains pending.
 
-96 HA tests passed; frontend/i18n tests and Ruff passed.
+104 HA tests passed; frontend/i18n tests and Ruff passed. Tests cover half-up
+temperature rounding, unmodified source snapshots, manual-step choices, all-manual
+rejection, capacity after selection, source-token identity, and explicit UI selection
+for Sparge with preview invalidation when the choice changes. All eight catalogs
+contain 206 keys. Duration validation is unchanged.
 
 ## User-operated BeerXML hardware acceptance
 

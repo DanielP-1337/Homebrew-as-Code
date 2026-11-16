@@ -175,7 +175,7 @@
   "config.incomplete_brewfather": "Brewfather-Benutzer-ID und API-Schlüssel beide angeben oder beide leer lassen.",
   "config.invalid_directory": "Einen absoluten Ordnerpfad innerhalb von HA verwenden.",
   "help.sources.title": "Weitere Rezeptquellen",
-  "help.sources.body": "Brewer’s-Friend-API-Schlüssel über die HBAC-Neukonfiguration ergänzen, dann Brewer’s Friend wählen und Liste laden oder Rezept-ID eingeben. Für BeerXML eine Datei hochladen oder eine XML-Datei aus dem eingestellten HA-Ordner wählen (Standard /config/hbac/import). Ordner bei Bedarf selbst anlegen. Dateien bleiben unverändert. Ein Rezept auswählen, Vorschau prüfen und zur gemeinsamen Liste hinzufügen; für weitere Rezepte wiederholen. Der Import startet keinen Geräteupload. BeerXML nutzt Celsius und Minuten; nicht unterstützte Rasten und nicht darstellbare Bruchteile werden abgewiesen.",
+  "help.sources.body": "Brewer’s-Friend-API-Schlüssel über die HBAC-Neukonfiguration ergänzen, dann Brewer’s Friend wählen und Liste laden oder Rezept-ID eingeben. Für BeerXML eine Datei hochladen oder eine XML-Datei aus dem eingestellten HA-Ordner wählen (Standard /config/hbac/import). Ordner bei Bedarf selbst anlegen. Dateien bleiben unverändert. Ein Rezept auswählen, Vorschau prüfen und zur gemeinsamen Liste hinzufügen; für weitere Rezepte wiederholen. Der Import startet keinen Geräteupload. BeerXML nutzt Celsius und Minuten; nicht unterstützte Rasten und Zeitdauern mit Nachkommastellen werden abgewiesen. Pro Schritt Maischerast oder manuellen Nachguss wählen. Bei Sparge/Nachguss ist eine ausdrückliche Auswahl nötig. Rasttemperaturen werden auf ganze °C gerundet; Änderungen und ausgelassene Schritte stehen in der Vorschau. Manuelle Schritte separat ausführen.",
   "runtime.xml_size": "BeerXML: Datei leer oder größer als 512 KiB.",
   "runtime.xml_invalid": "BeerXML: ungültiges oder unsicheres XML.",
   "runtime.xml_root": "BeerXML: RECIPES mit 1 bis 100 Rezepten erwartet.",
@@ -193,5 +193,16 @@
   "runtime.bf_size": "Brewer's Friend: Antwort zu groß.",
   "runtime.bf_invalid": "Brewer's Friend: nicht erreichbar oder ungültige Antwort.",
   "runtime.bf_many": "Brewer's Friend: zu viele Rezepte. Rezept-ID verwenden.",
-  "runtime.bf_id": "Brewer's Friend: ungültige Rezept-ID."
+  "runtime.bf_id": "Brewer's Friend: ungültige Rezept-ID.",
+  "ui.step_review": "Quellschritte prüfen",
+  "ui.device_rest": "Maischerast am Gerät",
+  "ui.manual_sparge": "Manueller Nachguss (nicht übertragen)",
+  "ui.convert_steps": "Programmvorschau erstellen",
+  "ui.step_hint": "Pro Schritt Maischerast oder manuellen Nachguss wählen. Bei Sparge/Nachguss ist eine ausdrückliche Auswahl nötig. Rasttemperaturen werden auf ganze °C gerundet; Änderungen und ausgelassene Schritte stehen in der Vorschau. Manuelle Schritte separat ausführen.",
+  "ui.source_token": "Quellprüfungs-ID",
+  "ui.step_roles": "Rolle je Quellschritt",
+  "runtime.rounded_temp": "Schritt {index}: Temperatur von {original} °C auf {rounded} °C gerundet.",
+  "runtime.manual_step": "Schritt {index} ({label}): manueller Nachguss; nicht an das Gerät übertragen.",
+  "runtime.choose_roles": "Für jeden Quellschritt Rast oder manuellen Nachguss wählen.",
+  "runtime.review_expired": "Quellprüfung abgelaufen. Rezept erneut abrufen."
 }

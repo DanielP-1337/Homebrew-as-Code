@@ -175,7 +175,7 @@
   "config.incomplete_brewfather": "Provide both Brewfather user ID and API key, or leave both empty.",
   "config.invalid_directory": "Use an absolute folder path inside HA.",
   "help.sources.title": "Additional recipe sources",
-  "help.sources.body": "Add a Brewer’s Friend API key through HBAC reconfiguration, then select Brewer’s Friend and load the list or enter a recipe ID. For BeerXML, upload a file or select an XML file from the configured HA folder (default /config/hbac/import). Create that folder yourself if needed. Files stay unchanged. Select one recipe, preview it and add it to the shared list; repeat for other recipes. Imports never start a device upload. BeerXML uses standard Celsius and minute fields; unsupported steps or fractional device values are rejected.",
+  "help.sources.body": "Add a Brewer’s Friend API key through HBAC reconfiguration, then select Brewer’s Friend and load the list or enter a recipe ID. For BeerXML, upload a file or select an XML file from the configured HA folder (default /config/hbac/import). Create that folder yourself if needed. Files stay unchanged. Select one recipe, preview it and add it to the shared list; repeat for other recipes. Imports never start a device upload. BeerXML uses standard Celsius and minute fields; unsupported steps and fractional durations are rejected. Choose device rest or manual sparge for each step. Steps named Sparge/Nachguss require an explicit choice. Rest temperatures are rounded to whole °C; changes and omitted steps appear in the preview. Manual steps must be performed separately.",
   "runtime.xml_size": "BeerXML: empty file or file larger than 512 KiB.",
   "runtime.xml_invalid": "BeerXML: invalid or unsafe XML.",
   "runtime.xml_root": "BeerXML: expected RECIPES with 1 to 100 recipes.",
@@ -193,5 +193,16 @@
   "runtime.bf_size": "Brewer's Friend: response is too large.",
   "runtime.bf_invalid": "Brewer's Friend: unavailable or invalid response.",
   "runtime.bf_many": "Brewer's Friend: too many recipes. Use a recipe ID.",
-  "runtime.bf_id": "Brewer's Friend: invalid recipe ID."
+  "runtime.bf_id": "Brewer's Friend: invalid recipe ID.",
+  "ui.step_review": "Review source steps",
+  "ui.device_rest": "Device mash rest",
+  "ui.manual_sparge": "Manual sparge (not uploaded)",
+  "ui.convert_steps": "Create program preview",
+  "ui.step_hint": "Choose device rest or manual sparge for each step. Steps named Sparge/Nachguss require an explicit choice. Rest temperatures are rounded to whole °C; changes and omitted steps appear in the preview. Manual steps must be performed separately.",
+  "ui.source_token": "Source review token",
+  "ui.step_roles": "Role of each source step",
+  "runtime.rounded_temp": "Step {index}: temperature rounded from {original} °C to {rounded} °C.",
+  "runtime.manual_step": "Step {index} ({label}): manual sparge; not sent to the device.",
+  "runtime.choose_roles": "Choose rest or manual sparge for every source step.",
+  "runtime.review_expired": "Source review expired. Fetch the recipe again."
 }

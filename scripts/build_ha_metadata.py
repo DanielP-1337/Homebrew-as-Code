@@ -12,7 +12,7 @@ services = yaml.safe_load((COMPONENT / "services.yaml").read_text(encoding="utf-
 action_keys = {"import_file": "ui.file_upload", "open_file": "ui.open_file", "state": "ui.state", "catalog": "ui.load_catalog", "preview": "ui.preview", "add": "ui.add",
                "remove": "ui.remove", "move": "ui.move", "clear": "ui.clear", "readiness": "ui.readiness",
                "upload": "ui.upload", "status": "ui.refresh_status", "acknowledge_unknown": "ui.release"}
-field_keys = {"content": "ui.file_upload", "filename": "ui.file", "entry_id": None, "kind": "ui.source", "refresh": "ui.refresh", "source_id": "ui.source_id",
+field_keys = {"review_steps": "ui.step_review", "source_token": "ui.source_token", "step_roles": "ui.step_roles", "content": "ui.file_upload", "filename": "ui.file", "entry_id": None, "kind": "ui.source", "refresh": "ui.refresh", "source_id": "ui.source_id",
               "mash_in": "ui.mash_in", "boil_temperature": "ui.boil_temperature", "preview_id": "ui.preview_id",
               "revision": "ui.revision", "index": "ui.index", "target": "ui.target", "replace_all": "ui.consent",
               "device_checked": "ui.release_confirm"}

@@ -59,6 +59,19 @@ preview:
           step: 1
           unit_of_measurement: °C
           mode: box
+    review_steps:
+      default: false
+      selector:
+        boolean: {}
+      name: Review source steps
+    source_token:
+      selector:
+        text: {}
+      name: Source review token
+    step_roles:
+      selector:
+        object: {}
+      name: Role of each source step
 add:
   name: Reviewed · Add to upload list
   description: Reviewed · Add to upload list

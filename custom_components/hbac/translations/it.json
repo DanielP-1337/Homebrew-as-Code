@@ -79,6 +79,15 @@
         },
         "boil_temperature": {
           "name": "Temperatura di bollitura °C"
+        },
+        "review_steps": {
+          "name": "Verifica i passaggi originali"
+        },
+        "source_token": {
+          "name": "ID verifica origine"
+        },
+        "step_roles": {
+          "name": "Ruolo di ogni passaggio originale"
         }
       }
     },
@@ -458,6 +467,18 @@
     },
     "runtime_bf_id": {
       "message": "Brewer's Friend: ID ricetta non valido."
+    },
+    "runtime_rounded_temp": {
+      "message": "Passaggio {index}: temperatura arrotondata da {original} °C a {rounded} °C."
+    },
+    "runtime_manual_step": {
+      "message": "Passaggio {index} ({label}): risciacquo manuale; non inviato al dispositivo."
+    },
+    "runtime_choose_roles": {
+      "message": "Scegli sosta o risciacquo manuale per ogni passaggio."
+    },
+    "runtime_review_expired": {
+      "message": "Verifica scaduta. Ricarica la ricetta."
     }
   },
   "entity": {

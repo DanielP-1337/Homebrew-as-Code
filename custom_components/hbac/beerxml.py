@@ -66,7 +66,7 @@ def normalized_recipe(node):
     steps = []
     for step in container(mash, "MASH_STEPS").findall("MASH_STEP"):
         version(step)
-        steps.append({"type": text(step, "TYPE"), "stepTemp": number(step, "STEP_TEMP"),
+        steps.append({"name": text(step, "NAME", False) or "", "type": text(step, "TYPE"), "stepTemp": number(step, "STEP_TEMP"),
                       "stepTime": number(step, "STEP_TIME"), "rampTime": number(step, "RAMP_TIME", False),
                       "endTemp": number(step, "END_TEMP", False), "infuseAmount": number(step, "INFUSE_AMOUNT", False)})
     hops = []

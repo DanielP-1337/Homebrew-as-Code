@@ -175,7 +175,7 @@
   "config.incomplete_brewfather": "Vul zowel Brewfather-gebruikers-ID als API-sleutel in, of laat beide leeg.",
   "config.invalid_directory": "Gebruik een absoluut mappad binnen HA.",
   "help.sources.title": "Andere receptbronnen",
-  "help.sources.body": "Voeg een Brewer’s Friend-API-sleutel toe via HBAC-herconfiguratie; laad de lijst of voer een recept-ID in. Upload voor BeerXML een bestand of kies een XML-bestand uit de ingestelde HA-map (standaard /config/hbac/import); maak de map zo nodig aan. Bestanden blijven ongewijzigd. Kies een recept, controleer het voorbeeld en voeg het toe aan de gezamenlijke lijst. Herhaal voor andere recepten. Import start geen apparaatupload. BeerXML gebruikt Celsius en minuten; niet-ondersteunde stappen en ongeschikte fracties worden geweigerd.",
+  "help.sources.body": "Voeg een Brewer’s Friend-API-sleutel toe via HBAC-herconfiguratie; laad de lijst of voer een recept-ID in. Upload voor BeerXML een bestand of kies een XML-bestand uit de ingestelde HA-map (standaard /config/hbac/import); maak de map zo nodig aan. Bestanden blijven ongewijzigd. Kies een recept, controleer het voorbeeld en voeg het toe aan de gezamenlijke lijst. Herhaal voor andere recepten. Import start geen apparaatupload. BeerXML gebruikt Celsius en minuten; niet-ondersteunde stappen en tijdsduren met fracties worden geweigerd. Kies per stap een maischrust of handmatig spoelen. Sparge/Nachguss vereist een expliciete keuze. Temperaturen worden afgerond op hele °C; wijzigingen en weggelaten stappen staan in het voorbeeld. Voer handmatige stappen afzonderlijk uit.",
   "runtime.xml_size": "BeerXML: leeg bestand of groter dan 512 KiB.",
   "runtime.xml_invalid": "BeerXML: ongeldige of onveilige XML.",
   "runtime.xml_root": "BeerXML: RECIPES met 1 tot 100 recepten verwacht.",
@@ -193,5 +193,16 @@
   "runtime.bf_size": "Brewer's Friend: antwoord is te groot.",
   "runtime.bf_invalid": "Brewer's Friend: niet bereikbaar of ongeldig antwoord.",
   "runtime.bf_many": "Brewer's Friend: te veel recepten. Gebruik een recept-ID.",
-  "runtime.bf_id": "Brewer's Friend: ongeldig recept-ID."
+  "runtime.bf_id": "Brewer's Friend: ongeldig recept-ID.",
+  "ui.step_review": "Bronstappen controleren",
+  "ui.device_rest": "Maischrust op het apparaat",
+  "ui.manual_sparge": "Handmatig spoelen (niet uploaden)",
+  "ui.convert_steps": "Programmavoorbeeld maken",
+  "ui.step_hint": "Kies per stap een maischrust of handmatig spoelen. Sparge/Nachguss vereist een expliciete keuze. Temperaturen worden afgerond op hele °C; wijzigingen en weggelaten stappen staan in het voorbeeld. Voer handmatige stappen afzonderlijk uit.",
+  "ui.source_token": "Broncontrole-ID",
+  "ui.step_roles": "Rol van elke bronstap",
+  "runtime.rounded_temp": "Stap {index}: temperatuur afgerond van {original} °C naar {rounded} °C.",
+  "runtime.manual_step": "Stap {index} ({label}): handmatig spoelen; niet naar het apparaat gestuurd.",
+  "runtime.choose_roles": "Kies voor elke stap rust of handmatig spoelen.",
+  "runtime.review_expired": "Broncontrole verlopen. Haal het recept opnieuw op."
 }

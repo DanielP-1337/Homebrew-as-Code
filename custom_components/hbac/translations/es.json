@@ -79,6 +79,15 @@
         },
         "boil_temperature": {
           "name": "Temperatura de hervor °C"
+        },
+        "review_steps": {
+          "name": "Revisar pasos de origen"
+        },
+        "source_token": {
+          "name": "ID de revisión de origen"
+        },
+        "step_roles": {
+          "name": "Función de cada paso de origen"
         }
       }
     },
@@ -458,6 +467,18 @@
     },
     "runtime_bf_id": {
       "message": "Brewer's Friend: ID de receta no válido."
+    },
+    "runtime_rounded_temp": {
+      "message": "Paso {index}: temperatura redondeada de {original} °C a {rounded} °C."
+    },
+    "runtime_manual_step": {
+      "message": "Paso {index} ({label}): lavado manual; no enviado al equipo."
+    },
+    "runtime_choose_roles": {
+      "message": "Elija reposo o lavado manual para cada paso."
+    },
+    "runtime_review_expired": {
+      "message": "Revisión caducada. Vuelva a cargar la receta."
     }
   },
   "entity": {

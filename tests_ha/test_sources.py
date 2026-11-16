@@ -47,7 +47,7 @@ def test_invalid_and_unsafe_xml_rejected(raw):
         parse_beerxml(raw)
 
 
-@pytest.mark.parametrize('old,new', [('63.0', '63.5'), ('63.0', 'nan'), ('63.0', '145.4'),
+@pytest.mark.parametrize('old,new', [('63.0', 'nan'), ('63.0', '145.4'),
     ('<STEP_TIME>40</STEP_TIME>', ''), ('Infusion', 'Decoction'), ('<VERSION>1</VERSION>', '<VERSION>2</VERSION>'),
     ('<BOIL_TIME>60</BOIL_TIME>', '<BOIL_TIME>60</BOIL_TIME><BOIL_TIME>90</BOIL_TIME>')])
 def test_no_silent_rounding_or_unsupported_program(old, new):
@@ -274,3 +274,61 @@ async def test_brewersfriend_empty_infusion_field_through_api_and_conversion(has
     result = convert(await client.get('brewersfriend', '42'), 'recipes', '42')
     assert result['program']['rests'] == [{'temperature': 63, 'minutes': 40}]
     assert result['program']['hop_additions'] == [15]
+
+@pytest.mark.parametrize('temperature,expected', [(67.222222222222, 67), (75.555555555556, 76), (76.666666666667, 77), (63.5, 64)])
+def test_rest_temperature_rounding_is_explicit(temperature, expected):
+    source = normalized_recipe(parse_beerxml(XML)[0])
+    source['mash']['steps'][0]['stepTemp'] = temperature
+    source['mash']['steps'][0]['endTemp'] = temperature
+    result = convert(source, 'recipes', 'test')
+    assert result['program']['rests'][0]['temperature'] == expected
+    assert result['source_recipe']['mash']['steps'][0]['stepTemp'] == temperature
+    assert any('rounded from' in w and f'to {expected} °C' in w for w in result['warnings'])
+
+
+async def test_review_choices_use_snapshot_and_exclude_only_selected_steps(import_manager):
+    from copy import deepcopy
+    source = normalized_recipe(parse_beerxml(XML)[0])
+    source['mash']['steps'] = [
+        {'name': 'Rest', 'type': 'Temperature', 'stepTemp': 67.222222222222, 'stepTime': 60},
+        {'name': 'Mash-out Rest', 'type': 'Temperature', 'stepTemp': 75.555555555556, 'stepTime': 10},
+        {'name': 'Sparge', 'type': 'Infusion', 'stepTemp': 76.666666666667, 'stepTime': 10, 'infuseAmount': 18.9270589}]
+    import_manager.brewersfriend = AsyncMock()
+    import_manager.brewersfriend.get.return_value = deepcopy(source)
+    request = {'kind': 'brewersfriend', 'source_id': '42'}
+    review = await import_manager.dispatch('preview', {**request, 'review_steps': True})
+    assert review['steps'][2]['name'] == 'Sparge'
+    assert 'program' not in review
+    import_manager.brewersfriend.get.return_value['mash']['steps'][0]['stepTemp'] = 20
+    preview = await import_manager.dispatch('preview', {**request, 'source_token': review['source_token'],
+        'step_roles': ['rest', 'rest', 'manual_sparge']})
+    assert preview['program']['rests'] == [{'temperature': 67, 'minutes': 60}, {'temperature': 76, 'minutes': 10}]
+    assert any('Sparge' in w and 'not sent' in w for w in preview['warnings'])
+    assert preview['program']['mash_in_temperature'] == 67
+    assert import_manager.brewersfriend.get.await_count == 1
+    await import_manager.dispatch('add', {'preview_id': preview['preview_id'], 'revision': import_manager.revision})
+    assert len(import_manager.queue[0]['source_recipe']['mash']['steps']) == 3
+    assert import_manager.queue[0]['step_roles'] == ['rest', 'rest', 'manual_sparge']
+    import_manager.bridge.assert_not_awaited()
+    # The same source can explicitly retain all three steps; names never auto-delete.
+    preview = await import_manager.dispatch('preview', {**request, 'source_token': review['source_token'],
+        'step_roles': ['rest', 'rest', 'rest']})
+    assert preview['program']['rests'][2] == {'temperature': 77, 'minutes': 10}
+    with pytest.raises(ValueError, match='expired'):
+        await import_manager.dispatch('preview', {**request, 'source_id': 'different', 'source_token': review['source_token']})
+
+
+@pytest.mark.parametrize('roles', [[], ['manual_sparge'], ['invalid'], ['rest', 'rest']])
+def test_invalid_or_all_manual_step_roles_rejected(roles):
+    source = normalized_recipe(parse_beerxml(XML)[0])
+    with pytest.raises(ConversionError):
+        convert(source, 'recipes', 'test', step_roles=roles)
+
+
+def test_rest_capacity_applies_after_manual_selection():
+    source = normalized_recipe(parse_beerxml(XML)[0])
+    source['mash']['steps'] *= 6
+    with pytest.raises(ConversionError):
+        convert(source, 'recipes', 'test')
+    result = convert(source, 'recipes', 'test', step_roles=['rest'] * 5 + ['manual_sparge'])
+    assert len(result['program']['rests']) == 5

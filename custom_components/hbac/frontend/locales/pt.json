@@ -175,7 +175,7 @@
   "config.incomplete_brewfather": "Informe ID de usuário e chave API Brewfather ou deixe ambos vazios.",
   "config.invalid_directory": "Use um caminho absoluto de pasta no HA.",
   "help.sources.title": "Outras fontes de receitas",
-  "help.sources.body": "Adicione uma chave API Brewer’s Friend na reconfiguração do HBAC; carregue a lista ou informe um ID. Para BeerXML, envie um arquivo ou selecione um XML da pasta HA configurada (padrão /config/hbac/import); crie a pasta se necessário. Os arquivos não mudam. Selecione uma receita, confira a prévia e adicione à lista comum. Repita para outras receitas. Sem envio automático ao equipamento. BeerXML usa Celsius e minutos; etapas e frações incompatíveis são rejeitadas.",
+  "help.sources.body": "Adicione uma chave API Brewer’s Friend na reconfiguração do HBAC; carregue a lista ou informe um ID. Para BeerXML, envie um arquivo ou selecione um XML da pasta HA configurada (padrão /config/hbac/import); crie a pasta se necessário. Os arquivos não mudam. Selecione uma receita, confira a prévia e adicione à lista comum. Repita para outras receitas. Sem envio automático ao equipamento. BeerXML usa Celsius e minutos; etapas incompatíveis e durações fracionárias são rejeitadas. Escolha rampa ou lavagem manual para cada etapa. Sparge/Nachguss exige escolha explícita. As temperaturas são arredondadas para °C inteiros; alterações e etapas omitidas aparecem na prévia. Execute as etapas manuais separadamente.",
   "runtime.xml_size": "BeerXML: arquivo vazio ou maior que 512 KiB.",
   "runtime.xml_invalid": "BeerXML: XML inválido ou inseguro.",
   "runtime.xml_root": "BeerXML: esperado RECIPES com 1 a 100 receitas.",
@@ -193,5 +193,16 @@
   "runtime.bf_size": "Brewer's Friend: resposta muito grande.",
   "runtime.bf_invalid": "Brewer's Friend: indisponível ou resposta inválida.",
   "runtime.bf_many": "Brewer's Friend: receitas demais. Use um ID.",
-  "runtime.bf_id": "Brewer's Friend: ID de receita inválido."
+  "runtime.bf_id": "Brewer's Friend: ID de receita inválido.",
+  "ui.step_review": "Revisar etapas de origem",
+  "ui.device_rest": "Rampa no equipamento",
+  "ui.manual_sparge": "Lavagem manual (não enviada)",
+  "ui.convert_steps": "Criar prévia do programa",
+  "ui.step_hint": "Escolha rampa ou lavagem manual para cada etapa. Sparge/Nachguss exige escolha explícita. As temperaturas são arredondadas para °C inteiros; alterações e etapas omitidas aparecem na prévia. Execute as etapas manuais separadamente.",
+  "ui.source_token": "ID de revisão da origem",
+  "ui.step_roles": "Função de cada etapa de origem",
+  "runtime.rounded_temp": "Etapa {index}: temperatura arredondada de {original} °C para {rounded} °C.",
+  "runtime.manual_step": "Etapa {index} ({label}): lavagem manual; não enviada ao equipamento.",
+  "runtime.choose_roles": "Escolha rampa ou lavagem manual para cada etapa.",
+  "runtime.review_expired": "Revisão expirada. Carregue a receita novamente."
 }
