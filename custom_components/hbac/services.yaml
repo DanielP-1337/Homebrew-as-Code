@@ -55,7 +55,7 @@ preview:
       selector:
         number:
           min: 95
-          max: 105
+          max: 103
           step: 1
           unit_of_measurement: °C
           mode: box

@@ -283,7 +283,7 @@ class HbacCard extends HTMLElement {
     }, "number"); mash.min = 20; mash.max = 80; mash.step = 1;
     const boil = this.field(card, this.t("ui.boil_temperature"), this.boil, value => {
       this.boil = value; this.preview = null; this.shadowRoot.querySelector("#preview-box")?.remove();
-    }, "number"); boil.min = 95; boil.max = 105; boil.step = 1;
+    }, "number"); boil.min = 95; boil.max = 103; boil.step = 1;
     this.button(card, this.t("ui.preview"), async () => {
       if (!this.selected) throw new Error(this.t("ui.choose_error"));
       this.preview = null; this.stepReview = null;

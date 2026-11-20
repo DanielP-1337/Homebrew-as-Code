@@ -107,7 +107,7 @@ def convert(source, kind, source_id, mash_in=None, boil_temperature=103, step_ro
         "mash_in_temperature": integer(mash_in, 20, 80, "Einmaischtemperatur"),
         "rests": rests,
         "boil_minutes": duration,
-        "boil_temperature": integer(boil_temperature, 95, 105, "Kochtemperatur"),
+        "boil_temperature": integer(boil_temperature, 95, 103, "Kochtemperatur"),
         "hop_additions": unique_alarms,
     }
     return {"program": program, "source": {"kind": kind, "id": source_id, "name": original,

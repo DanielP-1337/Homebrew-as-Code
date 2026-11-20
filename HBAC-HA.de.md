@@ -112,7 +112,11 @@ Die Karte benötigt weder Brewfather-Key noch HA-Zugriffstoken.
    zwischengespeichert, der Laden-Knopf aktualisiert ihn ausdrücklich.
 2. Einmaischtemperatur leer lassen, um die erste Rast zu verwenden, oder einen
    eigenen ganzzahligen Wert von 20–80 °C eingeben. Kochtemperatur: Geräteparameter
-   mit Vorgabe 103 °C, änderbar zwischen 95–105 °C.
+   mit Vorgabe 103 °C, änderbar zwischen 95–103 °C.
+   Das gilt auch für Brewer's Friend und BeerXML: Die Kochtemperatur ist eine
+   separate Geräteeinstellung. 104/105 °C werden abgelehnt, nicht automatisch
+   gekürzt. Bereits vorgemerkte Rezepte mit solchen Werten bitte entfernen und
+   mit höchstens 103 °C neu zur Uploadliste hinzufügen.
 3. **Abrufen und Vorschau erstellen**. Die Einzelabfrage holt das vollständige
    Rezept; bei Batches wird ausschließlich `batch.recipe` verwendet. Messwerte
    wie `measuredBoilTime` überschreiben keine geplanten Rezeptparameter.

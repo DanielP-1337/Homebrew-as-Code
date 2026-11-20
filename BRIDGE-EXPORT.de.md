@@ -83,7 +83,7 @@ data:
 ## Grenzen und Zuordnung
 
 Temperaturen und Zeiten müssen ganzzahlig sein: Einmaischen/Rasten 20–80 °C,
-1–5 Rasten mit 1–180 Minuten, Kochen 1–180 Minuten bei 95–105 °C.
+1–5 Rasten mit 1–180 Minuten, Kochen 1–180 Minuten bei 95–103 °C.
 Ohne Quellwert für die Kochtemperatur gilt der Bridge-Standard 103 °C; der Bericht
 weist darauf hin. Werte außerhalb des Geräteformats werden abgelehnt, nicht gerundet.
 

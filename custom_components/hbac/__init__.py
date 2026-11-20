@@ -25,7 +25,7 @@ SCHEMAS = {
                 vol.Optional("source_token"): str,
                 vol.Optional("step_roles"): vol.All([vol.In(["rest", "manual_sparge"])], vol.Length(min=1, max=100)),
                 vol.Optional("mash_in"): vol.All(int, vol.Range(min=20, max=80)),
-                vol.Optional("boil_temperature", default=103): vol.All(int, vol.Range(min=95, max=105))},
+                vol.Optional("boil_temperature", default=103): vol.All(int, vol.Range(min=95, max=103))},
     "import_file": {vol.Required("content"): vol.All(str, vol.Length(max=700000))},
     "open_file": {vol.Required("filename"): str},
     "add": {vol.Required("preview_id"): str, vol.Required("revision"): str},

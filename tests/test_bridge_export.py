@@ -9,6 +9,13 @@ from homebrew_as_code.recipe import RecipeError, load_recipe
 SOURCE = 'recipes/lebkuchen-zauber/recipe.yaml'
 
 
+def test_maximum_boil_temperature_is_preserved():
+    recipe = load_recipe(SOURCE)
+    recipe['boil']['temperature_c'] = 103
+    doc, _ = build_bridge_export([recipe])
+    assert doc['recipes'][0]['boil_temperature'] == 103
+
+
 def test_mapping_and_losses():
     doc, report = build_bridge_export([load_recipe(SOURCE)])
     recipe = doc['recipes'][0]
@@ -23,6 +30,7 @@ def test_mapping_and_losses():
 
 
 @pytest.mark.parametrize('field,value', [('temperature_c', 94), ('temperature_c', 100.5),
+                                        ('temperature_c', 104), ('temperature_c', 105),
                                         ('duration_min', 181), ('duration_min', True),
                                         ('duration_min', float('nan'))])
 def test_reject_unrepresentable_boil(field, value):

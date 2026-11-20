@@ -55,7 +55,7 @@ def build_bridge_export(recipes):
             'rests': [{'temperature': _integer(s['temperature_c'], 20, 80, 'rest.temperature'),
                        'minutes': _integer(s['duration_min'], 1, 180, 'rest.minutes')} for s in mash['steps']],
             'boil_minutes': duration,
-            'boil_temperature': _integer(boil.get('temperature_c', 103), 95, 105, 'boil.temperature_c'),
+            'boil_temperature': _integer(boil.get('temperature_c', 103), 95, 103, 'boil.temperature_c'),
             'hop_additions': hops,
         })
         if 'temperature_c' not in boil:
